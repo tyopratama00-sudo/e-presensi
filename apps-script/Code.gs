@@ -14,8 +14,8 @@ function getSS() {
 
 function doGet() {
   return HtmlService.createHtmlOutputFromFile('Index')
-    .setTitle('Absensi')
-    .addMetaTag('viewport', 'width=device-width, initial-scale=1');
+    .setTitle('Presensi Jonas Photo')
+    .addMetaTag('viewport', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover');
 }
 
 /**
