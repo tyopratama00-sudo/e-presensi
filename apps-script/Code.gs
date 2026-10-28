@@ -26,10 +26,10 @@ function setup() {
   ss.setSpreadsheetTimeZone(TZ);
   ss.setSpreadsheetLocale('en_US');
 
-  // 1. Sheet Freelancer
-  let f = ss.getSheetByName('Freelancer');
+  // 1. Sheet Database
+  let f = ss.getSheetByName('Database') || ss.getSheetByName('Freelancer');
   if (!f) {
-    f = ss.insertSheet('Freelancer');
+    f = ss.insertSheet('Database');
   }
   f.getRange('A1:I1').setValues([['Nama', 'ID', 'Status', 'Cabang', 'Departemen', 'Tarif', 'No Rekening', 'Bank', 'PIN']]).setFontWeight('bold');
   f.getRange('B:B').setNumberFormat('@'); // Format teks agar angka 0 ID tidak hilang
@@ -266,15 +266,17 @@ function renderFeeSheet(fee) {
   const curB7 = fee.getRange('B7').getValue();
   const namaB7 = (curB7 && typeof curB7 === 'string' && curB7.trim() && !curB7.startsWith('=')) ? curB7.trim() : 'Mikhael Yobel Saputra';
   fee.getRange('B7').setValue(namaB7).setHorizontalAlignment('center');
-  fee.getRange('C7').setFormula('=IF(B7="", "", IFERROR(VLOOKUP(B7, Freelancer!$A:$H, 3, FALSE), "-"))').setHorizontalAlignment('center');
-  fee.getRange('D7').setFormula('=IF(B7="", "", IFERROR(VLOOKUP(B7, Freelancer!$A:$H, 4, FALSE), "Pusat"))').setHorizontalAlignment('center');
-  fee.getRange('E7').setFormula('=IF(B7="", "", IFERROR(VLOOKUP(B7, Freelancer!$A:$H, 5, FALSE), "Operasional"))').setHorizontalAlignment('center');
-  fee.getRange('F7').setFormula('=IF(B7="", "", IFERROR(IF(VLOOKUP(B7, Freelancer!$A:$H, 6, FALSE)="-", 0, VLOOKUP(B7, Freelancer!$A:$H, 6, FALSE)), 0))').setNumberFormat('#,##0').setHorizontalAlignment('center');
+  const dbSheet = fee.getSheetByName ? (fee.getParent().getSheetByName('Database') || fee.getParent().getSheetByName('Freelancer')) : null;
+  const dbName = dbSheet ? dbSheet.getName() : 'Database';
+  fee.getRange('C7').setFormula(`=IF(B7="", "", IFERROR(VLOOKUP(B7, '${dbName}'!$A:$H, 3, FALSE), "-"))`).setHorizontalAlignment('center');
+  fee.getRange('D7').setFormula(`=IF(B7="", "", IFERROR(VLOOKUP(B7, '${dbName}'!$A:$H, 4, FALSE), "Pusat"))`).setHorizontalAlignment('center');
+  fee.getRange('E7').setFormula(`=IF(B7="", "", IFERROR(VLOOKUP(B7, '${dbName}'!$A:$H, 5, FALSE), "Operasional"))`).setHorizontalAlignment('center');
+  fee.getRange('F7').setFormula(`=IF(B7="", "", IFERROR(IF(VLOOKUP(B7, '${dbName}'!$A:$H, 6, FALSE)="-", 0, VLOOKUP(B7, '${dbName}'!$A:$H, 6, FALSE)), 0))`).setNumberFormat('#,##0').setHorizontalAlignment('center');
   fee.getRange('G7').setFormula('=IF(OR(B7="", NOT(ISNUMBER(F7))), 0, F7 * I7)').setNumberFormat('#,##0').setHorizontalAlignment('center');
   fee.getRange('H7').setFormula('=IF(OR(B7="", NOT(ISNUMBER(F7))), 0, F7 * I7)').setNumberFormat('#,##0').setHorizontalAlignment('center');
   fee.getRange('I7').setFormula('=IF(B7="", "", COUNTIF(M7:AQ7, "Hadir"))').setNumberFormat('0').setHorizontalAlignment('center');
-  fee.getRange('J7').setFormula('=IF(B7="", "", IFERROR(VLOOKUP(B7, Freelancer!$A:$H, 7, FALSE), "-"))').setHorizontalAlignment('center');
-  fee.getRange('K7').setFormula('=IF(B7="", "", IFERROR(VLOOKUP(B7, Freelancer!$A:$H, 8, FALSE), "-"))').setHorizontalAlignment('center');
+  fee.getRange('J7').setFormula(`=IF(B7="", "", IFERROR(VLOOKUP(B7, '${dbName}'!$A:$H, 7, FALSE), "-"))`).setHorizontalAlignment('center');
+  fee.getRange('K7').setFormula(`=IF(B7="", "", IFERROR(VLOOKUP(B7, '${dbName}'!$A:$H, 8, FALSE), "-"))`).setHorizontalAlignment('center');
   fee.getRange('L7').setValue('');
 
   // Kehadiran row 7 M7:AQ7 & row 8 M8:AQ8
@@ -413,11 +415,11 @@ function absen(idUser, pin, aksi, lat, lng) {
     throw new Error(`Anda berada di luar lokasi kerja (jarak: ${jarakStr} meter). Maksimal radius ${RADIUS_M} meter.`);
   }
 
-  // 2. Cek freelancer di Sheet "Freelancer"
+  // 2. Cek user di Sheet "Database" (atau fallback "Freelancer")
   const ss = getSS();
-  const shFreelancer = ss.getSheetByName('Freelancer');
+  const shFreelancer = ss.getSheetByName('Database') || ss.getSheetByName('Freelancer');
   if (!shFreelancer) {
-    throw new Error('Sheet "Freelancer" belum dibuat. Buka ulang web app atau jalankan setup().');
+    throw new Error('Sheet "Database" belum dibuat. Buka ulang web app atau jalankan setup().');
   }
 
   const dataFreelancer = shFreelancer.getDataRange().getDisplayValues().slice(1);
