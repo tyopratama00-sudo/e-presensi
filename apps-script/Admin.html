@@ -12,7 +12,7 @@
   <style>
     :root {
       --font-main: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      --bg-body: #f8fafc;
+      --bg-body: #eef1f5;
       --bg-surface: #ffffff;
       --bg-subtle: #f1f5f9;
       --border-color: #e2e8f0;
@@ -31,8 +31,6 @@
       --color-danger: #e11d48;
       --color-danger-dark: #be123c;
       --color-danger-light: #fff1f2;
-      --color-purple: #7c3aed;
-      --color-purple-light: #f5f3ff;
 
       --color-text-main: #0f172a;
       --color-text-body: #334155;
@@ -42,8 +40,7 @@
       --radius-sm: 6px;
       --radius-md: 8px;
       --radius-lg: 12px;
-
-      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+      --radius-pill: 999px;
       --sidebar-w: 240px;
     }
 
@@ -53,7 +50,7 @@
       font-family: var(--font-main);
       background: var(--bg-body);
       color: var(--color-text-body);
-      min-height: 100vh;
+      min-height: 100dvh;
       min-width: 1024px;
       font-size: 14px;
       line-height: 1.5;
@@ -67,7 +64,6 @@
       inset: 0 auto 0 0;
       width: var(--sidebar-w);
       background: var(--bg-surface);
-      border-right: 1px solid var(--border-color);
       display: flex;
       flex-direction: column;
       padding: 20px 12px;
@@ -76,7 +72,7 @@
     .sidebar-brand { padding: 4px 10px 24px; }
     .logo-img { height: 28px; width: auto; display: block; }
     .sidebar nav, .sidebar-footer { display: flex; flex-direction: column; gap: 2px; }
-    .sidebar-footer { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--border-color); }
+    .sidebar-footer { margin-top: auto; }
     .nav-item {
       display: flex;
       align-items: center;
@@ -90,7 +86,7 @@
       color: var(--color-text-muted);
       background: none;
       border: none;
-      border-radius: var(--radius-md);
+      border-radius: var(--radius-pill);
       cursor: pointer;
       text-decoration: none;
       text-align: left;
@@ -111,48 +107,33 @@
       flex-direction: column;
       gap: 20px;
     }
-    .page-header h1 { font-size: 22px; font-weight: 700; color: var(--color-text-main); letter-spacing: -0.3px; }
+    .page-header h1 { font-size: 30px; font-weight: 700; color: var(--color-text-main); letter-spacing: -0.02em; line-height: 1.1; }
 
     .tab-pane { display: none; }
     .tab-pane.active { display: flex; flex-direction: column; gap: 20px; }
 
     /* Stats */
-    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-    .stats-grid.two { grid-template-columns: repeat(2, 1fr); }
-    .stat-card {
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
       background: var(--bg-surface);
-      border: 1px solid var(--border-color);
       border-radius: var(--radius-lg);
-      padding: 18px 20px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
+      padding: 8px;
     }
-    .stat-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    .stat-icon svg { width: 18px; height: 18px; }
-    .stat-icon.blue { background: var(--color-primary-light); color: var(--color-primary); }
-    .stat-icon.green { background: var(--color-success-light); color: var(--color-success); }
-    .stat-icon.amber { background: var(--color-warning-light); color: var(--color-warning); }
-    .stat-icon.purple { background: var(--color-purple-light); color: var(--color-purple); }
-    .stat-info { display: flex; flex-direction: column; gap: 2px; }
-    .stat-label { font-size: 13px; font-weight: 500; color: var(--color-text-muted); }
-    .stat-value { font-size: 26px; font-weight: 700; color: var(--color-text-main); font-variant-numeric: tabular-nums; line-height: 1.2; }
+    .stats-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .content-card .stats-grid { background: var(--bg-subtle); }
+    .stat-card { padding: 16px 20px; }
+    .stat-info { display: flex; flex-direction: column; gap: 4px; }
+    .stat-label { font-size: 14px; font-weight: 600; color: var(--color-text-body); }
+    .stat-value { font-size: 36px; font-weight: 700; color: var(--color-text-main); font-variant-numeric: tabular-nums; line-height: 1.1; letter-spacing: -0.02em; }
     .stat-subtext { font-size: 12px; color: var(--color-text-subtle); }
 
     /* Content card */
     .content-card {
       background: var(--bg-surface);
-      border: 1px solid var(--border-color);
       border-radius: var(--radius-lg);
-      padding: 20px;
+      padding: 24px;
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -176,12 +157,12 @@
       border: 1px solid var(--border-color);
       border-radius: var(--radius-md);
       outline: none;
-      transition: border-color 0.15s, box-shadow 0.15s;
+      transition: border-color 0.15s;
     }
     .input-field { width: 100%; padding: 0 12px 0 36px; }
     .select-field { padding: 0 12px; cursor: pointer; }
     .input-year { width: 100px; padding-left: 12px; }
-    .input-field:focus, .select-field:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-primary-glow); }
+    .input-field:focus, .select-field:focus { border-color: var(--color-primary); outline: 3px solid var(--color-primary-glow); }
 
     /* Buttons */
     .btn {
@@ -194,26 +175,25 @@
       font-family: var(--font-main);
       font-size: 14px;
       font-weight: 600;
-      border-radius: var(--radius-md);
-      border: 1px solid transparent;
+      border-radius: var(--radius-pill);
+      border: none;
       cursor: pointer;
       white-space: nowrap;
-      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      transition: background 0.15s, color 0.15s;
     }
     .btn svg { width: 16px; height: 16px; flex-shrink: 0; }
     .btn-primary { background: var(--color-primary); color: #fff; }
     .btn-primary:hover { background: var(--color-primary-dark); }
     .btn-success { background: var(--color-success); color: #fff; }
     .btn-success:hover { background: var(--color-success-dark); }
-    .btn-secondary { background: var(--bg-surface); color: var(--color-text-main); border-color: var(--border-color); }
-    .btn-secondary:hover { background: var(--bg-subtle); }
-    .btn-danger { background: var(--color-danger); color: #fff; }
-    .btn-danger:hover { background: var(--color-danger-dark); }
+    .btn-secondary { background: var(--bg-subtle); color: var(--color-text-main); }
+    .btn-secondary:hover { background: var(--border-color); }
+    .modal-footer .btn-secondary { background: var(--bg-surface); }
     .btn-sm { height: 30px; padding: 0 10px; font-size: 12px; }
     .btn-block { width: 100%; height: 44px; }
 
     /* Tables */
-    .table-responsive { width: 100%; overflow-x: auto; border: 1px solid var(--border-color); border-radius: var(--radius-md); }
+    .table-responsive { width: 100%; overflow-x: auto; }
     .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
     .data-table th {
       background: var(--bg-subtle);
@@ -234,11 +214,10 @@
     .text-center { text-align: center; }
     .text-right { text-align: right; font-variant-numeric: tabular-nums; }
     .font-bold { font-weight: 600; color: var(--color-text-main); }
-    .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .tabular { font-variant-numeric: tabular-nums; }
     .text-success { color: var(--color-success); }
     .text-danger { color: var(--color-danger); }
     .text-warning { color: var(--color-warning); }
-    .text-purple { color: var(--color-purple); }
     .text-primary { color: var(--color-primary); }
     .text-muted { color: var(--color-text-muted); }
     .text-subtle { color: var(--color-text-subtle); }
@@ -273,8 +252,8 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      border-radius: var(--radius-sm);
-      border: 1px solid transparent;
+      border-radius: 50%;
+      border: none;
       background: none;
       color: var(--color-text-muted);
       cursor: pointer;
@@ -298,19 +277,18 @@
     .modal-backdrop.show { display: flex; }
     .modal-box {
       background: var(--bg-surface);
-      border: 1px solid var(--border-color);
       border-radius: var(--radius-lg);
       width: 100%;
       max-width: 540px;
-      box-shadow: 0 20px 40px -12px rgba(15, 23, 42, 0.25);
+      box-shadow: 0 20px 40px -12px rgba(15, 23, 42, 0.25); /* taste-skill-ignore: dialog floats */
       overflow: hidden;
       animation: modalIn 0.15s ease-out;
     }
     @keyframes modalIn { from { opacity: 0; transform: scale(0.98); } }
-    .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+    .modal-header { padding: 20px 24px 4px; display: flex; justify-content: space-between; align-items: center; }
     .modal-title { font-size: 16px; font-weight: 700; color: var(--color-text-main); }
-    .modal-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; max-height: 75vh; overflow-y: auto; }
-    .modal-footer { padding: 14px 20px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 8px; }
+    .modal-body { padding: 16px 24px 24px; display: flex; flex-direction: column; gap: 14px; max-height: 75vh; overflow-y: auto; }
+    .modal-footer { padding: 16px 24px; background: var(--bg-subtle); display: flex; justify-content: flex-end; gap: 8px; }
 
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     .form-group { display: flex; flex-direction: column; gap: 6px; }
@@ -326,7 +304,7 @@
       border-radius: var(--radius-md);
       outline: none;
     }
-    .form-group input:focus, .form-group select:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-primary-glow); }
+    .form-group input:focus, .form-group select:focus { border-color: var(--color-primary); outline: 3px solid var(--color-primary-glow); }
 
     /* Auth gate */
     .auth-gate {
@@ -341,13 +319,11 @@
     }
     .auth-card {
       background: var(--bg-surface);
-      border: 1px solid var(--border-color);
       border-radius: var(--radius-lg);
       padding: 36px 32px;
       width: 100%;
       max-width: 400px;
       text-align: center;
-      box-shadow: var(--shadow-sm);
     }
     .auth-brand-logo { max-width: 160px; height: auto; margin: 0 auto 20px; display: block; }
     .auth-icon-wrap {
@@ -377,7 +353,7 @@
       font-size: 14px;
       font-weight: 600;
       color: #fff;
-      box-shadow: 0 8px 20px -6px rgba(15, 23, 42, 0.3);
+      box-shadow: 0 8px 20px -6px rgba(15, 23, 42, 0.3); /* taste-skill-ignore: toast floats */
       animation: toastIn 0.2s ease-out;
       display: flex;
       align-items: center;
@@ -480,9 +456,6 @@
       <!-- KPI Metric Cards -->
       <div class="stats-grid">
         <div class="stat-card">
-          <div class="stat-icon blue">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-          </div>
           <div class="stat-info">
             <span class="stat-label">Total Karyawan</span>
             <span class="stat-value" id="statTotalEmployees">0</span>
@@ -491,9 +464,6 @@
         </div>
 
         <div class="stat-card">
-          <div class="stat-icon green">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-          </div>
           <div class="stat-info">
             <span class="stat-label">Hadir Hari Ini</span>
             <span class="stat-value text-success" id="statHadirToday">0</span>
@@ -502,9 +472,6 @@
         </div>
 
         <div class="stat-card">
-          <div class="stat-icon amber">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-          </div>
           <div class="stat-info">
             <span class="stat-label">Sedang Bekerja</span>
             <span class="stat-value text-warning" id="statSedangBekerja">0</span>
@@ -513,12 +480,9 @@
         </div>
 
         <div class="stat-card">
-          <div class="stat-icon purple">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-          </div>
           <div class="stat-info">
             <span class="stat-label">Sudah Pulang</span>
-            <span class="stat-value text-purple" id="statSelesai">0</span>
+            <span class="stat-value" id="statSelesai">0</span>
             <span class="stat-subtext">Selesai Jam Kerja</span>
           </div>
         </div>
@@ -710,9 +674,6 @@
         <!-- Stat Row -->
         <div class="stats-grid two">
           <div class="stat-card">
-            <div class="stat-icon green">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            </div>
             <div class="stat-info">
               <span class="stat-label">Total Pengeluaran Fee Periode Ini</span>
               <span class="stat-value text-success" id="feeTotalAmount">Rp 0</span>
@@ -720,9 +681,6 @@
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon blue">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-            </div>
             <div class="stat-info">
               <span class="stat-label">Total Hari Kehadiran (Days)</span>
               <span class="stat-value text-primary" id="feeTotalDays">0 Hari</span>
@@ -1110,12 +1068,12 @@
             </div>
           </td>
           <td><span class="badge badge-info">${escapeHtml(emp.id)}</span></td>
-          <td class="text-center font-mono">${escapeHtml(emp.pin)}</td>
+          <td class="text-center tabular">${escapeHtml(emp.pin)}</td>
           <td><span class="badge badge-secondary">${escapeHtml(emp.status || '-')}</span></td>
           <td class="text-center"><span class="badge badge-info">${escapeHtml(emp.cabang || 'Pusat')}</span></td>
           <td>${escapeHtml(emp.departemen || '-')}</td>
           <td class="text-right font-bold text-success">Rp ${formatRupiah(emp.tarif)}</td>
-          <td><span class="font-mono">${escapeHtml(emp.noRekening || '-')}</span></td>
+          <td><span class="tabular">${escapeHtml(emp.noRekening || '-')}</span></td>
           <td><span class="badge badge-secondary">${escapeHtml(emp.bank || '-')}</span></td>
           <td class="text-center">
             <div class="table-actions">
@@ -1392,7 +1350,7 @@
               <td class="text-right font-bold">${escapeHtml(item.tarif)}</td>
               <td class="text-center font-bold text-primary">${item.days} Hari</td>
               <td class="text-right font-bold text-success">${escapeHtml(item.totalFee)}</td>
-              <td><span class="font-mono">${escapeHtml(item.noRekening)}</span></td>
+              <td><span class="tabular">${escapeHtml(item.noRekening)}</span></td>
               <td><span class="badge badge-secondary">${escapeHtml(item.bank)}</span></td>
             </tr>`;
           });
