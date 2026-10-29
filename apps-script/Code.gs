@@ -488,12 +488,22 @@ function setupAbsensiHorizontal(ss) {
 
     a.getRange(5, 3, numEmp, 31).setValues(gridValues).setNumberFormat('@').setHorizontalAlignment('center');
 
-    // Data validation dropdown untuk status: OFF, Sakit, Izin (tetap membolehkan input jam kerja)
+    // Data validation dropdown HANYA untuk sel non-jam (OFF, Sakit, Izin, kosong)
     const ruleStatus = SpreadsheetApp.newDataValidation()
       .requireValueInList(['OFF', 'Sakit', 'Izin'], true)
       .setAllowInvalid(true)
       .build();
-    a.getRange(5, 3, numEmp, 31).setDataValidation(ruleStatus);
+    const validationMatrix = [];
+    for (let r = 0; r < numEmp; r++) {
+      const rowValRules = [];
+      for (let c = 0; c < 31; c++) {
+        const v = String(gridValues[r][c] || '').trim();
+        const isHours = v && v !== 'OFF' && v !== 'Sakit' && v !== 'Izin';
+        rowValRules.push(isHours ? null : ruleStatus);
+      }
+      validationMatrix.push(rowValRules);
+    }
+    a.getRange(5, 3, numEmp, 31).setDataValidations(validationMatrix);
 
     a.getRange(4, 1, numEmp + 1, 35).setBorder(true, true, true, true, true, true, '#CBD5E1', SpreadsheetApp.BorderStyle.SOLID);
     a.getRange('A4:AI4').setBorder(true, true, true, true, null, null, '#0F172A', SpreadsheetApp.BorderStyle.MEDIUM);
@@ -827,6 +837,21 @@ function onEdit(e) {
       if (fee) renderFeeSheet(fee);
     }
 
+    // Sheet Absensi: Jika kotak kehadiran (C5:AG) diedit, otomatis hilangkan dropdown jika terisi jam kerja
+    if (sheetName === 'Absensi' && row >= 5 && col >= 3 && col <= 33) {
+      const val = String(e.range.getValue() || '').trim();
+      const isHours = val && val !== 'OFF' && val !== 'Sakit' && val !== 'Izin';
+      if (isHours) {
+        e.range.clearDataValidations();
+      } else {
+        const ruleStatus = SpreadsheetApp.newDataValidation()
+          .requireValueInList(['OFF', 'Sakit', 'Izin'], true)
+          .setAllowInvalid(true)
+          .build();
+        e.range.setDataValidation(ruleStatus);
+      }
+    }
+
     // Sheet Fee: G1 (Bulan) atau G2 (Tahun)
     if (sheetName === 'Fee' && (row === 1 || row === 2) && col === 7) {
       renderFeeSheet(sheet);
@@ -1027,6 +1052,7 @@ function absen(idUser, pin, aksi, lat, lng) {
         throw new Error(`You have already clocked in today (${currentVal}).`);
       }
       targetCell.setValue(jamTeks).setNumberFormat('@').setHorizontalAlignment('center');
+      targetCell.clearDataValidations();
 
       // Simpan log ke master log Absensi_Log_Backup
       const shBackup = ss.getSheetByName('Absensi_Log_Backup');
