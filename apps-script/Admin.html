@@ -396,6 +396,9 @@
     }
 
     @media print {
+      body { min-width: 0; }
+      .data-table th, .data-table td { white-space: normal; padding: 6px 8px; font-size: 11px; }
+      .avatar-chip { display: none; }
       .sidebar, .card-actions, .toast-container { display: none !important; }
       .main { margin-left: 0; padding: 0; max-width: none; }
       .table-responsive { overflow: visible; }
