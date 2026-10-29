@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Presensi Jonas Photo</title>
   <base target="_top">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,7 +20,7 @@
       --color-bg: #f8fafc;
       --color-surface: #ffffff;
       --color-text-main: #0f172a;
-      --color-text-muted: #64748b;
+      --color-text-muted: #475569;
       --color-border: #e2e8f0;
       --radius-card: 24px;
       --radius-element: 14px;
@@ -45,6 +45,7 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
+      min-height: 100dvh;
       padding: 20px 16px;
       position: relative;
       overflow-x: hidden;
@@ -127,7 +128,7 @@
       font-weight: 700;
       letter-spacing: 2px;
       text-transform: uppercase;
-      color: #64748b;
+      color: var(--color-text-muted);
       background: #f1f5f9;
       padding: 4px 10px;
       border-radius: 999px;
@@ -233,16 +234,16 @@
       box-shadow: 0 0 0 3.5px rgba(37, 99, 235, 0.12);
     }
     input::placeholder {
-      color: #94a3b8;
+      color: #64748b;
       font-size: 13px;
       letter-spacing: normal;
       font-weight: 400;
     }
     .btn-toggle-eye {
       position: absolute;
-      right: 10px;
-      width: 32px;
-      height: 32px;
+      right: 2px;
+      width: 44px;
+      height: 44px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -364,6 +365,10 @@
     .remember-label input:checked + .custom-checkbox {
       background: var(--color-primary);
       border-color: var(--color-primary);
+    }
+    .remember-label input:focus-visible + .custom-checkbox {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
     }
     .custom-checkbox svg {
       width: 12px;
@@ -518,33 +523,19 @@
       font-weight: 600;
       color: #475569;
     }
-    .pulse-dot-wrapper {
-      position: relative;
-      width: 8px;
-      height: 8px;
+    .geo-badge svg {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
     }
-    .pulse-dot {
-      width: 8px;
-      height: 8px;
-      background-color: #10b981;
-      border-radius: 50%;
-    }
-    .pulse-ring {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 8px;
-      height: 8px;
-      background-color: #10b981;
-      border-radius: 50%;
-      opacity: 0.75;
-      animation: pingRing 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
-    }
-    @keyframes pingRing {
-      75%, 100% {
-        transform: scale(2.5);
-        opacity: 0;
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
       }
+      .btn-action:hover:not(:disabled) { transform: none; }
     }
   </style>
 </head>
@@ -586,6 +577,7 @@
       </button>
     </div>
 
+    <form id="absenForm" onsubmit="return false">
     <!-- ID Input -->
     <div class="form-group">
       <label for="idInput">ID</label>
@@ -623,7 +615,7 @@
           autocomplete="current-password"
           placeholder="Masukkan PIN"
         >
-        <button type="button" class="btn-toggle-eye" id="btnToggleEye" onclick="togglePinVisibility()" aria-label="Lihat PIN">
+        <button type="button" class="btn-toggle-eye" id="btnToggleEye" onclick="togglePinVisibility()" aria-label="Tampilkan PIN" aria-pressed="false">
           <!-- Eye Icon (visible by default) -->
           <svg id="eyeIconShow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -640,13 +632,13 @@
     <!-- Auto-Save on Device Checkbox -->
     <div class="remember-row">
       <label class="remember-label" for="rememberMe">
-        <input type="checkbox" id="rememberMe" checked onchange="handleRememberChange()">
+        <input type="checkbox" id="rememberMe" onchange="handleRememberChange()">
         <span class="custom-checkbox">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
           </svg>
         </span>
-        <span class="remember-text">Simpan otomatis di perangkat ini</span>
+        <span class="remember-text">Ingat ID di perangkat ini</span>
       </label>
       <span id="savedBadge" class="saved-badge" style="display:none;">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -671,20 +663,21 @@
         <span>Pulang</span>
       </button>
     </div>
+    </form>
 
     <!-- Status Message Alert -->
-    <div id="statusBox" class="status-box" role="alert">
+    <div id="statusBox" class="status-box" role="status" aria-live="polite">
       <div id="statusIcon" class="status-icon"></div>
       <div id="statusText"></div>
     </div>
 
     <!-- GPS Location Indicator -->
     <div class="geo-badge">
-      <div class="pulse-dot-wrapper">
-        <div class="pulse-ring"></div>
-        <div class="pulse-dot"></div>
-      </div>
-      <span>Validasi Lokasi GPS Aktif (Radius 100m)</span>
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+      <span>Absen butuh izin lokasi · radius 100m</span>
     </div>
   </div>
 
@@ -706,27 +699,26 @@
 
     // Device LocalStorage Keys (Auto-Save Perangkat)
     const KEY_ID = "jonas_absensi_id";
-    const KEY_PIN = "jonas_absensi_pin";
-    const KEY_PASS_OLD = "jonas_absensi_password";
     const KEY_NAMA = "jonas_absensi_nama";
     const KEY_REMEMBER = "jonas_absensi_remember";
 
     // Muat data akun tersimpan saat halaman dibuka
     function loadSavedCredentials() {
       try {
-        const remember = localStorage.getItem(KEY_REMEMBER) !== "false";
+        // PIN versi lama pernah disimpan plaintext; hapus.
+        localStorage.removeItem("jonas_absensi_pin");
+        localStorage.removeItem("jonas_absensi_password");
+
+        const remember = localStorage.getItem(KEY_REMEMBER) === "true";
         const chk = document.getElementById("rememberMe");
         if (chk) chk.checked = remember;
 
         const savedId = localStorage.getItem(KEY_ID);
-        const savedPin = localStorage.getItem(KEY_PIN) || localStorage.getItem(KEY_PASS_OLD);
         const savedNama = localStorage.getItem(KEY_NAMA);
 
         if (remember && savedId) {
           const idInput = document.getElementById("idInput");
-          const pinInput = document.getElementById("pinInput");
           if (idInput) idInput.value = savedId;
-          if (pinInput && savedPin) pinInput.value = savedPin;
 
           const savedBadge = document.getElementById("savedBadge");
           if (savedBadge) savedBadge.style.display = "inline-flex";
@@ -744,13 +736,12 @@
     }
 
     // Simpan data login ke localStorage perangkat
-    function saveCredentialsToDevice(id, pin, nama) {
+    function saveCredentialsToDevice(id, nama) {
       try {
         const remember = document.getElementById("rememberMe").checked;
         if (remember) {
           localStorage.setItem(KEY_REMEMBER, "true");
           if (id) localStorage.setItem(KEY_ID, id);
-          if (pin) localStorage.setItem(KEY_PIN, pin);
           if (nama) {
             localStorage.setItem(KEY_NAMA, nama);
             const greetingEl = document.getElementById("greetingName");
@@ -772,8 +763,6 @@
     function clearSavedCredentials() {
       try {
         localStorage.removeItem(KEY_ID);
-        localStorage.removeItem(KEY_PIN);
-        localStorage.removeItem(KEY_PASS_OLD);
         localStorage.removeItem(KEY_NAMA);
         localStorage.setItem(KEY_REMEMBER, "false");
         const savedBadge = document.getElementById("savedBadge");
@@ -790,9 +779,8 @@
         clearSavedCredentials();
       } else {
         const id = document.getElementById("idInput").value.trim();
-        const pin = document.getElementById("pinInput").value.trim();
-        if (id && pin) {
-          saveCredentialsToDevice(id, pin, null);
+        if (id) {
+          saveCredentialsToDevice(id, null);
         }
       }
     }
@@ -818,7 +806,6 @@
       clearSavedCredentials();
       document.getElementById("idInput").value = "";
       document.getElementById("pinInput").value = "";
-      document.getElementById("rememberMe").checked = true;
       document.getElementById("idInput").focus();
     }
 
@@ -827,7 +814,11 @@
       const input = document.getElementById("pinInput");
       const iconShow = document.getElementById("eyeIconShow");
       const iconHide = document.getElementById("eyeIconHide");
-      if (input.type === "password") {
+      const btn = document.getElementById("btnToggleEye");
+      const show = input.type === "password";
+      btn.setAttribute("aria-pressed", String(show));
+      btn.setAttribute("aria-label", show ? "Sembunyikan PIN" : "Tampilkan PIN");
+      if (show) {
         input.type = "text";
         iconShow.style.display = "none";
         iconHide.style.display = "block";
@@ -845,9 +836,15 @@
     const btnMasuk = document.getElementById("btnMasuk");
     const btnPulang = document.getElementById("btnPulang");
 
-    function showStatus(pesan, tipe) {
+    function showStatus(judul, pesan, tipe) {
       statusBox.className = "status-box show " + tipe;
-      statusText.innerHTML = pesan;
+      statusText.textContent = "";
+      if (judul) {
+        const b = document.createElement("strong");
+        b.textContent = judul + " ";
+        statusText.appendChild(b);
+      }
+      statusText.appendChild(document.createTextNode(pesan));
 
       if (tipe === "info") {
         statusIcon.innerHTML = '<svg class="spinner" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="3" stroke-dasharray="30 60" stroke-linecap="round" /></svg>';
@@ -871,57 +868,57 @@
       const pin = pinInput.value.trim();
 
       if (!idUser) {
-        showStatus("<strong>ID Belum Diisi:</strong> Masukkan ID Anda.", "error");
+        showStatus("ID Belum Diisi:", "Masukkan ID Anda.", "error");
         idInput.focus();
         return;
       }
 
       if (!pin) {
-        showStatus("<strong>PIN Belum Diisi:</strong> Masukkan PIN absensi Anda.", "error");
+        showStatus("PIN Belum Diisi:", "Masukkan PIN absensi Anda.", "error");
         pinInput.focus();
         return;
       }
 
       if (!navigator.geolocation) {
-        showStatus("<strong>GPS Tidak Didukung:</strong> Browser Anda tidak mendukung deteksi lokasi.", "error");
+        showStatus("GPS Tidak Didukung:", "Browser Anda tidak mendukung deteksi lokasi.", "error");
         return;
       }
 
       setButtonsBusy(true);
-      showStatus("Menghubungkan ke satelit GPS & memindai lokasi Anda...", "info");
+      showStatus("", "Mendeteksi lokasi Anda...", "info");
 
       navigator.geolocation.getCurrentPosition(
         function (pos) {
-          showStatus("Memvalidasi identitas & radius kerja...", "info");
+          showStatus("", "Memvalidasi identitas & radius kerja...", "info");
 
           google.script.run
             .withSuccessHandler(function (res) {
               const pesan = (res && typeof res === 'object') ? res.message : res;
               const nama = (res && typeof res === 'object') ? res.nama : null;
-              showStatus("<strong>Berhasil!</strong> " + pesan, "success");
+              showStatus("Berhasil!", pesan, "success");
 
               // Simpan otomatis ke perangkat jika opsi aktif
-              saveCredentialsToDevice(idUser, pin, nama);
+              saveCredentialsToDevice(idUser, nama);
 
               setButtonsBusy(false);
             })
             .withFailureHandler(function (err) {
-              showStatus("<strong>Gagal:</strong> " + (err.message || "Terjadi kendala pada sistem."), "error");
+              showStatus("Gagal:", err.message || "Terjadi kendala pada sistem.", "error");
               setButtonsBusy(false);
             })
             .absen(idUser, pin, aksi, pos.coords.latitude, pos.coords.longitude);
         },
         function (err) {
           setButtonsBusy(false);
-          let pesan = "Gagal mendeteksi lokasi GPS Anda.";
+          let judul = "", pesan = "Gagal mendeteksi lokasi GPS Anda.";
           if (err.code === 1) {
-            pesan = "<strong>Izin Lokasi Ditolak:</strong> Silakan aktifkan izin lokasi di browser Anda untuk melanjutkan absensi.";
+            judul = "Izin Lokasi Ditolak:"; pesan = "Silakan aktifkan izin lokasi di browser Anda untuk melanjutkan absensi.";
           } else if (err.code === 2) {
-            pesan = "<strong>Sinyal GPS Lemah:</strong> Pastikan GPS pada perangkat Anda aktif dan memiliki sinyal yang memadai.";
+            judul = "Sinyal GPS Lemah:"; pesan = "Pastikan GPS pada perangkat Anda aktif dan memiliki sinyal yang memadai.";
           } else if (err.code === 3) {
-            pesan = "<strong>Waktu Habis:</strong> Pencarian sinyal GPS membutuhkan waktu terlalu lama. Silakan coba lagi.";
+            judul = "Waktu Habis:"; pesan = "Pencarian sinyal GPS membutuhkan waktu terlalu lama. Silakan coba lagi.";
           }
-          showStatus(pesan, "error");
+          showStatus(judul, pesan, "error");
         },
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
       );

@@ -15,7 +15,7 @@ function getSS() {
 function doGet() {
   return HtmlService.createHtmlOutputFromFile('Index')
     .setTitle('Presensi Jonas Photo')
-    .addMetaTag('viewport', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover')
+    .addMetaTag('viewport', 'width=device-width, initial-scale=1, viewport-fit=cover')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
@@ -41,50 +41,8 @@ function setup() {
     f.getRange('A2:I2').setValues([['Mikhael Yobel Saputra', '@mikhaelyobels', '1111', 'AI Prompter', 'Pusat', 'IT', 75000, '3790944231', 'BCA']]);
   }
 
-  // 2. Sheet Absensi
-  let a = ss.getSheetByName('Absensi');
-  if (!a) {
-    a = ss.insertSheet('Absensi');
-  }
-  a.getRange('A1:E1').setValues([['Tanggal', 'Nama', 'Masuk', 'Pulang', 'Jam Kerja']]).setFontWeight('bold');
-  a.getRange('C:D').setNumberFormat('HH.mm');
-  a.getRange('E:E').setNumberFormat('0.00');
-
-  // Konversi tanggal string jika ada (misal diinput manual sebagai DD/MM/YYYY) ke Date objek
-  if (a.getLastRow() >= 2) {
-    const rangeTgl = a.getRange(2, 1, a.getLastRow() - 1, 1);
-    const vals = rangeTgl.getValues();
-    let modified = false;
-    for (let i = 0; i < vals.length; i++) {
-      const v = vals[i][0];
-      if (typeof v === 'string' && v.includes('/')) {
-        const p = v.split('/');
-        if (p.length === 3) {
-          vals[i][0] = new Date(Number(p[2]), Number(p[1]) - 1, Number(p[0]));
-          modified = true;
-        }
-      } else if (typeof v === 'string' && v.includes('-')) {
-        const p = v.split('-');
-        if (p.length === 3) {
-          vals[i][0] = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
-          modified = true;
-        }
-      }
-    }
-    if (modified) {
-      rangeTgl.setValues(vals);
-    }
-    a.getRange('A2:A').setNumberFormat('dd/mm/yyyy');
-
-    // Pastikan rumus Jam Kerja di kolom E terpasang untuk semua baris
-    const numRows = a.getLastRow() - 1;
-    const formulasE = [];
-    for (let i = 2; i <= a.getLastRow(); i++) {
-      formulasE.push([`=IF(OR(C${i}="", D${i}=""), "", ROUND(IF(D${i} < C${i}, D${i} + 1 - C${i}, D${i} - C${i}) * 24, 2))`]);
-    }
-    a.getRange(2, 5, numRows, 1).setFormulas(formulasE);
-    a.getRange('E2:E').setNumberFormat('0.00').setHorizontalAlignment('center');
-  }
+  // 2. Sheet Absensi (Format Horizontal Ke Samping)
+  setupAbsensiHorizontal(ss);
 
   // 3. Sheet Rekap (Filter Nama, Bulan, & Perhitungan Siklus Tanggal 21 - 20)
   let r = ss.getSheetByName('Rekap');
@@ -185,6 +143,207 @@ function setup() {
     renderFeeSheet(fee);
   }
 }
+
+/**
+ * Inisialisasi dan format Sheet Absensi Horizontal (Ke Samping):
+ * - Baris 1: Filter Bulan & Tahun
+ * - Baris 2: Keterangan Periode Cut-Off (21 bulan lalu s/d 20 bulan ini)
+ * - Baris 4: Header Kolom No, Nama, Tanggal 21..20 (C4:AG4, 31 kolom), Total Hadir (AH4)
+ * - Baris 5+: Data karyawan (Nama di kolom B, kotak absen di kolom C..AG)
+ * - Format jam di kotak absen: "08.00" (Masuk) atau "08.00 - 17.00" (Lengkap)
+ */
+function setupAbsensiHorizontal(ss) {
+  if (!ss) ss = getSS();
+  let a = ss.getSheetByName('Absensi');
+  if (!a) {
+    a = ss.insertSheet('Absensi');
+  }
+
+  // Backup data lama jika masih format kebawah
+  let oldRecords = [];
+  if (a.getLastRow() >= 1 && a.getRange('A1').getValue() === 'Tanggal') {
+    let backup = ss.getSheetByName('Absensi_Log_Backup');
+    if (!backup) {
+      backup = a.copyTo(ss).setName('Absensi_Log_Backup');
+    }
+    if (a.getLastRow() >= 2) {
+      oldRecords = a.getRange(2, 1, a.getLastRow() - 1, 4).getValues();
+    }
+    a.clear();
+  }
+
+  // Pastikan kolom cukup (minimal 36 kolom: A..AJ)
+  if (a.getMaxColumns() < 36) {
+    a.insertColumnsAfter(a.getMaxColumns(), 36 - a.getMaxColumns());
+  }
+
+  // 1. Bulan & Tahun di B1 & D1
+  const bulanList = [
+    '1 (Januari)', '2 (Februari)', '3 (Maret)', '4 (April)',
+    '5 (Mei)', '6 (Juni)', '7 (Juli)', '8 (Agustus)',
+    '9 (September)', '10 (Oktober)', '11 (November)', '12 (Desember)'
+  ];
+  const ruleBulan = SpreadsheetApp.newDataValidation()
+    .requireValueInList(bulanList, true)
+    .build();
+
+  const now = new Date();
+  let defaultMonthIdx = now.getMonth();
+  let defaultYear = now.getFullYear();
+  if (now.getDate() >= 21) {
+    if (defaultMonthIdx === 11) {
+      defaultMonthIdx = 0;
+      defaultYear += 1;
+    } else {
+      defaultMonthIdx += 1;
+    }
+  }
+
+  a.getRange('A1').setValue('Bulan:').setFontWeight('bold').setHorizontalAlignment('right');
+  if (!a.getRange('B1').getValue()) {
+    a.getRange('B1').setDataValidation(ruleBulan).setValue(bulanList[defaultMonthIdx]);
+  } else {
+    a.getRange('B1').setDataValidation(ruleBulan);
+  }
+  a.getRange('B1').setFontWeight('bold');
+
+  a.getRange('C1').setValue('Tahun:').setFontWeight('bold').setHorizontalAlignment('right');
+  if (!a.getRange('D1').getValue()) {
+    a.getRange('D1').setValue(defaultYear);
+  }
+  a.getRange('D1').setFontWeight('bold').setHorizontalAlignment('center');
+
+  try {
+    a.getRange('E1:G1').merge().setValue('PRESENSI DIGITAL JONAS PHOTO')
+      .setFontWeight('bold').setFontColor('#0F172A').setFontSize(11);
+  } catch (err) {}
+
+  // Baris 2: Keterangan Periode Cut-Off
+  a.getRange('A2').setValue('Periode:').setFontWeight('bold').setHorizontalAlignment('right');
+  try {
+    a.getRange('B2:G2').merge().setFormula(
+      '=TEXT(DATE(D1, VALUE(LEFT(B1, FIND(" ", B1 & " ") - 1)) - 1, 21), "dd/mm/yyyy") & " s/d " & TEXT(DATE(D1, VALUE(LEFT(B1, FIND(" ", B1 & " ") - 1)), 20), "dd/mm/yyyy")'
+    ).setFontWeight('bold').setFontColor('#15803D');
+  } catch (err) {}
+
+  // Baris 4: Header Kolom
+  a.getRange('A4').setValue('No').setHorizontalAlignment('center');
+  a.getRange('B4').setValue('Nama Karyawan').setHorizontalAlignment('left');
+  a.getRange('A4:B4').setBackground('#1E293B').setFontColor('#FFFFFF').setFontWeight('bold').setFontFamily('Arial').setFontSize(9.5);
+
+  // Tanggal C4:AG4 (31 kolom)
+  const dateFormulas = [];
+  dateFormulas.push('=DATE($D$1, VALUE(LEFT($B$1, FIND(" ", $B$1 & " ") - 1)) - 1, 21)');
+  for (let c = 4; c <= 33; c++) {
+    let prevLetter = '';
+    let temp = c - 1;
+    while (temp > 0) {
+      let rem = (temp - 1) % 26;
+      prevLetter = String.fromCharCode(65 + rem) + prevLetter;
+      temp = Math.floor((temp - rem) / 26);
+    }
+    dateFormulas.push('=IF(' + prevLetter + '4="", "", IF(' + prevLetter + '4 < DATE($D$1, VALUE(LEFT($B$1, FIND(" ", $B$1 & " ") - 1)), 20), ' + prevLetter + '4 + 1, ""))');
+  }
+  a.getRange('C4:AG4').setFormulas([dateFormulas])
+    .setNumberFormat('dd/mm')
+    .setFontWeight('bold')
+    .setHorizontalAlignment('center')
+    .setBackground('#1E293B')
+    .setFontColor('#FFFFFF')
+    .setFontFamily('Arial')
+    .setFontSize(9);
+
+  a.getRange('AH4').setValue('Total Hadir').setHorizontalAlignment('center')
+    .setBackground('#0F766E').setFontColor('#FFFFFF').setFontWeight('bold').setFontFamily('Arial').setFontSize(9.5);
+
+  // 2. Daftar Nama Karyawan dari Database
+  const shDb = ss.getSheetByName('Database') || ss.getSheetByName('Freelancer');
+  let names = [];
+  if (shDb && shDb.getLastRow() >= 2) {
+    const rawNames = shDb.getRange(2, 1, shDb.getLastRow() - 1, 1).getValues();
+    for (let i = 0; i < rawNames.length; i++) {
+      const n = String(rawNames[i][0] || '').trim();
+      if (n && !names.includes(n)) {
+        names.push(n);
+      }
+    }
+  }
+  if (names.length === 0) {
+    names = ['Mikhael Yobel Saputra'];
+  }
+
+  // Isi baris karyawan mulai baris 5
+  for (let i = 0; i < names.length; i++) {
+    const r = 5 + i;
+    a.getRange('A' + r).setValue(i + 1).setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#64748B');
+    a.getRange('B' + r).setValue(names[i]).setFontWeight('bold').setFontColor('#0F172A').setHorizontalAlignment('left');
+    a.getRange('AH' + r).setFormula(`=COUNTIF(C${r}:AG${r}, "<>")`).setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#0F766E');
+    a.getRange(r, 1, 1, 34).setFontFamily('Arial').setFontSize(9);
+  }
+
+  // Migrasikan catatan absen lama jika ada
+  if (oldRecords.length > 0) {
+    const dateRowVals = a.getRange(4, 3, 1, 31).getValues()[0];
+    for (let i = 0; i < oldRecords.length; i++) {
+      const rec = oldRecords[i];
+      let tgl = rec[0];
+      const nm = String(rec[1] || '').trim();
+      const msk = Utilities.formatDate(rec[2] instanceof Date ? rec[2] : new Date(rec[2]), TZ, 'HH.mm');
+      const plg = rec[3] ? Utilities.formatDate(rec[3] instanceof Date ? rec[3] : new Date(rec[3]), TZ, 'HH.mm') : '';
+      const cellText = plg ? `${msk} - ${plg}` : msk;
+
+      if (!tgl || !nm) continue;
+      const tglDate = tgl instanceof Date ? tgl : new Date(tgl);
+
+      // Cari baris orang
+      const pIdx = names.indexOf(nm);
+      if (pIdx === -1) continue;
+      const rowTarget = 5 + pIdx;
+
+      // Cari kolom tanggal
+      for (let c = 0; c < dateRowVals.length; c++) {
+        const dv = dateRowVals[c];
+        if (dv instanceof Date && dv.getDate() === tglDate.getDate() && dv.getMonth() === tglDate.getMonth()) {
+          a.getRange(rowTarget, 3 + c).setValue(cellText).setNumberFormat('@').setHorizontalAlignment('center');
+          break;
+        }
+      }
+    }
+  }
+
+  // Lebar kolom
+  a.setColumnWidth(1, 40);   // No
+  a.setColumnWidth(2, 190);  // Nama
+  for (let c = 3; c <= 33; c++) {
+    a.setColumnWidth(c, 105); // 31 Tanggal
+  }
+  a.setColumnWidth(34, 95);  // Total Hadir
+
+  // Freeze 2 kolom dan 4 baris header
+  try {
+    a.setFrozenColumns(2);
+    a.setFrozenRows(4);
+  } catch (err) {}
+
+  // Conditional Formatting untuk C5:AG100
+  a.clearConditionalFormatRules();
+  const ruleComplete = SpreadsheetApp.newConditionalFormatRule()
+    .whenTextContains(' - ')
+    .setBackground('#DCFCE7')
+    .setFontColor('#166534')
+    .setRanges([a.getRange('C5:AG100')])
+    .build();
+
+  const ruleInProgress = SpreadsheetApp.newConditionalFormatRule()
+    .whenFormulaSatisfied('=AND(C5<>"", ISERROR(FIND(" - ", C5)))')
+    .setBackground('#FEF3C7')
+    .setFontColor('#92400E')
+    .setRanges([a.getRange('C5:AG100')])
+    .build();
+
+  a.setConditionalFormatRules([ruleComplete, ruleInProgress]);
+}
+
 
 /**
  * Render Sheet Fee secara dinamis:
@@ -329,7 +488,7 @@ function renderFeeSheet(fee) {
         colLet = String.fromCharCode(65 + rem) + colLet;
         t = Math.floor((t - rem) / 26);
       }
-      attFormulas.push(`=IF(OR($B${r}="", ${colLet}$4=""), "", IF(COUNTIFS(Absensi!$A:$A, ${colLet}$4, Absensi!$B:$B, $B${r}) > 0, "Hadir", ""))`);
+      attFormulas.push(`=IF(OR($B${r}="", ${colLet}$4=""), "", IF(IFERROR(INDEX(Absensi!$C$5:$AG$100, MATCH($B${r}, Absensi!$B$5:$B$100, 0), MATCH(${colLet}$4, Absensi!$C$4:$AG$4, 0)))<>"", "Hadir", ""))`);
     }
     fee.getRange(r, 12, 1, 31).setFormulas([attFormulas]).setHorizontalAlignment('center');
   }
@@ -409,11 +568,17 @@ function onEdit(e) {
   if (!e || !e.range) return;
   try {
     const sheet = e.range.getSheet();
-    if (sheet.getName() !== 'Fee') return;
+    const sheetName = sheet.getName();
     const row = e.range.getRow();
     const col = e.range.getColumn();
-    // G1 (Bulan), G2 (Tahun)
-    if ((row === 1 || row === 2) && col === 7) {
+
+    // Sheet Absensi: B1 (Bulan) atau D1 (Tahun)
+    if (sheetName === 'Absensi' && row === 1 && (col === 2 || col === 4)) {
+      setupAbsensiHorizontal(sheet.getParent());
+    }
+
+    // Sheet Fee: G1 (Bulan) atau G2 (Tahun)
+    if (sheetName === 'Fee' && (row === 1 || row === 2) && col === 7) {
       renderFeeSheet(sheet);
     }
   } catch (err) {
@@ -427,8 +592,15 @@ function onEdit(e) {
 function onOpen() {
   SpreadsheetApp.getUi()
     .createMenu('Presensi & Fee')
+    .addItem('Perbarui Format Absensi Horizontal', 'menuSetupAbsensi')
     .addItem('Perbarui Sheet Fee', 'menuRenderFee')
     .addToUi();
+}
+
+function menuSetupAbsensi() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  setupAbsensiHorizontal(ss);
+  ss.toast('Sheet Absensi (Horizontal) berhasil diperbarui!', 'Presensi', 3);
 }
 
 function menuRenderFee() {
@@ -436,7 +608,8 @@ function menuRenderFee() {
   const fee = ss.getSheetByName('Fee');
   if (fee) {
     renderFeeSheet(fee);
-    SpreadsheetApp.getActiveSpreadsheet().toast('Sheet Fee berhasil diperbarui!', 'Presensi', 3);
+    ss.toast('Sheet Fee berhasil diperbarui!', 'Presensi', 3);
+    ss.setActiveSheet(fee);
   }
 
   // Hapus sheet default bawaan (Sheet1 / Sheet 1) jika ada
@@ -447,9 +620,6 @@ function menuRenderFee() {
       try { ss.deleteSheet(s); } catch (err) {}
     }
   }
-
-  // Aktifkan sheet Rekap
-  ss.setActiveSheet(r);
 }
 
 /**
@@ -518,45 +688,75 @@ function absen(idUser, pin, aksi, lat, lng) {
   lock.waitLock(15000);
 
   try {
-    const shAbsensi = ss.getSheetByName('Absensi');
+    let shAbsensi = ss.getSheetByName('Absensi');
     if (!shAbsensi) {
-      throw new Error('Sheet "Absensi" belum dibuat. Buka ulang web app atau jalankan setup().');
+      setupAbsensiHorizontal(ss);
+      shAbsensi = ss.getSheetByName('Absensi');
     }
 
-    const rows = shAbsensi.getDataRange().getDisplayValues();
     const now = new Date();
-    const hariDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const hariIni1 = Utilities.formatDate(now, TZ, 'yyyy-MM-dd');
-    const hariIni2 = Utilities.formatDate(now, TZ, 'dd/MM/yyyy');
     const jamTeks = Utilities.formatDate(now, TZ, 'HH.mm');
+    const todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-    // Cari riwayat baris absensi terbaru untuk freelancer ini (baris teratas = terbaru)
-    let idx = -1;
-    for (let i = 1; i < rows.length; i++) {
-      if (rows[i][1] === nama) {
-        idx = i;
+    // 4. Cari kolom tanggal hari ini di Baris 4 (Kolom C s/d AG, 31 tanggal cut-off)
+    const dateRowValues = shAbsensi.getRange(4, 3, 1, 31).getValues()[0];
+    let targetCol = -1;
+
+    for (let c = 0; c < dateRowValues.length; c++) {
+      const d = dateRowValues[c];
+      if (d instanceof Date) {
+        if (d.getFullYear() === todayDate.getFullYear() &&
+            d.getMonth() === todayDate.getMonth() &&
+            d.getDate() === todayDate.getDate()) {
+          targetCol = 3 + c;
+          break;
+        }
+      } else if (d) {
+        const dObj = new Date(d);
+        if (!isNaN(dObj.getTime()) &&
+            dObj.getFullYear() === todayDate.getFullYear() &&
+            dObj.getMonth() === todayDate.getMonth() &&
+            dObj.getDate() === todayDate.getDate()) {
+          targetCol = 3 + c;
+          break;
+        }
+      }
+    }
+
+    if (targetCol === -1) {
+      const tglStr = Utilities.formatDate(now, TZ, 'dd/MM/yyyy');
+      throw new Error(`Tanggal hari ini (${tglStr}) belum ada pada rentang tanggal cut-off sheet Absensi.`);
+    }
+
+    // 5. Cari baris karyawan di Kolom B (mulai baris 5)
+    const lastRow = Math.max(shAbsensi.getLastRow(), 5);
+    const names = shAbsensi.getRange(5, 2, lastRow - 4, 1).getValues();
+    let targetRow = -1;
+
+    for (let r = 0; r < names.length; r++) {
+      if (String(names[r][0] || '').trim().toLowerCase() === nama.toLowerCase()) {
+        targetRow = 5 + r;
         break;
       }
     }
-    const terakhir = idx > 0 ? rows[idx] : null;
-    const isHariIni = terakhir && (
-      terakhir[0] === hariIni1 ||
-      terakhir[0] === hariIni2 ||
-      terakhir[0].startsWith(hariIni1) ||
-      terakhir[0].startsWith(hariIni2)
-    );
+
+    // Jika nama belum terdaftar di tabel, tambahkan baris baru
+    if (targetRow === -1) {
+      targetRow = lastRow + 1;
+      const noUrut = targetRow - 4;
+      shAbsensi.getRange(targetRow, 1).setValue(noUrut).setHorizontalAlignment('center');
+      shAbsensi.getRange(targetRow, 2).setValue(nama).setFontWeight('bold');
+      shAbsensi.getRange(targetRow, 34).setFormula(`=COUNTIF(C${targetRow}:AG${targetRow}, "<>")`).setHorizontalAlignment('center').setFontWeight('bold');
+    }
+
+    const targetCell = shAbsensi.getRange(targetRow, targetCol);
+    const currentVal = String(targetCell.getValue() || '').trim();
 
     if (aksi === 'masuk') {
-      if (isHariIni) {
-        throw new Error('Sudah absen masuk hari ini.');
+      if (currentVal) {
+        throw new Error(`Sudah absen masuk hari ini (${currentVal}).`);
       }
-      // Sisipkan di baris 2 (paling atas di bawah header agar data terbaru selalu di atas)
-      shAbsensi.insertRowAfter(1);
-      shAbsensi.getRange(2, 1, 1, 4).setValues([[hariDate, nama, now, '']]);
-      shAbsensi.getRange('E2').setFormula('=IF(OR(C2="", D2=""), "", ROUND(IF(D2 < C2, D2 + 1 - C2, D2 - C2) * 24, 2))');
-      shAbsensi.getRange('A2').setNumberFormat('dd/mm/yyyy');
-      shAbsensi.getRange('C2:D2').setNumberFormat('HH.mm');
-      shAbsensi.getRange('E2').setNumberFormat('0.00');
+      targetCell.setValue(jamTeks).setNumberFormat('@').setHorizontalAlignment('center');
       return {
         success: true,
         message: `Halo ${nama}, absensi MASUK berhasil dicatat pukul ${jamTeks} WIB.`,
@@ -567,34 +767,25 @@ function absen(idUser, pin, aksi, lat, lng) {
     }
 
     // Aksi pulang
-    if (!terakhir || !isHariIni) {
+    if (!currentVal) {
       throw new Error('Belum absen masuk hari ini.');
     }
-    if (terakhir[3]) {
-      throw new Error('Sudah absen pulang hari ini.');
+    if (currentVal.includes(' - ')) {
+      throw new Error(`Sudah absen pulang hari ini (${currentVal}).`);
     }
 
-    // Hitung jam kerja otomatis akurat
-    const rowNum = idx + 1;
-    const masukVal = shAbsensi.getRange(rowNum, 3).getValue();
-    let masukJam = 0;
-    if (masukVal instanceof Date) {
-      masukJam = masukVal.getHours() + masukVal.getMinutes() / 60 + masukVal.getSeconds() / 3600;
-    } else if (typeof masukVal === 'number') {
-      masukJam = masukVal * 24;
-    } else {
-      const parts = String(masukVal || '').replace('.', ':').split(':');
-      masukJam = (parseInt(parts[0], 10) || 0) + (parseInt(parts[1], 10) || 0) / 60;
-    }
-
-    const nowJam = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
-    let selisih = nowJam - masukJam;
+    // Hitung jam kerja
+    const jamMasukStr = currentVal.replace('.', ':');
+    const parts = jamMasukStr.split(':');
+    const masukHours = (parseInt(parts[0], 10) || 0) + (parseInt(parts[1], 10) || 0) / 60;
+    const nowHours = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
+    let selisih = nowHours - masukHours;
     if (selisih < 0) selisih += 24;
     const jamKerja = Math.max(0, Math.round(selisih * 100) / 100);
 
-    // Set waktu pulang di kolom D dan rumus akurat di kolom E
-    shAbsensi.getRange(rowNum, 4).setValue(now).setNumberFormat('HH.mm');
-    shAbsensi.getRange(rowNum, 5).setFormula(`=IF(OR(C${rowNum}="", D${rowNum}=""), "", ROUND(IF(D${rowNum} < C${rowNum}, D${rowNum} + 1 - C${rowNum}, D${rowNum} - C${rowNum}) * 24, 2))`).setNumberFormat('0.00');
+    const valBaru = `${currentVal} - ${jamTeks}`;
+    targetCell.setValue(valBaru).setNumberFormat('@').setHorizontalAlignment('center');
+
     return {
       success: true,
       message: `Halo ${nama}, absensi PULANG berhasil dicatat pukul ${jamTeks} WIB. Total jam kerja: ${jamKerja} jam.`,
