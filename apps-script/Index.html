@@ -584,7 +584,7 @@
 
   <div class="card">
     <!-- Admin Portal Shortcut -->
-    <a href="?page=admin" class="btn-admin-shortcut" title="Portal Admin & Data" aria-label="Portal Admin">
+    <a href="<?= scriptUrl ?>?page=admin" class="btn-admin-shortcut" title="Portal Admin & Data" aria-label="Portal Admin" target="_top" onclick="navigateToAdmin(event)">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
       </svg>
@@ -962,6 +962,23 @@
         },
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
       );
+    }
+
+    // Navigasi ke Portal Admin & Data (menembus sandbox iframe Google Apps Script)
+    const SCRIPT_BASE_URL = '<?= scriptUrl ?>';
+
+    function navigateToAdmin(e) {
+      if (e) {
+        try { e.preventDefault(); } catch (err) {}
+      }
+      const dest = (SCRIPT_BASE_URL || 'https://script.google.com/macros/s/AKfycbzfkm8mu2pZcUAvU1MugpaLGejwK-HL2mEsKma-hPPSwW3SgH7QmG6YfgXhzBKlsOPBYQ/exec') + '?page=admin';
+      try {
+        if (window.top) {
+          window.top.location.href = dest;
+          return;
+        }
+      } catch (err) {}
+      window.location.href = dest;
     }
 
     // Jalankan auto-load saat halaman siap

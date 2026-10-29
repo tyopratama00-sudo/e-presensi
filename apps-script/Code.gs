@@ -16,14 +16,30 @@ const MASTER_ADMIN_PIN = '9999';
 
 function doGet(e) {
   const page = (e && e.parameter && e.parameter.page) ? String(e.parameter.page).toLowerCase() : '';
-  if (page === 'admin') {
-    return HtmlService.createHtmlOutputFromFile('Admin')
-      .setTitle('Portal Admin & Data - Jonas Photo')
-      .addMetaTag('viewport', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
+  const templateName = page === 'admin' ? 'Admin' : 'Index';
+  const template = HtmlService.createTemplateFromFile(templateName);
+  
+  let scriptUrl = 'https://script.google.com/macros/s/AKfycbzfkm8mu2pZcUAvU1MugpaLGejwK-HL2mEsKma-hPPSwW3SgH7QmG6YfgXhzBKlsOPBYQ/exec';
+  try {
+    const liveUrl = ScriptApp.getService().getUrl();
+    if (liveUrl) scriptUrl = liveUrl;
+  } catch (err) {
+    console.error('getService().getUrl error:', err);
   }
-  return HtmlService.createHtmlOutputFromFile('Index')
-    .setTitle('Presensi Jonas Photo')
-    .addMetaTag('viewport', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover');
+  template.scriptUrl = scriptUrl;
+  
+  return template.evaluate()
+    .setTitle(page === 'admin' ? 'Portal Admin & Data - Jonas Photo' : 'Presensi Jonas Photo')
+    .addMetaTag('viewport', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover')
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
+
+function getScriptServiceUrl() {
+  try {
+    return ScriptApp.getService().getUrl() || 'https://script.google.com/macros/s/AKfycbzfkm8mu2pZcUAvU1MugpaLGejwK-HL2mEsKma-hPPSwW3SgH7QmG6YfgXhzBKlsOPBYQ/exec';
+  } catch (err) {
+    return 'https://script.google.com/macros/s/AKfycbzfkm8mu2pZcUAvU1MugpaLGejwK-HL2mEsKma-hPPSwW3SgH7QmG6YfgXhzBKlsOPBYQ/exec';
+  }
 }
 
 /**

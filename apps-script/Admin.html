@@ -654,7 +654,7 @@
         Buka Dashboard
       </button>
       <div style="margin-top: 14px;">
-        <a href="?" style="color: #64748b; font-size: 12px; text-decoration: none;">&larr; Kembali ke Presensi Karyawan</a>
+        <a href="<?= scriptUrl ?>" target="_top" onclick="navigateToPresensi(event)" style="color: #64748b; font-size: 12px; text-decoration: none;">&larr; Kembali ke Presensi Karyawan</a>
       </div>
     </div>
   </div>
@@ -666,7 +666,7 @@
       <span class="portal-badge">PORTAL ADMIN & DATA</span>
     </div>
     <div class="nav-actions">
-      <a href="?" class="btn-nav btn-nav-outline" title="Buka Presensi Karyawan">
+      <a href="<?= scriptUrl ?>" target="_top" onclick="navigateToPresensi(event)" class="btn-nav btn-nav-outline" title="Buka Presensi Karyawan">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
         </svg>
@@ -1102,6 +1102,22 @@
   <div id="toastContainer" class="toast-container"></div>
 
   <script>
+    const SCRIPT_BASE_URL = '<?= scriptUrl ?>';
+
+    function navigateToPresensi(e) {
+      if (e) {
+        try { e.preventDefault(); } catch (err) {}
+      }
+      const dest = SCRIPT_BASE_URL || 'https://script.google.com/macros/s/AKfycbzfkm8mu2pZcUAvU1MugpaLGejwK-HL2mEsKma-hPPSwW3SgH7QmG6YfgXhzBKlsOPBYQ/exec';
+      try {
+        if (window.top) {
+          window.top.location.href = dest;
+          return;
+        }
+      } catch (err) {}
+      window.location.href = dest;
+    }
+
     // State Aplikasi Admin
     const STORAGE_KEY_ADMIN_PIN = "jonas_admin_auth_pin";
     let activeAdminPin = sessionStorage.getItem(STORAGE_KEY_ADMIN_PIN) || "";
