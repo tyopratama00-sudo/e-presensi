@@ -99,36 +99,6 @@
       }
     }
 
-    /* Logo Header */
-    
-    .btn-admin-shortcut {
-      position: absolute;
-      top: 18px;
-      right: 18px;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: #f1f5f9;
-      border: 1px solid #e2e8f0;
-      color: #64748b;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      transition: all 0.2s;
-      z-index: 10;
-    }
-    .btn-admin-shortcut:hover,
-    .btn-admin-shortcut:active {
-      background: #e2e8f0;
-      color: #0f172a;
-      transform: scale(1.05);
-    }
-    .btn-admin-shortcut svg {
-      width: 16px;
-      height: 16px;
-    }
-
     .brand-header {
       display: flex;
       flex-direction: column;
@@ -583,13 +553,6 @@
   <div class="ambient-glow-2"></div>
 
   <div class="card">
-    <!-- Admin Portal Shortcut -->
-    <a href="<?= scriptUrl ?>?page=admin" class="btn-admin-shortcut" title="Portal Admin & Data" aria-label="Portal Admin" target="_top" onclick="navigateToAdmin(event)">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-      </svg>
-    </a>
-
     <!-- Brand Header -->
     <header class="brand-header">
       <div class="logo-container">
@@ -962,23 +925,6 @@
         },
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
       );
-    }
-
-    // Navigasi ke Portal Admin & Data (menembus sandbox iframe Google Apps Script)
-    const SCRIPT_BASE_URL = '<?= scriptUrl ?>';
-
-    function navigateToAdmin(e) {
-      if (e) {
-        try { e.preventDefault(); } catch (err) {}
-      }
-      const dest = (SCRIPT_BASE_URL || 'https://script.google.com/macros/s/AKfycbzfkm8mu2pZcUAvU1MugpaLGejwK-HL2mEsKma-hPPSwW3SgH7QmG6YfgXhzBKlsOPBYQ/exec') + '?page=admin';
-      try {
-        if (window.top) {
-          window.top.location.href = dest;
-          return;
-        }
-      } catch (err) {}
-      window.location.href = dest;
     }
 
     // Jalankan auto-load saat halaman siap
