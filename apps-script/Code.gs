@@ -3,6 +3,17 @@
  * Lokasi: Jl. Progo No. 12, Bandung
  */
 
+/**
+ * Formula: total hours in Absensi row r, parsed from "HH.mm - HH.mm" cells (C:AG).
+ * Clock-in-only cells count 0. Overnight shifts wrap via MOD.
+ */
+function hoursFormula(r) {
+  const c = `C${r}:AG${r}`;
+  const n = (re) => `VALUE(REGEXEXTRACT(${c}, "${re}"))`;
+  const sh = n('^([0-9]+)[.]'), sm = n('[.]([0-9]+) '), eh = n('- ([0-9]+)[.]'), em = n('[.]([0-9]+)$');
+  return `=ROUND(SUM(ARRAYFORMULA(IFERROR(MOD((${eh}*60+${em}-${sh}*60-${sm})/60, 24), 0))), 2)`;
+}
+
 const LOKASI = { lat: -6.9046, lng: 107.6184 };
 const RADIUS_M = 100;
 const TZ = 'Asia/Jakarta';
@@ -18,10 +29,10 @@ function doGet(e) {
     const a = ss.getSheetByName('Absensi');
     if (a) {
       if (e.parameter.month) {
-        a.getRange('B1').setValue(e.parameter.month);
+        a.getRange('D1').setValue(e.parameter.month);
       }
       if (e.parameter.year) {
-        a.getRange('D1').setValue(Number(e.parameter.year));
+        a.getRange('G1').setValue(Number(e.parameter.year));
       }
     }
     setup();
@@ -73,7 +84,7 @@ function setup() {
   if (!f) {
     f = ss.insertSheet('Database');
   }
-  f.getRange('A1:I1').setValues([['Nama', 'ID', 'PIN', 'Status', 'Cabang', 'Departemen', 'Tarif', 'No Rekening', 'Bank']]).setFontWeight('bold');
+  f.getRange('A1:I1').setValues([['Name', 'ID', 'PIN', 'Status', 'Branch', 'Department', 'Rate', 'Account No.', 'Bank']]).setFontWeight('bold');
   f.getRange('B:B').setNumberFormat('@'); // Format teks ID
   f.getRange('C:C').setNumberFormat('@'); // Format teks PIN
   f.getRange('G:G').setNumberFormat('#,##0'); // Format Tarif
@@ -85,23 +96,21 @@ function setup() {
   // 2. Sheet Absensi (Format Horizontal Ke Samping)
   setupAbsensiHorizontal(ss);
 
-  // 3. Sheet Rekap (Filter Nama, Bulan, & Perhitungan Siklus Tanggal 21 - 20)
+  // 3. Sheet Rekap (Hanya jika sheet Rekap ada)
   let r = ss.getSheetByName('Rekap');
-  if (!r) {
-    r = ss.insertSheet('Rekap');
-  }
+  if (r) {
 
   // Baris 1: Filter Controls
-  r.getRange('A1').setValue('Filter Nama:').setFontWeight('bold');
+  r.getRange('A1').setValue('Name filter:').setFontWeight('bold');
   if (!r.getRange('B1').getValue()) {
-    r.getRange('B1').setValue('Semua');
+    r.getRange('B1').setValue('All');
   }
 
-  r.getRange('C1').setValue('Bulan:').setFontWeight('bold');
+  r.getRange('C1').setValue('Month:').setFontWeight('bold');
   const bulanList = [
-    '1 (Januari)', '2 (Februari)', '3 (Maret)', '4 (April)',
-    '5 (Mei)', '6 (Juni)', '7 (Juli)', '8 (Agustus)',
-    '9 (September)', '10 (Oktober)', '11 (November)', '12 (Desember)'
+    '1 (January)', '2 (February)', '3 (March)', '4 (April)',
+    '5 (May)', '6 (June)', '7 (July)', '8 (August)',
+    '9 (September)', '10 (October)', '11 (November)', '12 (December)'
   ];
   const ruleBulan = SpreadsheetApp.newDataValidation()
     .requireValueInList(bulanList, true)
@@ -122,10 +131,10 @@ function setup() {
   if (!r.getRange('D1').getValue()) {
     r.getRange('D1').setDataValidation(ruleBulan).setValue(bulanList[defaultMonthIdx]);
   } else {
-    r.getRange('D1').setDataValidation(ruleBulan);
+    r.getRange('D1').setDataValidation(ruleBulan).setValue(bulanList[(parseInt(r.getRange('D1').getValue(), 10) || (defaultMonthIdx + 1)) - 1]);
   }
 
-  r.getRange('E1').setValue('Tahun:').setFontWeight('bold');
+  r.getRange('E1').setValue('Year:').setFontWeight('bold');
   let f1Val = r.getRange('F1').getValue();
   if (!f1Val || isNaN(Number(f1Val)) || Number(f1Val) < 2000) {
     r.getRange('F1').setValue(defaultYear);
@@ -134,9 +143,9 @@ function setup() {
   r.getRange('G1:J1').clearContent().clearFormat();
 
   // Baris 2: Keterangan Periode Cut-Off (21 Bulan Lalu s/d 20 Bulan Ini)
-  r.getRange('A2').setValue('Periode Cut-Off:').setFontWeight('bold');
+  r.getRange('A2').setValue('Cut-off period:').setFontWeight('bold');
   r.getRange('B2').setFormula(
-    `=TEXT(DATE(F1, VALUE(LEFT(D1, FIND(" ", D1 & " ") - 1)) - 1, 21), "dd/mm/yyyy") & " s/d " & TEXT(DATE(F1, VALUE(LEFT(D1, FIND(" ", D1 & " ") - 1)), 20), "dd/mm/yyyy")`
+    `=TEXT(DATE(F1, VALUE(LEFT(D1, FIND(" ", D1 & " ") - 1)) - 1, 21), "dd/mm/yyyy") & " to " & TEXT(DATE(F1, VALUE(LEFT(D1, FIND(" ", D1 & " ") - 1)), 20), "dd/mm/yyyy")`
   ).setFontWeight('bold').setFontColor('#15803d');
 
   // Sel bantu Tanggal Mulai (G2) dan Tanggal Selesai (H2) format yyyy-mm-dd
@@ -145,7 +154,7 @@ function setup() {
   r.getRange('G2:H2').setFontColor('#ffffff'); // Sembunyikan warna teks sel bantu
 
   // Kolom K: Dynamic list nama yang hadir pada periode cut-off terpilih
-  r.getRange('K1').setValue('Semua');
+  r.getRange('K1').setValue('All');
   r.getRange('K2').setFormula(
     `=IFERROR(UNIQUE(QUERY(Absensi_Log_Backup!A2:B, "SELECT B WHERE B IS NOT NULL AND A >= date '" & G2 & "' AND A <= date '" & H2 & "' ORDER BY B LABEL B ''", 0)), "")`
   );
@@ -162,24 +171,25 @@ function setup() {
   r.getRange('B1').setDataValidation(ruleNama);
 
   // Tabel 1 (Kolom A-C): Ringkasan Total
-  r.getRange('A4:C4').setValues([['Nama', 'Total Hari Kerja', 'Total Jam Kerja']])
+  r.getRange('A4:C4').setValues([['Name', 'Total Work Days', 'Total Work Hours']])
     .setFontWeight('bold')
     .setBackground('#e2e8f0');
   r.getRange('A5').setFormula(
-    `=IFERROR(IF(OR(B1="Semua", B1=""), QUERY(Absensi_Log_Backup!A2:E, "SELECT B, COUNT(A), SUM(E) WHERE B IS NOT NULL AND A >= date '" & G2 & "' AND A <= date '" & H2 & "' GROUP BY B LABEL COUNT(A) '', SUM(E) ''", 0), QUERY(Absensi_Log_Backup!A2:E, "SELECT B, COUNT(A), SUM(E) WHERE B = '" & B1 & "' AND A >= date '" & G2 & "' AND A <= date '" & H2 & "' GROUP BY B LABEL COUNT(A) '', SUM(E) ''", 0)), "")`
+    `=IFERROR(IF(OR(B1="All", B1=""), QUERY(Absensi_Log_Backup!A2:E, "SELECT B, COUNT(A), SUM(E) WHERE B IS NOT NULL AND A >= date '" & G2 & "' AND A <= date '" & H2 & "' GROUP BY B LABEL COUNT(A) '', SUM(E) ''", 0), QUERY(Absensi_Log_Backup!A2:E, "SELECT B, COUNT(A), SUM(E) WHERE B = '" & B1 & "' AND A >= date '" & G2 & "' AND A <= date '" & H2 & "' GROUP BY B LABEL COUNT(A) '', SUM(E) ''", 0)), "")`
   );
   r.getRange('C5:C').setNumberFormat('0.00');
 
   // Tabel 2 (Kolom E-I): Rincian Absensi Harian (Terbaru di paling atas)
-  r.getRange('E4:I4').setValues([['Tanggal', 'Nama', 'Masuk', 'Pulang', 'Jam Kerja']])
+  r.getRange('E4:I4').setValues([['Date', 'Name', 'Clock In', 'Clock Out', 'Work Hours']])
     .setFontWeight('bold')
     .setBackground('#e2e8f0');
   r.getRange('E5').setFormula(
-    `=IFERROR(IF(OR(B1="Semua", B1=""), QUERY(Absensi_Log_Backup!A2:E, "SELECT A, B, C, D, E WHERE B IS NOT NULL AND A >= date '" & G2 & "' AND A <= date '" & H2 & "' ORDER BY A DESC, B ASC", 0), QUERY(Absensi_Log_Backup!A2:E, "SELECT A, B, C, D, E WHERE B = '" & B1 & "' AND A >= date '" & G2 & "' AND A <= date '" & H2 & "' ORDER BY A DESC", 0)), "")`
+    `=IFERROR(IF(OR(B1="All", B1=""), QUERY(Absensi_Log_Backup!A2:E, "SELECT A, B, C, D, E WHERE B IS NOT NULL AND A >= date '" & G2 & "' AND A <= date '" & H2 & "' ORDER BY A DESC, B ASC", 0), QUERY(Absensi_Log_Backup!A2:E, "SELECT A, B, C, D, E WHERE B = '" & B1 & "' AND A >= date '" & G2 & "' AND A <= date '" & H2 & "' ORDER BY A DESC", 0)), "")`
   );
   r.getRange('E5:E').setNumberFormat('dd/mm/yyyy');
   r.getRange('G5:H').setNumberFormat('HH.mm');
   r.getRange('I5:I').setNumberFormat('0.00');
+  }
 
   // 4. Sheet Fee (Konfigurasi Dinamis 1 Orang / Semua Orang)
   const fee = ss.getSheetByName('Fee');
@@ -192,7 +202,7 @@ function setup() {
  * Inisialisasi dan format Sheet Absensi Horizontal (Ke Samping):
  * - Baris 1: Filter Bulan & Tahun
  * - Baris 2: Keterangan Periode Cut-Off (21 bulan lalu s/d 20 bulan ini)
- * - Baris 4: Header Kolom No, Nama, Tanggal 21..20 (C4:AG4, 31 kolom), Total Hadir (AH4)
+ * - Baris 4: Header Kolom No, Nama, Tanggal 21..20 (C4:AG4, 31 kolom), Total Days (AH4), Total Hours (AI4)
  * - Baris 5+: Data karyawan (Nama di kolom B, kotak absen di kolom C..AG)
  * - Format jam di kotak absen: "08.00" (Masuk) atau "08.00 - 17.00" (Lengkap)
  */
@@ -221,11 +231,11 @@ function setupAbsensiHorizontal(ss) {
   let backup = ss.getSheetByName('Absensi_Log_Backup');
   if (!backup) {
     backup = ss.insertSheet('Absensi_Log_Backup');
-    backup.getRange('A1:E1').setValues([['Tanggal', 'Nama', 'Masuk', 'Pulang', 'Jam Kerja']]).setFontWeight('bold');
+    backup.getRange('A1:E1').setValues([['Date', 'Name', 'Clock In', 'Clock Out', 'Work Hours']]).setFontWeight('bold');
   }
 
   // Backup data lama jika masih format kebawah di Absensi
-  if (a.getLastRow() >= 1 && a.getRange('A1').getValue() === 'Tanggal') {
+  if (a.getLastRow() >= 1 && (a.getRange('A1').getValue() === 'Tanggal' || a.getRange('A1').getValue() === 'Date')) {
     if (a.getLastRow() >= 2) {
       const oldVals = a.getRange(2, 1, a.getLastRow() - 1, 5).getValues();
       const bLast = backup.getLastRow();
@@ -239,19 +249,10 @@ function setupAbsensiHorizontal(ss) {
     a.insertColumnsAfter(a.getMaxColumns(), 36 - a.getMaxColumns());
   }
 
-  // 1. Bersihkan merge lama dan format di baris 1-4
-  try {
-    a.getRange(1, 1, 4, a.getMaxColumns()).breakApart();
-    a.getRange(1, 1, 4, a.getMaxColumns()).clearContent();
-  } catch (err) {}
-
-  a.getRange('A:A').setNumberFormat('0').setHorizontalAlignment('center');
-  a.getRange('C1:D1').setNumberFormat('0').setHorizontalAlignment('center');
-
   const bulanList = [
-    '1 (Januari)', '2 (Februari)', '3 (Maret)', '4 (April)',
-    '5 (Mei)', '6 (Juni)', '7 (Juli)', '8 (Agustus)',
-    '9 (September)', '10 (Oktober)', '11 (November)', '12 (Desember)'
+    '1 (January)', '2 (February)', '3 (March)', '4 (April)',
+    '5 (May)', '6 (June)', '7 (July)', '8 (August)',
+    '9 (September)', '10 (October)', '11 (November)', '12 (December)'
   ];
   const ruleBulan = SpreadsheetApp.newDataValidation()
     .requireValueInList(bulanList, true)
@@ -269,76 +270,99 @@ function setupAbsensiHorizontal(ss) {
     }
   }
 
-  // Header Baris 1: Filter Bulan & Tahun
-  a.getRange('A1').setValue('Bulan:').setFontWeight('bold').setHorizontalAlignment('right').setFontColor('#334155');
-  let currentBulanVal = String(a.getRange('B1').getValue() || '').trim();
+  // Baca Month (D1) dan Year (G1) sesuai layout user
+  let currentBulanVal = String(a.getRange('D1').getValue() || '').trim();
+  const _m = parseInt(currentBulanVal, 10);
+  if (_m >= 1 && _m <= 12) currentBulanVal = bulanList[_m - 1];
   if (!currentBulanVal || !bulanList.includes(currentBulanVal)) {
-    a.getRange('B1').setDataValidation(ruleBulan).setValue(bulanList[defaultMonthIdx]);
     currentBulanVal = bulanList[defaultMonthIdx];
-  } else {
-    a.getRange('B1').setDataValidation(ruleBulan);
   }
-  a.getRange('B1').setFontWeight('bold').setHorizontalAlignment('left').setBackground('#EFF6FF').setFontColor('#1E40AF');
 
-  a.getRange('C1').setValue('Tahun:').setFontWeight('bold').setHorizontalAlignment('right').setFontColor('#334155');
-  let currentTahunVal = a.getRange('D1').getValue();
+  let currentTahunVal = a.getRange('G1').getValue();
   if (!currentTahunVal || isNaN(Number(currentTahunVal)) || Number(currentTahunVal) < 2000) {
-    a.getRange('D1').setValue(defaultYear);
     currentTahunVal = defaultYear;
   }
-  a.getRange('D1').setNumberFormat('0').setFontWeight('bold').setHorizontalAlignment('center').setBackground('#EFF6FF').setFontColor('#1E40AF');
 
-  try {
-    a.getRange('E1:G1').merge().setValue('PRESENSI DIGITAL JONAS PHOTO')
-      .setFontWeight('bold').setFontColor('#0F172A').setFontSize(11).setHorizontalAlignment('left');
-  } catch (err) {}
+  // JANGAN timpa baris 1-4 jika header sudah ada (melindungi perubahan tata letak manual user)
+  const isHeaderSet = String(a.getRange('A1').getValue() || '').includes('JONAS PHOTO') && a.getRange('A4').getValue() === 'No';
+  if (!isHeaderSet) {
+    // 1. Bersihkan hanya jika sheet masih kosong/baru
+    try {
+      a.getRange(1, 1, 4, a.getMaxColumns()).breakApart();
+      a.getRange(1, 1, 4, a.getMaxColumns()).clearContent();
+    } catch (err) {}
 
-  // Baris 2: Keterangan Periode Cut-Off
-  a.getRange('A2').setValue('Periode:').setFontWeight('bold').setHorizontalAlignment('right').setFontColor('#334155');
-  try {
-    a.getRange('B2:G2').merge().setFormula(
-      '=TEXT(DATE(D1, VALUE(LEFT(B1, FIND(" ", B1 & " ") - 1)) - 1, 21), "dd/mm/yyyy") & " s/d " & TEXT(DATE(D1, VALUE(LEFT(B1, FIND(" ", B1 & " ") - 1)), 20), "dd/mm/yyyy")'
-    ).setFontWeight('bold').setFontColor('#15803D').setHorizontalAlignment('left');
-  } catch (err) {}
+    a.getRange('A:A').setNumberFormat('0').setHorizontalAlignment('center');
 
-  // Baris 3: Nama Hari (Sen, Sel, Rab, Kam, Jum, Sab, Min)
-  a.getRange('A3:B3').setValues([['', '']]).setBackground('#F8FAFC');
-  const dayNameFormulas = [];
-  for (let c = 3; c <= 33; c++) {
-    let colLet = getColLetter(c);
-    dayNameFormulas.push(`=IF(${colLet}4="", "", CHOOSE(WEEKDAY(${colLet}4, 2), "Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"))`);
+    // Header Baris 1-3: Title Box A1:B3
+    try {
+      a.getRange('A1:B3').merge()
+        .setValue('JONAS PHOTO DIGITAL ATTENDANCE')
+        .setFontWeight('bold')
+        .setFontColor('#0F172A')
+        .setHorizontalAlignment('center')
+        .setVerticalAlignment('middle')
+        .setBackground('#EFF6FF');
+    } catch (err) {}
+
+    // Month di C1, D1:E1 merged value
+    a.getRange('C1').setValue('Month:').setFontWeight('bold').setHorizontalAlignment('center').setFontColor('#334155').setBackground('#EFF6FF');
+    try { a.getRange('D1:E1').merge(); } catch (err) {}
+    a.getRange('D1').setDataValidation(ruleBulan).setValue(currentBulanVal)
+      .setFontWeight('bold').setHorizontalAlignment('center').setBackground('#EFF6FF').setFontColor('#1E40AF');
+
+    // Year di F1, G1 value
+    a.getRange('F1').setValue('Year:').setFontWeight('bold').setHorizontalAlignment('center').setFontColor('#334155').setBackground('#EFF6FF');
+    a.getRange('G1').setNumberFormat('0').setValue(currentTahunVal)
+      .setFontWeight('bold').setHorizontalAlignment('center').setBackground('#EFF6FF').setFontColor('#1E40AF');
+
+    // Period di C2, D2:E2 merged formula
+    a.getRange('C2').setValue('Period:').setFontWeight('bold').setHorizontalAlignment('center').setFontColor('#334155').setBackground('#EFF6FF');
+    try { a.getRange('D2:E2').merge(); } catch (err) {}
+    a.getRange('D2').setFormula(
+      '=TEXT(DATE(G1, VALUE(LEFT(D1, FIND(" ", D1 & " ") - 1)) - 1, 21), "dd/mm/yyyy") & " to " & TEXT(DATE(G1, VALUE(LEFT(D1, FIND(" ", D1 & " ") - 1)), 20), "dd/mm/yyyy")'
+    ).setFontWeight('bold').setFontColor('#15803D').setHorizontalAlignment('center').setBackground('#EFF6FF');
+
+    // Baris 3: Nama Hari (Mon..Sun)
+    const dayNameFormulas = [];
+    for (let c = 3; c <= 33; c++) {
+      let colLet = getColLetter(c);
+      dayNameFormulas.push(`=IF(${colLet}4="", "", CHOOSE(WEEKDAY(${colLet}4, 2), "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"))`);
+    }
+    a.getRange('C3:AG3').setFormulas([dayNameFormulas])
+      .setHorizontalAlignment('center')
+      .setFontColor('#64748B')
+      .setFontSize(8)
+      .setFontWeight('bold')
+      .setBackground('#F8FAFC');
+    a.getRange('AH3:AI3').setValue('').setBackground('#F8FAFC');
+
+    // Baris 4: Header Kolom
+    a.getRange('A4').setValue('No').setHorizontalAlignment('center');
+    a.getRange('B4').setValue('Employee Name').setHorizontalAlignment('left');
+    a.getRange('A4:B4').setBackground('#1E293B').setFontColor('#FFFFFF').setFontWeight('bold').setFontFamily('Arial').setFontSize(9.5);
+
+    // Tanggal C4:AG4 (31 kolom) mengacu ke $G$1 (Year) dan $D$1 (Month)
+    const dateFormulas = [];
+    dateFormulas.push('=DATE($G$1, VALUE(LEFT($D$1, FIND(" ", $D$1 & " ") - 1)) - 1, 21)');
+    for (let c = 4; c <= 33; c++) {
+      let prevLetter = getColLetter(c - 1);
+      dateFormulas.push('=IF(' + prevLetter + '4="", "", IF(' + prevLetter + '4 < DATE($G$1, VALUE(LEFT($D$1, FIND(" ", $D$1 & " ") - 1)), 20), ' + prevLetter + '4 + 1, ""))');
+    }
+    a.getRange('C4:AG4').setFormulas([dateFormulas])
+      .setNumberFormat('dd/mm')
+      .setFontWeight('bold')
+      .setHorizontalAlignment('center')
+      .setBackground('#1E293B')
+      .setFontColor('#FFFFFF')
+      .setFontFamily('Arial')
+      .setFontSize(9);
+
+    a.getRange('AH4').setValue('Total Days').setHorizontalAlignment('center')
+      .setBackground('#0F766E').setFontColor('#FFFFFF').setFontWeight('bold').setFontFamily('Arial').setFontSize(9.5);
+    a.getRange('AI4').setValue('Total Hours').setHorizontalAlignment('center')
+      .setBackground('#0F766E').setFontColor('#FFFFFF').setFontWeight('bold').setFontFamily('Arial').setFontSize(9.5);
   }
-  a.getRange('C3:AG3').setFormulas([dayNameFormulas])
-    .setHorizontalAlignment('center')
-    .setFontColor('#64748B')
-    .setFontSize(8)
-    .setFontWeight('bold')
-    .setBackground('#F8FAFC');
-  a.getRange('AH3').setValue('').setBackground('#F8FAFC');
-
-  // Baris 4: Header Kolom
-  a.getRange('A4').setValue('No').setHorizontalAlignment('center');
-  a.getRange('B4').setValue('Nama Karyawan').setHorizontalAlignment('left');
-  a.getRange('A4:B4').setBackground('#1E293B').setFontColor('#FFFFFF').setFontWeight('bold').setFontFamily('Arial').setFontSize(9.5);
-
-  // Tanggal C4:AG4 (31 kolom)
-  const dateFormulas = [];
-  dateFormulas.push('=DATE($D$1, VALUE(LEFT($B$1, FIND(" ", $B$1 & " ") - 1)) - 1, 21)');
-  for (let c = 4; c <= 33; c++) {
-    let prevLetter = getColLetter(c - 1);
-    dateFormulas.push('=IF(' + prevLetter + '4="", "", IF(' + prevLetter + '4 < DATE($D$1, VALUE(LEFT($B$1, FIND(" ", $B$1 & " ") - 1)), 20), ' + prevLetter + '4 + 1, ""))');
-  }
-  a.getRange('C4:AG4').setFormulas([dateFormulas])
-    .setNumberFormat('dd/mm')
-    .setFontWeight('bold')
-    .setHorizontalAlignment('center')
-    .setBackground('#1E293B')
-    .setFontColor('#FFFFFF')
-    .setFontFamily('Arial')
-    .setFontSize(9);
-
-  a.getRange('AH4').setValue('Total Hadir').setHorizontalAlignment('center')
-    .setBackground('#0F766E').setFontColor('#FFFFFF').setFontWeight('bold').setFontFamily('Arial').setFontSize(9.5);
 
   // 2. HITUNG TANGGAL CUT-OFF UNTUK FILTER BULAN
   const selectedMonthNum = parseInt(currentBulanVal.split(' ')[0], 10) || (defaultMonthIdx + 1);
@@ -441,7 +465,8 @@ function setupAbsensiHorizontal(ss) {
       a.getRange('A' + r).setValue(i + 1).setNumberFormat('0').setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#64748B');
       a.getRange('B' + r).setValue(empName).setFontWeight('bold').setFontColor('#0F172A').setHorizontalAlignment('left');
       a.getRange('AH' + r).setFormula(`=COUNTIF(C${r}:AG${r}, "<>")`).setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#0F766E');
-      a.getRange(r, 1, 1, 34).setFontFamily('Arial').setFontSize(9);
+      a.getRange('AI' + r).setFormula(hoursFormula(r)).setNumberFormat('0.00').setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#0F766E');
+      a.getRange(r, 1, 1, 35).setFontFamily('Arial').setFontSize(9);
     }
 
     const gridValues = [];
@@ -462,8 +487,8 @@ function setupAbsensiHorizontal(ss) {
     }
 
     a.getRange(5, 3, numEmp, 31).setValues(gridValues).setNumberFormat('@').setHorizontalAlignment('center');
-    a.getRange(4, 1, numEmp + 1, 34).setBorder(true, true, true, true, true, true, '#CBD5E1', SpreadsheetApp.BorderStyle.SOLID);
-    a.getRange('A4:AH4').setBorder(true, true, true, true, null, null, '#0F172A', SpreadsheetApp.BorderStyle.MEDIUM);
+    a.getRange(4, 1, numEmp + 1, 35).setBorder(true, true, true, true, true, true, '#CBD5E1', SpreadsheetApp.BorderStyle.SOLID);
+    a.getRange('A4:AI4').setBorder(true, true, true, true, null, null, '#0F172A', SpreadsheetApp.BorderStyle.MEDIUM);
   }
 
   // 5. BERSIHKAN SEMUA BARIS DI BAWAH TABEL (agar tabel menciut/menyesuaikan persis jumlah orang yang hadir)
@@ -481,7 +506,17 @@ function setupAbsensiHorizontal(ss) {
   for (let c = 3; c <= 33; c++) {
     a.setColumnWidth(c, 100); // 31 Tanggal
   }
-  a.setColumnWidth(34, 95);  // Total Hadir
+  a.setColumnWidth(34, 95);  // Total Days
+  a.setColumnWidth(35, 95);  // Total Hours
+
+  // Polish: no gridlines, comfortable row heights
+  a.setHiddenGridlines(true);
+  a.setRowHeight(4, 30);
+  if (numEmp > 0) {
+    a.setRowHeights(5, numEmp, 28);
+    a.getRange(5, 1, numEmp, 35).setVerticalAlignment('middle');
+  }
+  a.getRange(1, 1, 4, 35).setVerticalAlignment('middle');
 
   // Freeze 2 kolom dan 4 baris header
   try {
@@ -495,7 +530,7 @@ function setupAbsensiHorizontal(ss) {
       a.getFilter().remove();
     }
     if (numEmp > 0) {
-      a.getRange(4, 1, numEmp + 1, 34).createFilter();
+      a.getRange(4, 1, numEmp + 1, 35).createFilter();
     }
   } catch (err) {}
 
@@ -516,7 +551,12 @@ function setupAbsensiHorizontal(ss) {
       .setRanges([a.getRange(5, 3, numEmp, 31)])
       .build();
 
-    a.setConditionalFormatRules([ruleComplete, ruleInProgress]);
+    const ruleWeekend = SpreadsheetApp.newConditionalFormatRule()
+      .whenFormulaSatisfied('=OR(C$3="Sat", C$3="Sun")')
+      .setBackground('#F1F5F9')
+      .setRanges([a.getRange(5, 3, numEmp, 31)])
+      .build();
+    a.setConditionalFormatRules([ruleComplete, ruleInProgress, ruleWeekend]);
   }
 }
 function renderFeeSheet(fee) {
@@ -535,21 +575,21 @@ function renderFeeSheet(fee) {
   const defaultYear = 2026;
   const defaultMonthIdx = 10; // November (11)
   const bulanList = [
-    '1 (Januari)', '2 (Februari)', '3 (Maret)', '4 (April)',
-    '5 (Mei)', '6 (Juni)', '7 (Juli)', '8 (Agustus)',
-    '9 (September)', '10 (Oktober)', '11 (November)', '12 (Desember)'
+    '1 (January)', '2 (February)', '3 (March)', '4 (April)',
+    '5 (May)', '6 (June)', '7 (July)', '8 (August)',
+    '9 (September)', '10 (October)', '11 (November)', '12 (December)'
   ];
   const ruleBulan = SpreadsheetApp.newDataValidation()
     .requireValueInList(bulanList, true)
     .build();
 
-  fee.getRange('F1').setValue('Bulan:').setFontWeight('bold');
+  fee.getRange('F1').setValue('Month:').setFontWeight('bold');
   if (!fee.getRange('G1').getValue()) {
     fee.getRange('G1').setValue(bulanList[defaultMonthIdx]);
   }
-  fee.getRange('G1').setDataValidation(ruleBulan).setHorizontalAlignment('center');
+  fee.getRange('G1').setDataValidation(ruleBulan).setValue(bulanList[(parseInt(fee.getRange('G1').getValue(), 10) || (defaultMonthIdx + 1)) - 1]).setHorizontalAlignment('center');
 
-  fee.getRange('F2').setValue('Tahun:').setFontWeight('bold');
+  fee.getRange('F2').setValue('Year:').setFontWeight('bold');
   if (!fee.getRange('G2').getValue()) {
     fee.getRange('G2').setValue(defaultYear);
   }
@@ -559,16 +599,16 @@ function renderFeeSheet(fee) {
   try {
     fee.getRange('A1:B1').merge();
   } catch (err) {}
-  fee.getRange('A1').setValue('Perhitungan Fee').setFontWeight('bold');
+  fee.getRange('A1').setValue('Fee Calculation').setFontWeight('bold');
 
   try {
     fee.getRange('A2:C2').merge();
   } catch (err) {}
-  const fA2 = '="Periode : 21 " & CHOOSE(IF(VALUE(LEFT(G1, FIND(" ", G1 & " ") - 1))=1, 12, VALUE(LEFT(G1, FIND(" ", G1 & " ") - 1)) - 1), "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember") & " - 20 " & CHOOSE(VALUE(LEFT(G1, FIND(" ", G1 & " ") - 1)), "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember") & " " & G2';
+  const fA2 = '="Period: 21 " & CHOOSE(IF(VALUE(LEFT(G1, FIND(" ", G1 & " ") - 1))=1, 12, VALUE(LEFT(G1, FIND(" ", G1 & " ") - 1)) - 1), "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December") & " - 20 " & CHOOSE(VALUE(LEFT(G1, FIND(" ", G1 & " ") - 1)), "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December") & " " & G2';
   fee.getRange('A2').setFormula(fA2);
 
   // 3. Header Tabel di Baris 4
-  const headerTitles = ['No', 'Name', 'Status', 'Cabang', 'Tarif', 'Total Fee', 'Total Fee Manual', 'Days', 'No Rekening', 'Bank', 'Keterangan'];
+  const headerTitles = ['No', 'Name', 'Status', 'Branch', 'Rate', 'Total Fee', 'Manual Total Fee', 'Days', 'Account No.', 'Bank', 'Notes'];
   fee.getRange('A4:K4').setValues([headerTitles])
     .setFontWeight('bold')
     .setHorizontalAlignment('center')
@@ -649,7 +689,7 @@ function renderFeeSheet(fee) {
     fee.getRange('E' + r).setFormula(`=IF(B${r}="", "", IFERROR(IF(VLOOKUP(B${r}, '${dbName}'!$A:$I, 7, FALSE)="-", 0, VLOOKUP(B${r}, '${dbName}'!$A:$I, 7, FALSE)), 0))`).setNumberFormat('Rp #,##0').setHorizontalAlignment('center').setFontWeight('bold');
     fee.getRange('F' + r).setFormula(`=IF(OR(B${r}="", NOT(ISNUMBER(E${r}))), 0, E${r} * H${r})`).setNumberFormat('Rp #,##0').setHorizontalAlignment('center').setFontWeight('bold');
     fee.getRange('G' + r).setFormula(`=IF(OR(B${r}="", NOT(ISNUMBER(E${r}))), 0, E${r} * H${r})`).setNumberFormat('Rp #,##0').setHorizontalAlignment('center').setFontWeight('bold');
-    fee.getRange('H' + r).setFormula(`=IF(B${r}="", "", COUNTIF(L${r}:AP${r}, "Hadir"))`).setNumberFormat('0').setHorizontalAlignment('center').setFontWeight('bold');
+    fee.getRange('H' + r).setFormula(`=IF(B${r}="", "", COUNTIF(L${r}:AP${r}, "Present"))`).setNumberFormat('0').setHorizontalAlignment('center').setFontWeight('bold');
     fee.getRange('I' + r).setFormula(`=IF(B${r}="", "", IFERROR(VLOOKUP(B${r}, '${dbName}'!$A:$I, 8, FALSE), "-"))`).setHorizontalAlignment('center');
     fee.getRange('J' + r).setFormula(`=IF(B${r}="", "", IFERROR(VLOOKUP(B${r}, '${dbName}'!$A:$I, 9, FALSE), "-"))`).setHorizontalAlignment('center').setFontWeight('bold');
     fee.getRange('K' + r).setValue('');
@@ -664,13 +704,13 @@ function renderFeeSheet(fee) {
         colLet = String.fromCharCode(65 + rem) + colLet;
         t = Math.floor((t - rem) / 26);
       }
-      attFormulas.push(`=IF(OR($B${r}="", ${colLet}$4=""), "", IF(IFERROR(INDEX(Absensi!$C$5:$AG$100, MATCH($B${r}, Absensi!$B$5:$B$100, 0), MATCH(${colLet}$4, Absensi!$C$4:$AG$4, 0)))<>"", "Hadir", ""))`);
+      attFormulas.push(`=IF(OR($B${r}="", ${colLet}$4=""), "", IF(IFERROR(INDEX(Absensi!$C$5:$AG$100, MATCH($B${r}, Absensi!$B$5:$B$100, 0), MATCH(${colLet}$4, Absensi!$C$4:$AG$4, 0)))<>"", "Present", ""))`);
     }
     fee.getRange(r, 12, 1, 31).setFormulas([attFormulas]).setHorizontalAlignment('center');
   }
 
   // 6. Baris Jumlah
-  fee.getRange('A' + jumlahRow).setValue('Jumlah').setFontWeight('bold').setHorizontalAlignment('center');
+  fee.getRange('A' + jumlahRow).setValue('Total').setFontWeight('bold').setHorizontalAlignment('center');
   try {
     fee.getRange(`A${jumlahRow}:E${jumlahRow}`).merge();
   } catch (err) {}
@@ -691,7 +731,7 @@ function renderFeeSheet(fee) {
     if (numPeople === 1) {
       sumAttFormulas.push(`=${colLet}5`);
     } else {
-      sumAttFormulas.push(`=COUNTIF(${colLet}5:${colLet}${lastDataRow}, "Hadir")`);
+      sumAttFormulas.push(`=COUNTIF(${colLet}5:${colLet}${lastDataRow}, "Present")`);
     }
   }
   fee.getRange(jumlahRow, 12, 1, 31).setFormulas([sumAttFormulas]).setHorizontalAlignment('center');
@@ -706,18 +746,19 @@ function renderFeeSheet(fee) {
   }
 
   // Border solid rapi A4:AP{jumlahRow}
+  fee.setHiddenGridlines(true);
   fee.getRange(`A4:AP${jumlahRow}`).setBorder(true, true, true, true, true, true, '#CBD5E1', SpreadsheetApp.BorderStyle.SOLID);
   fee.getRange(`A4:AP4`).setBorder(true, true, true, true, true, true, '#1E293B', SpreadsheetApp.BorderStyle.SOLID);
   fee.getRange(`A${jumlahRow}:AP${jumlahRow}`).setBorder(true, true, true, true, true, true, '#1E293B', SpreadsheetApp.BorderStyle.SOLID);
 
   // 7. Tanggal Bandung
   const dateRow = jumlahRow + 2;
-  const fDate = '="Bandung, 21 " & CHOOSE(VALUE(LEFT(G1, FIND(" ", G1 & " ") - 1)), "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember") & " " & G2';
+  const fDate = '="Bandung, 21 " & CHOOSE(VALUE(LEFT(G1, FIND(" ", G1 & " ") - 1)), "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December") & " " & G2';
   fee.getRange('A' + dateRow).setFormula(fDate).setHorizontalAlignment('left').setFontStyle('italic').setFontColor('#475569');
 
   // 8. Blok Tanda Tangan
   const ttdTitleRow = dateRow + 2;
-  fee.getRange(`B${ttdTitleRow}:F${ttdTitleRow}`).setValues([['Di buat oleh', '', 'Mengetahui', '', 'Menyetujui']]).setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#1E293B');
+  fee.getRange(`B${ttdTitleRow}:F${ttdTitleRow}`).setValues([['Prepared by', '', 'Acknowledged by', '', 'Approved by']]).setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#1E293B');
 
   const imgRow = ttdTitleRow + 1;
   fee.getRange('B' + imgRow).setFormula('=IMAGE("https://lh3.googleusercontent.com/d/1h2OmvURnGv6EPKhy-VnqAug_Kd71gUAa", 1)');
@@ -748,8 +789,8 @@ function onEdit(e) {
     const row = e.range.getRow();
     const col = e.range.getColumn();
 
-    // Sheet Absensi: B1 (Bulan) atau D1 (Tahun)
-    if (sheetName === 'Absensi' && row === 1 && (col === 2 || col === 4)) {
+    // Sheet Absensi: D1 (Month, col 4) atau G1 (Year, col 7)
+    if (sheetName === 'Absensi' && row === 1 && (col === 4 || col === 7)) {
       setupAbsensiHorizontal(sheet.getParent());
       const fee = sheet.getParent().getSheetByName('Fee');
       if (fee) renderFeeSheet(fee);
@@ -769,16 +810,16 @@ function onEdit(e) {
  */
 function onOpen() {
   SpreadsheetApp.getUi()
-    .createMenu('Presensi & Fee')
-    .addItem('Perbarui Format Absensi Horizontal', 'menuSetupAbsensi')
-    .addItem('Perbarui Sheet Fee', 'menuRenderFee')
+    .createMenu('Attendance & Fee')
+    .addItem('Refresh Attendance Sheet', 'menuSetupAbsensi')
+    .addItem('Refresh Fee Sheet', 'menuRenderFee')
     .addToUi();
 }
 
 function menuSetupAbsensi() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   setupAbsensiHorizontal(ss);
-  ss.toast('Sheet Absensi (Horizontal) berhasil diperbarui!', 'Presensi', 3);
+  ss.toast('Attendance sheet refreshed!', 'Attendance', 3);
 }
 
 function menuRenderFee() {
@@ -786,7 +827,7 @@ function menuRenderFee() {
   const fee = ss.getSheetByName('Fee');
   if (fee) {
     renderFeeSheet(fee);
-    ss.toast('Sheet Fee berhasil diperbarui!', 'Presensi', 3);
+    ss.toast('Fee sheet refreshed!', 'Attendance', 3);
     ss.setActiveSheet(fee);
   }
 
@@ -927,11 +968,12 @@ function absen(idUser, pin, aksi, lat, lng) {
       shAbsensi.getRange(targetRow, 1).setValue(noUrut).setNumberFormat('0').setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#64748B');
       shAbsensi.getRange(targetRow, 2).setValue(nama).setFontWeight('bold').setFontColor('#0F172A').setHorizontalAlignment('left');
       shAbsensi.getRange(targetRow, 34).setFormula(`=COUNTIF(C${targetRow}:AG${targetRow}, "<>")`).setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#0F766E');
-      shAbsensi.getRange(targetRow, 1, 1, 34).setFontFamily('Arial').setFontSize(9);
-      shAbsensi.getRange(targetRow, 1, 1, 34).setBorder(true, true, true, true, true, true, '#CBD5E1', SpreadsheetApp.BorderStyle.SOLID);
+      shAbsensi.getRange(targetRow, 35).setFormula(hoursFormula(targetRow)).setNumberFormat('0.00').setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#0F766E');
+      shAbsensi.getRange(targetRow, 1, 1, 35).setFontFamily('Arial').setFontSize(9);
+      shAbsensi.getRange(targetRow, 1, 1, 35).setBorder(true, true, true, true, true, true, '#CBD5E1', SpreadsheetApp.BorderStyle.SOLID);
       try {
         if (shAbsensi.getFilter()) shAbsensi.getFilter().remove();
-        shAbsensi.getRange(4, 1, targetRow - 3, 34).createFilter();
+        shAbsensi.getRange(4, 1, targetRow - 3, 35).createFilter();
       } catch (err) {}
     }
 
