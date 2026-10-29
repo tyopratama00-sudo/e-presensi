@@ -211,11 +211,75 @@
       background: var(--lens-glass);
       border: 1.5px solid rgba(100, 116, 139, 0.4);
       border-radius: var(--radius-inner);
-      padding: 16px;
+      padding: 14px;
       position: relative;
       box-shadow: inset 0 3px 12px rgba(0, 0, 0, 0.9), 0 1px 2px rgba(255, 255, 255, 0.05);
       overflow: hidden;
       margin-bottom: 18px;
+      min-height: 220px;
+      display: flex;
+      flex-direction: column;
+    }
+    .vf-mode-stage {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+    }
+    .vf-playback-card {
+      background: rgba(18, 20, 26, 0.98);
+      border-radius: 12px;
+      padding: 4px 6px;
+    }
+    .vf-pb-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 6px;
+      margin-bottom: 6px;
+    }
+    .vf-pb-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--accent-gold);
+      letter-spacing: 0.08em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .vf-pb-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #34d399;
+      box-shadow: 0 0 6px #34d399;
+    }
+    .vf-pb-details {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      margin-bottom: 8px;
+    }
+    .vf-pb-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 8px;
+    }
+    .vf-pb-stamp-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .vf-timer-text {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      color: var(--text-muted);
     }
     
     /* Viewfinder Corner Framing Brackets */
@@ -546,68 +610,9 @@
     .btn-shutter.is-busy .shutter-label-content { display: none; }
     .btn-shutter.is-busy .shutter-spinner { display: inline-block; }
 
-    /* Film Dispenser Slot */
-    .film-dispenser-line {
-      text-align: center;
-      padding-top: 4px;
-    }
-    .dispenser-slot {
-      width: 170px;
-      height: 5px;
-      background: #000000;
-      border: 1px solid #27272a;
-      border-radius: 4px;
-      margin: 0 auto 4px;
-      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.9);
-    }
-    .dispenser-text {
-      font-family: var(--font-mono);
-      font-size: 9.5px;
-      letter-spacing: 0.14em;
-      color: var(--text-dim);
-      text-transform: uppercase;
-    }
-
-    /* Polaroid Card Printout Container */
-    #polaroidContainer {
-      margin-top: 14px;
-      transform-origin: top center;
-    }
-    .polaroid-eject-anim {
-      animation: ejectPhoto 700ms var(--ease-smooth) forwards;
-    }
-    @keyframes ejectPhoto {
-      0% {
-        transform: translateY(-40px) scale(0.92);
-        opacity: 0;
-      }
-      100% {
-        transform: translateY(0) scale(1);
-        opacity: 1;
-      }
-    }
-
-    /* The Physical Polaroid Pass */
-    .polaroid-card {
-      background: #ffffff;
-      color: #0f172a;
-      border-radius: 14px;
-      padding: 14px 14px 10px;
-      box-shadow: 
-        0 20px 40px -10px rgba(0, 0, 0, 0.9),
-        0 0 0 1px rgba(255, 255, 255, 0.2);
-    }
-    .polaroid-inner-photo {
-      background: #090a0d;
-      color: #f8fafc;
-      border-radius: 8px;
-      padding: 16px;
-      border: 1px solid #1e293b;
-      position: relative;
-      overflow: hidden;
-    }
+    /* Chemical developing animation for Playback screen */
     .chemical-develop-anim {
-      animation: developChemical 3.4s ease-out forwards;
+      animation: developChemical 2.4s ease-out forwards;
     }
     @keyframes developChemical {
       0% {
@@ -708,26 +713,13 @@
       color: var(--text-dim);
     }
 
-    /* Polaroid White Bottom Chin with Auto-Timer */
-    .polaroid-bottom-chin {
-      padding: 10px 4px 2px;
-    }
-    .timer-info-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-family: var(--font-mono);
-      font-size: 10.5px;
-      color: #475569;
-      margin-bottom: 5px;
-      font-weight: 600;
-    }
     .timer-bar-track {
       width: 100%;
-      height: 5px;
-      background: #e2e8f0;
-      border-radius: 3px;
+      height: 4px;
+      background: rgba(51, 65, 85, 0.6);
+      border-radius: 2px;
       overflow: hidden;
+      margin-top: 4px;
     }
     .timer-bar-progress {
       height: 100%;
@@ -811,26 +803,74 @@
         <span class="vf-bracket vf-bl">└</span>
         <span class="vf-bracket vf-br">┘</span>
 
-        <!-- Viewfinder Top HUD -->
-        <div class="vf-hud-top">
-          <span class="vf-rec-tag">LIVE HUD</span>
-          <span class="vf-date" id="dateDisplay">--</span>
-          <span class="vf-loc-badge">JL. PROGO 12</span>
-        </div>
-
-        <!-- Center Viewfinder Clock -->
-        <div class="vf-center-clock">
-          <div class="vf-clock-nums">
-            <span id="clockDisplay">--:--:--</span><span class="vf-tz">WIB</span>
+        <!-- MODE 1: LIVE CLOCK & VIEWFINDER HUD (Default) -->
+        <div id="vfLiveMode" class="vf-mode-stage">
+          <div class="vf-hud-top">
+            <span class="vf-rec-tag">LIVE HUD</span>
+            <span class="vf-date" id="dateDisplay">--</span>
+            <span class="vf-loc-badge">JL. PROGO 12</span>
           </div>
-          <div class="vf-optical-stats">ISO 100 · F/2.8 · 1/250s · AF-LOCK</div>
+
+          <!-- Center Viewfinder Clock -->
+          <div class="vf-center-clock">
+            <div class="vf-clock-nums">
+              <span id="clockDisplay">--:--:--</span><span class="vf-tz">WIB</span>
+            </div>
+            <div class="vf-optical-stats">ISO 100 · F/2.8 · 1/250s · AF-LOCK</div>
+          </div>
+
+          <!-- Viewfinder Bottom HUD Status -->
+          <div class="vf-hud-bottom">
+            <div id="vfStatusText" class="vf-status-text" role="status" aria-live="polite">STANDBY · READY TO SHOOT</div>
+            <div class="vf-lens-format">35MM FORMAT</div>
+          </div>
         </div>
 
-        <!-- Viewfinder Bottom HUD Status -->
-        <div class="vf-hud-bottom">
-          <div id="vfStatusText" class="vf-status-text" role="status" aria-live="polite">STANDBY · READY TO SHOOT</div>
-          <div class="vf-lens-format">35MM FORMAT</div>
+        <!-- MODE 2: PLAYBACK ATTENDANCE PASS (Menggantikan Layar Jam) -->
+        <div id="vfPlaybackMode" class="vf-mode-stage vf-playback-card chemical-develop-anim" hidden>
+          <div class="vf-pb-header">
+            <div class="vf-pb-title">
+              <span class="vf-pb-dot"></span>
+              <span>JONAS PHOTO PASS</span>
+            </div>
+            <span id="passActionBadge" class="polaroid-action-badge badge-masuk">CLOCKED IN</span>
+          </div>
+
+          <div class="vf-pb-details">
+            <div class="p-row">
+              <span class="p-label">STAF:</span>
+              <span id="passName" class="p-val p-val-name">--</span>
+            </div>
+            <div class="p-row">
+              <span class="p-label">ID STAF:</span>
+              <span id="passId" class="p-val" style="color:#fde047;">--</span>
+            </div>
+            <div class="p-row">
+              <span class="p-label">WAKTU:</span>
+              <span id="passTime" class="p-val p-val-time">--</span>
+            </div>
+            <div class="p-row">
+              <span class="p-label">LOKASI:</span>
+              <span class="p-val">Jl. Progo No. 12, BDG</span>
+            </div>
+            <div class="p-row">
+              <span class="p-label">RADIUS:</span>
+              <span id="passRadius" class="p-val" style="color:#34d399;">TERVERIFIKASI (&lt; 100M)</span>
+            </div>
+          </div>
+
+          <div class="vf-pb-footer">
+            <div class="vf-pb-stamp-row">
+              <div class="official-stamp">✓ VERIFIED SYSTEM</div>
+              <div class="stamp-id" id="passDocCode">PASS #JP-STUDIO</div>
+              <div class="vf-timer-text">Reset dlm <strong id="countdownText" style="color:#fbbf24;">10</strong>s</div>
+            </div>
+            <div class="timer-bar-track">
+              <div id="timerBarProgress" class="timer-bar-progress"></div>
+            </div>
+          </div>
         </div>
+
       </section>
 
       <!-- Saved Account Badge (If remembered) -->
@@ -930,75 +970,6 @@
 
         </div>
       </form>
-
-      <!-- Instant Film Dispenser Slot -->
-      <div class="film-dispenser-line">
-        <div class="dispenser-slot"></div>
-        <div class="dispenser-text">▲ Instant Film Dispenser ▲</div>
-      </div>
-
-      <!-- Polaroid Receipt Printout Container -->
-      <div id="polaroidContainer" hidden>
-        
-        <div class="polaroid-card">
-          
-          <!-- Inner Developed Photo Section -->
-          <div class="polaroid-inner-photo chemical-develop-anim">
-            
-            <div class="polaroid-header">
-              <div>
-                <div class="polaroid-title">JONAS PHOTO</div>
-                <div class="polaroid-subtitle">ATTENDANCE CERTIFIED PASS</div>
-              </div>
-              <span id="passActionBadge" class="polaroid-action-badge badge-masuk">
-                CLOCKED IN
-              </span>
-            </div>
-
-            <div class="polaroid-details">
-              <div class="p-row">
-                <span class="p-label">NAMA STAF:</span>
-                <span id="passName" class="p-val p-val-name">--</span>
-              </div>
-              <div class="p-row">
-                <span class="p-label">ID STAF:</span>
-                <span id="passId" class="p-val" style="color:#fde047;">--</span>
-              </div>
-              <div class="p-row">
-                <span class="p-label">WAKTU:</span>
-                <span id="passTime" class="p-val p-val-time">--</span>
-              </div>
-              <div class="p-row">
-                <span class="p-label">LOKASI:</span>
-                <span class="p-val">Jl. Progo No. 12, BDG</span>
-              </div>
-              <div class="p-row">
-                <span class="p-label">RADIUS GPS:</span>
-                <span id="passRadius" class="p-val" style="color:#34d399;">TERVERIFIKASI (&lt; 100m)</span>
-              </div>
-            </div>
-
-            <div class="polaroid-footer-stamp">
-              <div class="official-stamp">✓ VERIFIED SYSTEM</div>
-              <div class="stamp-id" id="passDocCode">PASS #JP-STUDIO</div>
-            </div>
-
-          </div>
-
-          <!-- Polaroid White Bottom Chin with 10s Timer -->
-          <div class="polaroid-bottom-chin">
-            <div class="timer-info-row">
-              <span>Auto-reset dalam <strong id="countdownText" style="color:#0f172a;">10</strong> detik</span>
-              <span>JONAS INSTANT v2</span>
-            </div>
-            <div class="timer-bar-track">
-              <div id="timerBarProgress" class="timer-bar-progress"></div>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
 
     </div>
 
@@ -1263,11 +1234,9 @@
         $("passRadius").textContent = "TERVERIFIKASI (< 100M)";
       }
 
-      // 3. Eject Polaroid animation
-      const container = $("polaroidContainer");
-      container.hidden = false;
-      container.className = "polaroid-eject-anim";
-      container.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      // 3. Ganti Layar Viewfinder: Sembunyikan Jam, Tampilkan Bukti Pass
+      $("vfLiveMode").hidden = true;
+      $("vfPlaybackMode").hidden = false;
 
       // 4. Timer bar reset & countdown (10 detik)
       clearTimeout(resetTimer);
@@ -1288,9 +1257,10 @@
         }
       }, 1000);
 
-      // Auto-reset tepat 10 detik tanpa tombol
+      // Auto-kembali ke Layar Jam setelah 10 detik
       resetTimer = setTimeout(() => {
-        container.hidden = true;
+        $("vfPlaybackMode").hidden = true;
+        $("vfLiveMode").hidden = false;
         clearInterval(countdownInterval);
         updateHudStatus("STANDBY · READY TO SHOOT", "normal");
       }, 10000);
