@@ -682,29 +682,40 @@ function renderFeeSheet(fee) {
     .requireValueInList(bulanList, true)
     .build();
 
-  fee.getRange('F1').setValue('Month:').setFontWeight('bold');
+  // Bersihkan cell sekitar F1/F2 agar tidak ada label Month/Year duplikat
+  try {
+    fee.getRange('E1:E2').clearContent().clearFormat();
+    fee.getRange('H1:H2').clearContent().clearFormat();
+  } catch (err) {}
+
+  fee.getRange('F1').setValue('Month:').setFontWeight('bold').setHorizontalAlignment('right');
   if (!fee.getRange('G1').getValue()) {
     fee.getRange('G1').setValue(bulanList[defaultMonthIdx]);
   }
-  fee.getRange('G1').setDataValidation(ruleBulan).setValue(bulanList[(parseInt(fee.getRange('G1').getValue(), 10) || (defaultMonthIdx + 1)) - 1]).setHorizontalAlignment('center');
+  fee.getRange('G1').setDataValidation(ruleBulan).setValue(bulanList[(parseInt(fee.getRange('G1').getValue(), 10) || (defaultMonthIdx + 1)) - 1]).setHorizontalAlignment('center').setFontWeight('bold');
 
-  fee.getRange('F2').setValue('Year:').setFontWeight('bold');
+  fee.getRange('F2').setValue('Year:').setFontWeight('bold').setHorizontalAlignment('right');
   if (!fee.getRange('G2').getValue()) {
     fee.getRange('G2').setValue(defaultYear);
   }
-  fee.getRange('G2').setHorizontalAlignment('center');
+  fee.getRange('G2').setNumberFormat('0').setHorizontalAlignment('center').setFontWeight('bold');
 
   // Judul di A1:B1 & Formula Periode Cut-Off di A2:C2
   try {
     fee.getRange('A1:B1').merge();
   } catch (err) {}
-  fee.getRange('A1').setValue('Fee Calculation').setFontWeight('bold');
+  fee.getRange('A1').setValue('Fee Calculation').setFontWeight('bold').setFontSize(14).setFontColor('#0F172A');
 
   try {
     fee.getRange('A2:C2').merge();
   } catch (err) {}
   const fA2 = '="Period: 21 " & CHOOSE(IF(VALUE(LEFT(G1, FIND(" ", G1 & " ") - 1))=1, 12, VALUE(LEFT(G1, FIND(" ", G1 & " ") - 1)) - 1), "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December") & " - 20 " & CHOOSE(VALUE(LEFT(G1, FIND(" ", G1 & " ") - 1)), "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December") & " " & G2';
-  fee.getRange('A2').setFormula(fA2);
+  fee.getRange('A2').setFormula(fA2).setFontStyle('italic').setFontSize(10).setFontColor('#475569');
+
+  // Baris 3: Kosongkan baris spasi
+  try {
+    fee.getRange('A3:AP3').breakApart().clearContent().clearFormat();
+  } catch (err) {}
 
   // 3. Header Tabel di Baris 4
   const headerTitles = ['No', 'Name', 'Status', 'Branch', 'Rate', 'Total Fee', 'Manual Total Fee', 'Days', 'Account No.', 'Bank', 'Notes'];
@@ -720,13 +731,7 @@ function renderFeeSheet(fee) {
   const dateRowFormulas = [];
   dateRowFormulas.push('=DATE($G$2, VALUE(LEFT($G$1, FIND(" ", $G$1 & " ") - 1)) - 1, 21)');
   for (let c = 13; c <= 42; c++) {
-    let prevLetter = '';
-    let temp = c - 1;
-    while (temp > 0) {
-      let rem = (temp - 1) % 26;
-      prevLetter = String.fromCharCode(65 + rem) + prevLetter;
-      temp = Math.floor((temp - rem) / 26);
-    }
+    const prevLetter = getColLetter(c - 1);
     dateRowFormulas.push('=IF(' + prevLetter + '4="", "", IF(' + prevLetter + '4 < DATE($G$2, VALUE(LEFT($G$1, FIND(" ", $G$1 & " ") - 1)), 20), ' + prevLetter + '4 + 1, ""))');
   }
   fee.getRange('L4:AP4').setFormulas([dateRowFormulas])
@@ -779,15 +784,15 @@ function renderFeeSheet(fee) {
     const r = 5 + idx;
     const name = names[idx];
     const rowBg = (idx % 2 === 0) ? '#FFFFFF' : '#F8FAFC';
-    fee.getRange(r, 1, 1, 42).setBackground(rowBg).setFontFamily('Arial').setFontSize(9);
+    fee.getRange(r, 1, 1, 42).setBackground(rowBg).setFontFamily('Arial').setFontSize(9).setVerticalAlignment('middle');
 
-    fee.getRange('A' + r).setValue(idx + 1).setHorizontalAlignment('center');
-    fee.getRange('B' + r).setValue(name).setHorizontalAlignment('center').setFontWeight('bold');
+    fee.getRange('A' + r).setValue(idx + 1).setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#64748B');
+    fee.getRange('B' + r).setValue(name).setHorizontalAlignment('left').setFontWeight('bold').setFontColor('#0F172A');
     fee.getRange('C' + r).setFormula(`=IF(B${r}="", "", IFERROR(VLOOKUP(B${r}, '${dbName}'!$A:$I, 4, FALSE), "-"))`).setHorizontalAlignment('center');
     fee.getRange('D' + r).setFormula(`=IF(B${r}="", "", IFERROR(VLOOKUP(B${r}, '${dbName}'!$A:$I, 5, FALSE), "Pusat"))`).setHorizontalAlignment('center');
-    fee.getRange('E' + r).setFormula(`=IF(B${r}="", "", IFERROR(IF(VLOOKUP(B${r}, '${dbName}'!$A:$I, 7, FALSE)="-", 0, VLOOKUP(B${r}, '${dbName}'!$A:$I, 7, FALSE)), 0))`).setNumberFormat('Rp #,##0').setHorizontalAlignment('center').setFontWeight('bold');
-    fee.getRange('F' + r).setFormula(`=IF(OR(B${r}="", NOT(ISNUMBER(E${r}))), 0, E${r} * H${r})`).setNumberFormat('Rp #,##0').setHorizontalAlignment('center').setFontWeight('bold');
-    fee.getRange('G' + r).setFormula(`=IF(OR(B${r}="", NOT(ISNUMBER(E${r}))), 0, E${r} * H${r})`).setNumberFormat('Rp #,##0').setHorizontalAlignment('center').setFontWeight('bold');
+    fee.getRange('E' + r).setFormula(`=IF(B${r}="", "", IFERROR(IF(VLOOKUP(B${r}, '${dbName}'!$A:$I, 7, FALSE)="-", 0, VLOOKUP(B${r}, '${dbName}'!$A:$I, 7, FALSE)), 0))`).setNumberFormat('Rp #,##0').setHorizontalAlignment('right').setFontWeight('bold');
+    fee.getRange('F' + r).setFormula(`=IF(OR(B${r}="", NOT(ISNUMBER(E${r}))), 0, E${r} * H${r})`).setNumberFormat('Rp #,##0').setHorizontalAlignment('right').setFontWeight('bold');
+    fee.getRange('G' + r).setFormula(`=IF(OR(B${r}="", NOT(ISNUMBER(E${r}))), 0, E${r} * H${r})`).setNumberFormat('Rp #,##0').setHorizontalAlignment('right').setFontWeight('bold');
     fee.getRange('H' + r).setFormula(`=IF(B${r}="", "", COUNT(L${r}:AP${r}))`).setNumberFormat('0').setHorizontalAlignment('center').setFontWeight('bold');
     fee.getRange('I' + r).setFormula(`=IF(B${r}="", "", IFERROR(VLOOKUP(B${r}, '${dbName}'!$A:$I, 8, FALSE), "-"))`).setHorizontalAlignment('center');
     fee.getRange('J' + r).setFormula(`=IF(B${r}="", "", IFERROR(VLOOKUP(B${r}, '${dbName}'!$A:$I, 9, FALSE), "-"))`).setHorizontalAlignment('center').setFontWeight('bold');
@@ -796,13 +801,7 @@ function renderFeeSheet(fee) {
     // Attendance L..AP (Rate nominal harian per karyawan, kosong jika tidak hadir)
     const attFormulas = [];
     for (let c = 12; c <= 42; c++) {
-      let colLet = '';
-      let t = c;
-      while (t > 0) {
-        let rem = (t - 1) % 26;
-        colLet = String.fromCharCode(65 + rem) + colLet;
-        t = Math.floor((t - rem) / 26);
-      }
+      const colLet = getColLetter(c);
       attFormulas.push(`=IF(OR($B${r}="", ${colLet}$4=""), "", LET(v, IFERROR(INDEX(Absensi!$C$5:$AG$100, MATCH($B${r}, Absensi!$B$5:$B$100, 0), MATCH(${colLet}$4, Absensi!$C$4:$AG$4, 0)), ""), IF(OR(v="", v="OFF", v="Sakit", v="Izin"), "", $E${r})))`);
     }
     fee.getRange(r, 12, 1, 31).setFormulas([attFormulas]).setNumberFormat('#,##0').setHorizontalAlignment('center');
@@ -813,37 +812,40 @@ function renderFeeSheet(fee) {
   try {
     fee.getRange(`A${jumlahRow}:E${jumlahRow}`).merge();
   } catch (err) {}
-  fee.getRange(`A${jumlahRow}:AP${jumlahRow}`).setBackground('#F1F5F9').setFontFamily('Arial').setFontSize(9).setFontWeight('bold');
-  fee.getRange('F' + jumlahRow).setFormula(`=SUM(F5:F${lastDataRow})`).setNumberFormat('Rp #,##0').setHorizontalAlignment('center');
-  fee.getRange('G' + jumlahRow).setFormula(`=SUM(G5:G${lastDataRow})`).setNumberFormat('Rp #,##0').setHorizontalAlignment('center');
+  fee.getRange(`A${jumlahRow}:AP${jumlahRow}`).setBackground('#F1F5F9').setFontFamily('Arial').setFontSize(9.5).setFontWeight('bold').setVerticalAlignment('middle');
+  fee.getRange('F' + jumlahRow).setFormula(`=SUM(F5:F${lastDataRow})`).setNumberFormat('Rp #,##0').setHorizontalAlignment('right');
+  fee.getRange('G' + jumlahRow).setFormula(`=SUM(G5:G${lastDataRow})`).setNumberFormat('Rp #,##0').setHorizontalAlignment('right');
 
   // Kolom Tanggal pada Baris Jumlah (Menampilkan total fee harian, jika kosong/0 maka kosongkan)
   const sumAttFormulas = [];
   for (let c = 12; c <= 42; c++) {
-    let colLet = '';
-    let t = c;
-    while (t > 0) {
-      let rem = (t - 1) % 26;
-      colLet = String.fromCharCode(65 + rem) + colLet;
-      t = Math.floor((t - rem) / 26);
-    }
+    const colLet = getColLetter(c);
     sumAttFormulas.push(`=IF(SUM(${colLet}5:${colLet}${lastDataRow})=0, "", SUM(${colLet}5:${colLet}${lastDataRow}))`);
   }
   fee.getRange(jumlahRow, 12, 1, 31).setFormulas([sumAttFormulas]).setNumberFormat('#,##0').setHorizontalAlignment('center');
 
-  // Atur lebar kolom L:AP agar angka nominal tidak terpotong (###)
+  // Lebar Kolom
+  fee.setColumnWidth(1, 45);
+  fee.setColumnWidth(2, 220);
+  fee.setColumnWidth(3, 110);
+  fee.setColumnWidth(4, 90);
+  fee.setColumnWidth(5, 100);
+  fee.setColumnWidth(6, 115);
+  fee.setColumnWidth(7, 125);
+  fee.setColumnWidth(8, 60);
+  fee.setColumnWidth(9, 120);
+  fee.setColumnWidth(10, 85);
+  fee.setColumnWidth(11, 100);
   for (let c = 12; c <= 42; c++) {
     fee.setColumnWidth(c, 70);
   }
 
-  if (numPeople === 1) {
-    try {
-      fee.getRange(`H5:H6`).merge();
-      fee.getRange(`I5:I6`).merge();
-      fee.getRange(`J5:J6`).merge();
-      fee.getRange(`K5:K6`).merge();
-    } catch (err) {}
+  // Tinggi Baris
+  fee.setRowHeight(4, 32);
+  if (numPeople > 0) {
+    fee.setRowHeights(5, numPeople, 28);
   }
+  fee.setRowHeight(jumlahRow, 30);
 
   // Border solid rapi A4:AP{jumlahRow}
   fee.setHiddenGridlines(true);
@@ -867,7 +869,7 @@ function renderFeeSheet(fee) {
   } catch (err) {}
 
   const nameRow = imgRow + 3;
-  fee.getRange(`B${nameRow}:F${nameRow}`).setValues([['Surya Tio Pratama', '', 'Indra Gunawan', '', 'Benard Silalahi']]).setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#0F172A');
+  fee.getRange(`B${nameRow}:F${nameRow}`).setValues([['Surya Tio Pratama', '', 'Indra Gunawan', '', 'Benard Silalahi']]).setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#0F172A').setFontLine('underline');
 
   // Bersihkan baris sisa di bawah blok TTD jika ada bekas sebelumnya
   try {
