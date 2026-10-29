@@ -469,16 +469,60 @@ function setupAbsensiHorizontal(ss) {
       a.getRange(r, 1, 1, 35).setFontFamily('Arial').setFontSize(9);
     }
 
+    const todayDateStr = Utilities.formatDate(now, TZ, 'yyyy-MM-dd');
+    const currentHour = parseInt(Utilities.formatDate(now, TZ, 'HH'), 10);
+    const isPast3PM = currentHour >= 15;
+
+    // Baca status manual (Sakit/Izin/OFF) yang sudah ada di sheet agar tidak terhapus
+    const existingManualStatus = {};
+    if (a && a.getLastRow() >= 5) {
+      const existingLastRow = Math.min(a.getLastRow(), 4 + numEmp);
+      if (existingLastRow >= 5) {
+        const rawGrid = a.getRange(5, 2, existingLastRow - 4, 32).getValues();
+        for (let r = 0; r < rawGrid.length; r++) {
+          const nm = String(rawGrid[r][0] || '').trim();
+          if (!nm) continue;
+          existingManualStatus[nm] = {};
+          for (let c = 0; c < 31; c++) {
+            const val = String(rawGrid[r][c + 1] || '').trim();
+            if (val === 'Sakit' || val === 'Izin' || val === 'OFF') {
+              if (c < cutOffDates.length) {
+                const dk = Utilities.formatDate(cutOffDates[c], TZ, 'yyyy-MM-dd');
+                existingManualStatus[nm][dk] = val;
+              }
+            }
+          }
+        }
+      }
+    }
+
     const gridValues = [];
     for (let r = 0; r < numEmp; r++) {
       const empName = names[r];
       const rowCells = [];
       const empAttendance = attendanceMap[empName] || {};
+      const empManual = existingManualStatus[empName] || {};
 
       for (let c = 0; c < 31; c++) {
         if (c < cutOffDates.length) {
           const dateKey = Utilities.formatDate(cutOffDates[c], TZ, 'yyyy-MM-dd');
-          rowCells.push(empAttendance[dateKey] || 'OFF');
+          const attended = empAttendance[dateKey];
+          const manual = empManual[dateKey];
+
+          if (attended) {
+            rowCells.push(attended);
+          } else if (manual && (manual === 'Sakit' || manual === 'Izin')) {
+            rowCells.push(manual);
+          } else if (dateKey < todayDateStr) {
+            // Tanggal sudah lewat: jika tidak hadir maka OFF
+            rowCells.push(manual || 'OFF');
+          } else if (dateKey === todayDateStr) {
+            // Tanggal hari ini: jika sudah jam 3 sore (15:00) ke atas dan belum hadir maka OFF, sebelum jam 3 biarkan kosong
+            rowCells.push(manual || (isPast3PM ? 'OFF' : ''));
+          } else {
+            // Tanggal belum lewat (masa depan): kosongkan (jangan ada tanda OFF)
+            rowCells.push((manual === 'Sakit' || manual === 'Izin') ? manual : '');
+          }
         } else {
           rowCells.push('');
         }
@@ -559,8 +603,9 @@ function setupAbsensiHorizontal(ss) {
 
     const ruleOff = SpreadsheetApp.newConditionalFormatRule()
       .whenTextEqualTo('OFF')
-      .setBackground('#F1F5F9')
-      .setFontColor('#64748B')
+      .setBackground('#E2E8F0')
+      .setFontColor('#475569')
+      .setBold(true)
       .setRanges([rangeData])
       .build();
 
@@ -596,7 +641,21 @@ function setupAbsensiHorizontal(ss) {
       .setRanges([rangeData])
       .build();
 
-    a.setConditionalFormatRules([ruleOff, ruleSakit, ruleIzin, ruleComplete, ruleInProgress]);
+    // Sel belum terlewat (kosong) di akhir pekan (Sat/Sun) -> #E8EDF2
+    const ruleEmptyWeekend = SpreadsheetApp.newConditionalFormatRule()
+      .whenFormulaSatisfied('=AND(C5="", C$4<>"", OR(C$3="Sat", C$3="Sun"))')
+      .setBackground('#E8EDF2')
+      .setRanges([rangeData])
+      .build();
+
+    // Sel belum terlewat (kosong) di hari kerja (Mon-Fri) -> #F1F5F9 (jangan putih)
+    const ruleEmptyWeekday = SpreadsheetApp.newConditionalFormatRule()
+      .whenFormulaSatisfied('=AND(C5="", C$4<>"")')
+      .setBackground('#F1F5F9')
+      .setRanges([rangeData])
+      .build();
+
+    a.setConditionalFormatRules([ruleOff, ruleSakit, ruleIzin, ruleComplete, ruleInProgress, ruleEmptyWeekend, ruleEmptyWeekday]);
   }
 }
 function renderFeeSheet(fee) {
@@ -869,7 +928,61 @@ function onOpen() {
     .createMenu('Attendance & Fee')
     .addItem('Refresh Attendance Sheet', 'menuSetupAbsensi')
     .addItem('Refresh Fee Sheet', 'menuRenderFee')
+    .addItem('Check & Mark OFF (Past 3 PM)', 'autoCheckAndMarkOff')
     .addToUi();
+
+  try {
+    autoCheckAndMarkOff();
+  } catch (err) {}
+}
+
+/**
+ * Otomatis mengecek dan mengisi status OFF setelah jam 3 sore (15:00 WIB)
+ * Dipanggil saat spreadsheet dibuka atau via Time-driven Trigger
+ */
+function autoCheckAndMarkOff() {
+  const ss = getSS();
+  const shAbsensi = ss.getSheetByName('Absensi');
+  if (!shAbsensi || shAbsensi.getLastRow() < 5) return;
+
+  const now = new Date();
+  const currentHour = parseInt(Utilities.formatDate(now, TZ, 'HH'), 10);
+  if (currentHour < 15) return; // Belum jam 3 sore
+
+  const todayStr = Utilities.formatDate(now, TZ, 'dd/MM');
+  const dateRowValues = shAbsensi.getRange(4, 3, 1, 31).getValues()[0];
+  let todayCol = -1;
+  for (let c = 0; c < dateRowValues.length; c++) {
+    const dVal = dateRowValues[c];
+    let colDateStr = '';
+    if (dVal instanceof Date) {
+      colDateStr = Utilities.formatDate(dVal, TZ, 'dd/MM');
+    } else if (typeof dVal === 'string') {
+      colDateStr = dVal.trim();
+    }
+    if (colDateStr === todayStr) {
+      todayCol = 3 + c;
+      break;
+    }
+  }
+
+  if (todayCol === -1) return;
+
+  const numRows = shAbsensi.getLastRow() - 4;
+  const colVals = shAbsensi.getRange(5, todayCol, numRows, 1).getValues();
+  const ruleStatus = SpreadsheetApp.newDataValidation()
+    .requireValueInList(['OFF', 'Sakit', 'Izin'], true)
+    .setAllowInvalid(true)
+    .build();
+
+  for (let i = 0; i < numRows; i++) {
+    const val = String(colVals[i][0] || '').trim();
+    if (!val) {
+      const cell = shAbsensi.getRange(5 + i, todayCol);
+      cell.setValue('OFF').setNumberFormat('@').setHorizontalAlignment('center');
+      cell.setDataValidation(ruleStatus);
+    }
+  }
 }
 
 function menuSetupAbsensi() {
