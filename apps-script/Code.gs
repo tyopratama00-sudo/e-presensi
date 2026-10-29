@@ -12,7 +12,15 @@ function getSS() {
   return SpreadsheetApp.getActiveSpreadsheet() || SpreadsheetApp.openById(SPREADSHEET_ID);
 }
 
-function doGet() {
+const MASTER_ADMIN_PIN = '9999';
+
+function doGet(e) {
+  const page = (e && e.parameter && e.parameter.page) ? String(e.parameter.page).toLowerCase() : '';
+  if (page === 'admin') {
+    return HtmlService.createHtmlOutputFromFile('Admin')
+      .setTitle('Portal Admin & Data - Jonas Photo')
+      .addMetaTag('viewport', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
+  }
   return HtmlService.createHtmlOutputFromFile('Index')
     .setTitle('Presensi Jonas Photo')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover');
@@ -615,4 +623,316 @@ function jarakMeter(lat1, lng1, lat2, lng2) {
   const a = Math.sin(rad(lat2 - lat1) / 2) ** 2 +
     Math.cos(rad(lat1)) * Math.cos(rad(lat2)) * Math.sin(rad(lng2 - lng1) / 2) ** 2;
   return 2 * 6371000 * Math.asin(Math.sqrt(a));
+}
+
+// ==========================================
+// MODUL BACKEND API: PORTAL ADMIN & DATA
+// ==========================================
+
+function requireAdmin(pin) {
+  if (String(pin || '').trim() !== MASTER_ADMIN_PIN) {
+    throw new Error('PIN Admin tidak valid atau sesi telah berakhir.');
+  }
+}
+
+function adminLogin(pin) {
+  requireAdmin(pin);
+  return { success: true, message: 'Autentikasi Admin berhasil.' };
+}
+
+function adminGetDashboardData(pin) {
+  requireAdmin(pin);
+  const ss = getSS();
+  const shDb = ss.getSheetByName('Database') || ss.getSheetByName('Freelancer');
+  const shAbs = ss.getSheetByName('Absensi');
+  if (!shDb || !shAbs) {
+    throw new Error('Sheet Database atau Absensi belum tersedia.');
+  }
+
+  const dbRows = shDb.getDataRange().getDisplayValues().slice(1);
+  const totalEmployees = dbRows.filter(r => r[0] && r[0].trim()).length;
+
+  const now = new Date();
+  const hariIni1 = Utilities.formatDate(now, TZ, 'yyyy-MM-dd');
+  const hariIni2 = Utilities.formatDate(now, TZ, 'dd/MM/yyyy');
+
+  const absRows = shAbs.getDataRange().getDisplayValues().slice(1);
+  const todayList = [];
+  let totalSedangBekerja = 0;
+  let totalSelesai = 0;
+
+  for (let i = 0; i < absRows.length; i++) {
+    const r = absRows[i];
+    const tgl = (r[0] || '').trim();
+    if (tgl === hariIni1 || tgl === hariIni2 || tgl.startsWith(hariIni1) || tgl.startsWith(hariIni2)) {
+      const masuk = (r[2] || '').trim();
+      const pulang = (r[3] || '').trim();
+      const jamKerja = (r[4] || '').trim();
+      const isSelesai = pulang !== '';
+      if (isSelesai) {
+        totalSelesai++;
+      } else {
+        totalSedangBekerja++;
+      }
+      todayList.push({
+        rowIndex: i + 2,
+        tanggal: tgl,
+        nama: r[1] || '-',
+        masuk: masuk || '-',
+        pulang: pulang || '-',
+        jamKerja: jamKerja || '0.00',
+        status: isSelesai ? 'Selesai' : 'Sedang Bekerja'
+      });
+    }
+  }
+
+  return {
+    success: true,
+    stats: {
+      totalEmployees: totalEmployees,
+      totalHadirToday: todayList.length,
+      totalSedangBekerja: totalSedangBekerja,
+      totalSelesai: totalSelesai
+    },
+    todayList: todayList
+  };
+}
+
+function adminGetEmployees(pin) {
+  requireAdmin(pin);
+  const ss = getSS();
+  const shDb = ss.getSheetByName('Database') || ss.getSheetByName('Freelancer');
+  if (!shDb) throw new Error('Sheet Database belum ditemukan.');
+
+  const rows = shDb.getDataRange().getDisplayValues();
+  const employees = [];
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i];
+    if (r[0] && r[0].trim()) {
+      employees.push({
+        rowIndex: i + 1,
+        nama: r[0].trim(),
+        id: (r[1] || '').trim(),
+        pin: (r[2] || '').trim(),
+        status: (r[3] || '').trim(),
+        cabang: (r[4] || '').trim(),
+        departemen: (r[5] || '').trim(),
+        tarif: (r[6] || '').trim(),
+        noRekening: (r[7] || '').trim(),
+        bank: (r[8] || '').trim()
+      });
+    }
+  }
+  return { success: true, employees: employees };
+}
+
+function adminSaveEmployee(pin, data, isEdit, rowIndex) {
+  requireAdmin(pin);
+  if (!data || !data.nama || !data.id || !data.pin) {
+    throw new Error('Nama, ID, dan PIN wajib diisi.');
+  }
+  const ss = getSS();
+  const shDb = ss.getSheetByName('Database') || ss.getSheetByName('Freelancer');
+  if (!shDb) throw new Error('Sheet Database belum ditemukan.');
+
+  const cleanTarif = Number(String(data.tarif || 0).replace(/[^0-9]/g, '')) || 0;
+  const rowVals = [
+    String(data.nama).trim(),
+    String(data.id).trim(),
+    String(data.pin).trim(),
+    String(data.status || '').trim(),
+    String(data.cabang || 'Pusat').trim(),
+    String(data.departemen || '').trim(),
+    cleanTarif,
+    String(data.noRekening || '').trim(),
+    String(data.bank || '').trim()
+  ];
+
+  if (isEdit && rowIndex && Number(rowIndex) >= 2) {
+    shDb.getRange(Number(rowIndex), 1, 1, 9).setValues([rowVals]);
+    shDb.getRange('B' + rowIndex).setNumberFormat('@');
+    shDb.getRange('C' + rowIndex).setNumberFormat('@');
+    shDb.getRange('G' + rowIndex).setNumberFormat('#,##0');
+    shDb.getRange('H' + rowIndex).setNumberFormat('@');
+  } else {
+    shDb.appendRow(rowVals);
+    const last = shDb.getLastRow();
+    shDb.getRange('B' + last).setNumberFormat('@');
+    shDb.getRange('C' + last).setNumberFormat('@');
+    shDb.getRange('G' + last).setNumberFormat('#,##0');
+    shDb.getRange('H' + last).setNumberFormat('@');
+  }
+
+  return { success: true, message: 'Data karyawan berhasil disimpan.' };
+}
+
+function adminDeleteEmployee(pin, rowIndex) {
+  requireAdmin(pin);
+  rowIndex = Number(rowIndex);
+  if (!rowIndex || rowIndex < 2) {
+    throw new Error('Baris karyawan tidak valid.');
+  }
+  const ss = getSS();
+  const shDb = ss.getSheetByName('Database') || ss.getSheetByName('Freelancer');
+  if (!shDb) throw new Error('Sheet Database belum ditemukan.');
+  shDb.deleteRow(rowIndex);
+  return { success: true, message: 'Karyawan berhasil dihapus.' };
+}
+
+function adminGetAttendanceLogs(pin, filterDate, filterName) {
+  requireAdmin(pin);
+  const ss = getSS();
+  const shAbs = ss.getSheetByName('Absensi');
+  if (!shAbs) throw new Error('Sheet Absensi belum ditemukan.');
+
+  const rows = shAbs.getDataRange().getDisplayValues();
+  const logs = [];
+  const qDate = (filterDate || '').trim().toLowerCase();
+  const qName = (filterName || '').trim().toLowerCase();
+
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i];
+    const tgl = (r[0] || '').trim();
+    const nama = (r[1] || '').trim();
+    if (!tgl && !nama) continue;
+
+    if (qDate && !tgl.toLowerCase().includes(qDate)) {
+      continue;
+    }
+    if (qName && !nama.toLowerCase().includes(qName)) {
+      continue;
+    }
+
+    logs.push({
+      rowIndex: i + 1,
+      tanggal: tgl,
+      nama: nama,
+      masuk: (r[2] || '').trim(),
+      pulang: (r[3] || '').trim(),
+      jamKerja: (r[4] || '').trim()
+    });
+    if (logs.length >= 500) break;
+  }
+  return { success: true, logs: logs };
+}
+
+function adminSaveAttendanceManual(pin, data, isEdit, rowIndex) {
+  requireAdmin(pin);
+  if (!data || !data.nama || !data.tanggal) {
+    throw new Error('Nama dan Tanggal absensi wajib diisi.');
+  }
+  const ss = getSS();
+  const shAbs = ss.getSheetByName('Absensi');
+  if (!shAbs) throw new Error('Sheet Absensi belum ditemukan.');
+
+  let tglDate = new Date();
+  if (data.tanggal.includes('-')) {
+    const p = data.tanggal.split('-');
+    tglDate = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+  } else if (data.tanggal.includes('/')) {
+    const p = data.tanggal.split('/');
+    tglDate = new Date(Number(p[2]), Number(p[1]) - 1, Number(p[0]));
+  }
+
+  const masukStr = (data.masuk || '').trim();
+  const pulangStr = (data.pulang || '').trim();
+
+  let targetRow = Number(rowIndex);
+  if (isEdit && targetRow >= 2) {
+    shAbs.getRange(targetRow, 1).setValue(tglDate).setNumberFormat('dd/mm/yyyy');
+    shAbs.getRange(targetRow, 2).setValue(data.nama.trim());
+    shAbs.getRange(targetRow, 3).setValue(masukStr).setNumberFormat('HH.mm');
+    shAbs.getRange(targetRow, 4).setValue(pulangStr).setNumberFormat('HH.mm');
+    shAbs.getRange(targetRow, 5).setFormula(`=IF(OR(C${targetRow}="", D${targetRow}=""), "", ROUND(IF(D${targetRow} < C${targetRow}, D${targetRow} + 1 - C${targetRow}, D${targetRow} - C${targetRow}) * 24, 2))`).setNumberFormat('0.00');
+  } else {
+    shAbs.insertRowAfter(1);
+    targetRow = 2;
+    shAbs.getRange(targetRow, 1).setValue(tglDate).setNumberFormat('dd/mm/yyyy');
+    shAbs.getRange(targetRow, 2).setValue(data.nama.trim());
+    shAbs.getRange(targetRow, 3).setValue(masukStr).setNumberFormat('HH.mm');
+    shAbs.getRange(targetRow, 4).setValue(pulangStr).setNumberFormat('HH.mm');
+    shAbs.getRange(targetRow, 5).setFormula(`=IF(OR(C${targetRow}="", D${targetRow}=""), "", ROUND(IF(D${targetRow} < C${targetRow}, D${targetRow} + 1 - C${targetRow}, D${targetRow} - C${targetRow}) * 24, 2))`).setNumberFormat('0.00');
+  }
+
+  return { success: true, message: 'Data absensi berhasil disimpan.' };
+}
+
+function adminDeleteAttendance(pin, rowIndex) {
+  requireAdmin(pin);
+  rowIndex = Number(rowIndex);
+  if (!rowIndex || rowIndex < 2) {
+    throw new Error('Baris absensi tidak valid.');
+  }
+  const ss = getSS();
+  const shAbs = ss.getSheetByName('Absensi');
+  if (!shAbs) throw new Error('Sheet Absensi belum ditemukan.');
+  shAbs.deleteRow(rowIndex);
+  return { success: true, message: 'Baris absensi berhasil dihapus.' };
+}
+
+function adminGetFeeSummary(pin, monthValue, yearValue) {
+  requireAdmin(pin);
+  const ss = getSS();
+  const fee = ss.getSheetByName('Fee');
+  if (!fee) throw new Error('Sheet Fee belum ditemukan.');
+
+  if (monthValue && yearValue) {
+    fee.getRange('G1').setValue(monthValue);
+    fee.getRange('G2').setValue(Number(yearValue));
+    renderFeeSheet(fee);
+  }
+
+  const periodText = fee.getRange('A2').getDisplayValue() || 'Periode Fee';
+  const monthText = fee.getRange('G1').getDisplayValue();
+  const yearText = fee.getRange('G2').getDisplayValue();
+
+  const values = fee.getDataRange().getDisplayValues();
+  const feeList = [];
+  let totalFeeAll = 'Rp 0';
+  let totalDaysAll = 0;
+
+  for (let i = 4; i < values.length; i++) {
+    const r = values[i];
+    const noOrLabel = (r[0] || '').trim();
+    if (noOrLabel.toLowerCase() === 'jumlah') {
+      totalFeeAll = r[5] || r[6] || 'Rp 0';
+      break;
+    }
+    const nama = (r[1] || '').trim();
+    if (!nama) continue;
+
+    const days = parseInt(r[7], 10) || 0;
+    totalDaysAll += days;
+
+    feeList.push({
+      no: noOrLabel,
+      nama: nama,
+      status: r[2] || '-',
+      cabang: r[3] || 'Pusat',
+      tarif: r[4] || 'Rp 0',
+      totalFee: r[5] || 'Rp 0',
+      days: days,
+      noRekening: r[8] || '-',
+      bank: r[9] || '-'
+    });
+  }
+
+  return {
+    success: true,
+    period: periodText,
+    month: monthText,
+    year: yearText,
+    feeList: feeList,
+    totalFee: totalFeeAll,
+    totalDays: totalDaysAll
+  };
+}
+
+function adminTriggerRenderFee(pin) {
+  requireAdmin(pin);
+  const ss = getSS();
+  const fee = ss.getSheetByName('Fee');
+  if (!fee) throw new Error('Sheet Fee tidak ditemukan.');
+  renderFeeSheet(fee);
+  return { success: true, message: 'Sheet Fee berhasil dikalkulasi ulang dan disinkronkan.' };
 }

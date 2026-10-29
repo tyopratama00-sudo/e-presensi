@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Portal Admin & Data Presensi Jonas Photo - Jl. Progo No. 12, Bandung">
+  <title>Portal Admin & Data - Jonas Photo</title>
+  <base target="_top">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-main: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --bg-body: #0b1329;
+      --bg-panel: #111e38;
+      --bg-card: #162544;
+      --bg-card-hover: #1c2e54;
+      --bg-input: #0c172e;
+      --border-color: #233558;
+      --border-light: rgba(255, 255, 255, 0.08);
+      --color-primary: #3b82f6;
+      --color-primary-hover: #2563eb;
+      --color-success: #10b981;
+      --color-warning: #f59e0b;
+      --color-danger: #ef4444;
+      --color-text-main: #f8fafc;
+      --color-text-muted: #94a3b8;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg-body);
+      color: var(--color-text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      font-size: 14px;
+    }
+
+    /* Ambient Lighting */
+    .ambient-glow {
+      position: fixed;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.25;
+    }
+    .glow-1 { top: -100px; left: -100px; background: #2563eb; }
+    .glow-2 { bottom: -100px; right: -100px; background: #10b981; }
+
+    /* Top Navigation Bar */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(17, 30, 56, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .logo-img {
+      height: 32px;
+      width: auto;
+      display: block;
+    }
+    .portal-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      font-size: 12.5px;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-nav-outline {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--color-text-main);
+      border: 1px solid var(--border-color);
+    }
+    .btn-nav-outline:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: #3b82f6;
+    }
+    .btn-nav-danger {
+      background: rgba(239, 68, 68, 0.12);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    .btn-nav-danger:hover {
+      background: #ef4444;
+      color: #ffffff;
+    }
+
+    /* Main Container */
+    .admin-container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 24px 20px 40px 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Module Navigation Tabs */
+    .tab-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-panel);
+      padding: 6px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tab-bar::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      font-family: var(--font-main);
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--color-text-muted);
+      background: transparent;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .tab-btn svg { width: 17px; height: 17px; }
+    .tab-btn:hover {
+      color: var(--color-text-main);
+      background: rgba(255, 255, 255, 0.04);
+    }
+    .tab-btn.active {
+      color: #ffffff;
+      background: var(--color-primary);
+      box-shadow: 0 4px 14px -2px rgba(59, 130, 246, 0.5);
+    }
+
+    /* Tab Panes */
+    .tab-pane {
+      display: none;
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+    .tab-pane.active {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: var(--shadow-card);
+      transition: transform 0.2s;
+    }
+    .stat-card:hover { transform: translateY(-2px); }
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .stat-icon svg { width: 24px; height: 24px; }
+    .stat-icon.blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+    .stat-icon.green { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+    .stat-icon.amber { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+    .stat-icon.purple { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
+    .stat-info { display: flex; flex-direction: column; }
+    .stat-label { font-size: 12px; font-weight: 600; color: var(--color-text-muted); }
+    .stat-value { font-size: 26px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; }
+
+    /* Content Card */
+    .content-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .card-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+    .card-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .card-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+    .card-subtitle {
+      font-size: 12.5px;
+      color: var(--color-text-muted);
+    }
+    .card-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Search & Filter Toolbar */
+    .filter-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .search-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      min-width: 240px;
+    }
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      width: 16px;
+      height: 16px;
+      color: var(--color-text-muted);
+      pointer-events: none;
+    }
+    .input-field {
+      width: 100%;
+      height: 40px;
+      padding: 0 14px 0 36px;
+      font-family: var(--font-main);
+      font-size: 13px;
+      font-weight: 600;
+      color: #ffffff;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      outline: none;
+      transition: all 0.2s;
+    }
+    .input-field:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+    .select-field {
+      height: 40px;
+      padding: 0 14px;
+      font-family: var(--font-main);
+      font-size: 13px;
+      font-weight: 600;
+      color: #ffffff;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* Primary / Secondary Buttons */
+    .btn {
+      height: 40px;
+      padding: 0 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: var(--font-main);
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn svg { width: 16px; height: 16px; }
+    .btn-primary {
+      background: var(--color-primary);
+      color: #ffffff;
+    }
+    .btn-primary:hover { background: var(--color-primary-hover); transform: translateY(-1px); }
+    .btn-success {
+      background: var(--color-success);
+      color: #ffffff;
+    }
+    .btn-success:hover { background: #059669; }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--color-text-main);
+      border: 1px solid var(--border-color);
+    }
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.12); }
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    .btn-danger:hover { background: #ef4444; color: #ffffff; }
+
+    /* Tables */
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+    .data-table th {
+      background: #0d172c;
+      color: #cbd5e1;
+      font-weight: 700;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-color);
+      white-space: nowrap;
+    }
+    .data-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-color);
+      color: #e2e8f0;
+      white-space: nowrap;
+    }
+    .data-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .text-center { text-align: center; }
+    .text-right { text-align: right; }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .badge-success { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-warning { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-info { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+
+    /* Action Buttons in Tables */
+    .table-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-icon {
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-icon:hover { color: #ffffff; background: var(--color-primary); border-color: var(--color-primary); }
+    .btn-icon.delete:hover { background: var(--color-danger); border-color: var(--color-danger); }
+    .btn-icon svg { width: 15px; height: 15px; }
+
+    /* Modals */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal-box {
+      background: #13223f;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 520px;
+      box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.8);
+      overflow: hidden;
+      animation: modalScale 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes modalScale {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .modal-header {
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-title { font-size: 16px; font-weight: 800; color: #ffffff; }
+    .modal-body {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-height: 75vh;
+      overflow-y: auto;
+    }
+    .modal-footer {
+      padding: 16px 22px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      background: #0f1c34;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      text-align: left;
+    }
+    .form-group label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+    .form-group input,
+    .form-group select {
+      height: 42px;
+      padding: 0 12px;
+      font-family: var(--font-main);
+      font-size: 13.5px;
+      color: #ffffff;
+      background: var(--bg-input);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      outline: none;
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--color-primary);
+    }
+
+    /* Auth Gate PIN Screen */
+    .auth-gate {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--bg-body);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .auth-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 36px 30px;
+      width: 100%;
+      max-width: 380px;
+      text-align: center;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7);
+    }
+    .auth-icon-wrap {
+      width: 60px;
+      height: 60px;
+      border-radius: 18px;
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px auto;
+    }
+    .auth-icon-wrap svg { width: 30px; height: 30px; }
+    .auth-title { font-size: 20px; font-weight: 800; color: #ffffff; margin-bottom: 6px; }
+    .auth-desc { font-size: 12.5px; color: var(--color-text-muted); margin-bottom: 22px; }
+    .pin-input {
+      letter-spacing: 6px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: 800;
+      height: 52px;
+      margin-bottom: 18px;
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 3000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+    .toast-item {
+      pointer-events: auto;
+      padding: 12px 18px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      color: #ffffff;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+      animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .toast-item.success { background: #059669; }
+    .toast-item.error { background: #dc2626; }
+    .toast-item.info { background: #2563eb; }
+
+    /* Empty State */
+    .empty-state {
+      padding: 40px 20px;
+      text-align: center;
+      color: var(--color-text-muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .empty-state svg { width: 40px; height: 40px; opacity: 0.4; }
+
+    @media (max-width: 768px) {
+      .top-nav { padding: 12px 16px; }
+      .admin-container { padding: 16px 12px 30px 12px; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Ambient Glow -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+
+  <!-- Auth Gate: Master PIN Modal -->
+  <div id="authGate" class="auth-gate">
+    <div class="auth-card">
+      <div class="auth-icon-wrap">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        </svg>
+      </div>
+      <h1 class="auth-title">Portal Manajemen</h1>
+      <p class="auth-desc">Masukkan PIN Master Admin untuk mengakses dashboard & data presensi Jonas Photo.</p>
+      <input
+        type="password"
+        id="adminPinInput"
+        class="input-field pin-input"
+        placeholder="••••"
+        maxlength="8"
+        inputmode="numeric"
+        onkeydown="if(event.key === 'Enter') handleAdminLogin()"
+      >
+      <button type="button" class="btn btn-primary" style="width: 100%; height: 48px;" onclick="handleAdminLogin()">
+        Buka Dashboard
+      </button>
+      <div style="margin-top: 14px;">
+        <a href="?" style="color: #64748b; font-size: 12px; text-decoration: none;">&larr; Kembali ke Presensi Karyawan</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Navigation Header -->
+  <header class="top-nav">
+    <div class="brand-wrap">
+      <img src="data:image/png;base64,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" alt="Jonas Photo" class="logo-img">
+      <span class="portal-badge">PORTAL ADMIN & DATA</span>
+    </div>
+    <div class="nav-actions">
+      <a href="?" class="btn-nav btn-nav-outline" title="Buka Presensi Karyawan">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+        </svg>
+        <span>Web Presensi</span>
+      </a>
+      <button type="button" class="btn-nav btn-nav-danger" onclick="logoutAdmin()" title="Kunci / Keluar Admin">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
+        <span>Kunci</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Admin Main Workspace -->
+  <main class="admin-container">
+
+    <!-- Tab Navigation -->
+    <nav class="tab-bar" aria-label="Menu Admin">
+      <button class="tab-btn active" onclick="switchTab('dashboard')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+        </svg>
+        <span>Dashboard Hari Ini</span>
+      </button>
+
+      <button class="tab-btn" onclick="switchTab('employees')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+        <span>Database Karyawan</span>
+      </button>
+
+      <button class="tab-btn" onclick="switchTab('attendance')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>Riwayat & Koreksi Absensi</span>
+      </button>
+
+      <button class="tab-btn" onclick="switchTab('fee')">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+        <span>Rekap & Perhitungan Fee</span>
+      </button>
+    </nav>
+
+    <!-- TAB 1: DASHBOARD REAL-TIME -->
+    <section id="tab-dashboard" class="tab-pane active">
+      <!-- Metric Cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon blue">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Total Karyawan</span>
+            <span class="stat-value" id="statTotalEmployees">0</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon green">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Hadir Hari Ini</span>
+            <span class="stat-value" id="statHadirToday">0</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon amber">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Sedang Bekerja</span>
+            <span class="stat-value" id="statSedangBekerja">0</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon purple">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Sudah Pulang</span>
+            <span class="stat-value" id="statSelesai">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Monitoring Table -->
+      <div class="content-card">
+        <div class="card-header-row">
+          <div class="card-title-group">
+            <h2 class="card-title">Live Presensi Hari Ini</h2>
+            <span class="card-subtitle" id="dashboardSubtitle">Memuat data hari ini...</span>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-secondary" onclick="loadDashboardData()" title="Muat Ulang Data">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+              <span>Refresh</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table" id="todayTable">
+            <thead>
+              <tr>
+                <th class="text-center" style="width: 50px;">No</th>
+                <th>Nama Karyawan</th>
+                <th class="text-center">Tanggal</th>
+                <th class="text-center">Jam Masuk</th>
+                <th class="text-center">Jam Pulang</th>
+                <th class="text-center">Total Jam</th>
+                <th class="text-center">Status</th>
+                <th class="text-center" style="width: 80px;">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="todayTableBody">
+              <tr>
+                <td colspan="8" class="text-center" style="padding: 24px;">Memuat data kehadiran...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: DATABASE KARYAWAN -->
+    <section id="tab-employees" class="tab-pane">
+      <div class="content-card">
+        <div class="card-header-row">
+          <div class="card-title-group">
+            <h2 class="card-title">Kelola Database Karyawan</h2>
+            <span class="card-subtitle">Manajemen data master freelancer, staf, tarif, dan nomor rekening</span>
+          </div>
+          <div class="card-actions">
+            <div class="search-input-wrap">
+              <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              <input type="text" id="searchEmployeeInput" class="input-field" placeholder="Cari karyawan..." oninput="renderEmployeeTable()">
+            </div>
+            <button class="btn btn-primary" onclick="openAddEmployeeModal()">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+              <span>Tambah Karyawan</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th class="text-center" style="width: 50px;">No</th>
+                <th>Nama Lengkap</th>
+                <th>ID</th>
+                <th class="text-center">PIN</th>
+                <th>Status / Role</th>
+                <th class="text-center">Cabang</th>
+                <th>Departemen</th>
+                <th class="text-right">Tarif</th>
+                <th>No Rekening</th>
+                <th>Bank</th>
+                <th class="text-center" style="width: 90px;">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="employeeTableBody">
+              <tr>
+                <td colspan="11" class="text-center" style="padding: 24px;">Memuat data karyawan...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: RIWAYAT & KOREKSI ABSENSI -->
+    <section id="tab-attendance" class="tab-pane">
+      <div class="content-card">
+        <div class="card-header-row">
+          <div class="card-title-group">
+            <h2 class="card-title">Riwayat & Koreksi Absensi</h2>
+            <span class="card-subtitle">Pencarian log kehadiran, tambah absensi manual, dan perbaikan jam kerja</span>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-primary" onclick="openAddAttendanceModal()">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+              <span>Tambah Absen Manual</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-toolbar">
+          <div class="search-input-wrap">
+            <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+            <input type="date" id="filterAttDate" class="input-field" title="Pilih Tanggal">
+          </div>
+          <div class="search-input-wrap">
+            <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+            <input type="text" id="filterAttName" class="input-field" placeholder="Filter nama...">
+          </div>
+          <button class="btn btn-secondary" onclick="loadAttendanceLogs()">
+            Terapkan Filter
+          </button>
+          <button class="btn btn-secondary" onclick="resetAttendanceFilter()">
+            Reset
+          </button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th class="text-center" style="width: 50px;">No</th>
+                <th class="text-center">Tanggal</th>
+                <th>Nama Karyawan</th>
+                <th class="text-center">Jam Masuk</th>
+                <th class="text-center">Jam Pulang</th>
+                <th class="text-center">Jam Kerja</th>
+                <th class="text-center" style="width: 90px;">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="attendanceTableBody">
+              <tr>
+                <td colspan="7" class="text-center" style="padding: 24px;">Memuat data absensi...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: REKAPITULASI & FEE (CUT-OFF 21 - 20) -->
+    <section id="tab-fee" class="tab-pane">
+      <!-- Periode & Action Header -->
+      <div class="content-card">
+        <div class="card-header-row">
+          <div class="card-title-group">
+            <h2 class="card-title">Perhitungan Fee & Siklus Cut-Off</h2>
+            <span class="card-subtitle" id="feePeriodBanner">Periode: 21 s/d 20</span>
+          </div>
+          <div class="card-actions">
+            <select id="feeMonthSelect" class="select-field">
+              <option value="1 (Januari)">1 (Januari)</option>
+              <option value="2 (Februari)">2 (Februari)</option>
+              <option value="3 (Maret)">3 (Maret)</option>
+              <option value="4 (April)">4 (April)</option>
+              <option value="5 (Mei)">5 (Mei)</option>
+              <option value="6 (Juni)">6 (Juni)</option>
+              <option value="7 (Juli)">7 (Juli)</option>
+              <option value="8 (Agustus)">8 (Agustus)</option>
+              <option value="9 (September)">9 (September)</option>
+              <option value="10 (Oktober)">10 (Oktober)</option>
+              <option value="11 (November)">11 (November)</option>
+              <option value="12 (Desember)">12 (Desember)</option>
+            </select>
+            <input type="number" id="feeYearInput" class="input-field" style="width: 100px;" value="2026">
+            <button class="btn btn-secondary" onclick="loadFeeSummary()">
+              Terapkan Periode
+            </button>
+            <button class="btn btn-success" onclick="triggerSyncFeeSheet()">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+              <span>Sinkronkan Sheet Fee</span>
+            </button>
+            <button class="btn btn-secondary" onclick="window.print()">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+              <span>Cetak Rekap</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Stat Row -->
+        <div class="stats-grid" style="grid-template-columns: 1fr 1fr;">
+          <div class="stat-card">
+            <div class="stat-icon green">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-label">Total Pengeluaran Fee Periode Ini</span>
+              <span class="stat-value" id="feeTotalAmount">Rp 0</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon blue">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+            </div>
+            <div class="stat-info">
+              <span class="stat-label">Total Hari Kehadiran (Days)</span>
+              <span class="stat-value" id="feeTotalDays">0 Hari</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fee Summary Table -->
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th class="text-center" style="width: 50px;">No</th>
+                <th>Nama Freelancer / Karyawan</th>
+                <th>Status / Role</th>
+                <th class="text-center">Cabang</th>
+                <th class="text-right">Tarif</th>
+                <th class="text-center">Hadir (Days)</th>
+                <th class="text-right">Total Fee</th>
+                <th>No Rekening</th>
+                <th>Bank</th>
+              </tr>
+            </thead>
+            <tbody id="feeTableBody">
+              <tr>
+                <td colspan="9" class="text-center" style="padding: 24px;">Memuat perhitungan fee...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: TAMBAH / EDIT KARYAWAN -->
+  <div id="employeeModal" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="employeeModalTitle">Tambah Karyawan Baru</h3>
+        <button type="button" class="btn-icon" onclick="closeModal('employeeModal')">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+      <form id="employeeForm" onsubmit="handleSaveEmployee(event)">
+        <input type="hidden" id="empIsEdit" value="false">
+        <input type="hidden" id="empRowIndex" value="">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="empNama">Nama Lengkap *</label>
+            <input type="text" id="empNama" required placeholder="Contoh: Mikhael Yobel Saputra">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="empId">ID Pengguna *</label>
+              <input type="text" id="empId" required placeholder="Contoh: @mikhaelyobels">
+            </div>
+            <div class="form-group">
+              <label for="empPin">PIN Absensi (Angka) *</label>
+              <input type="text" id="empPin" required inputmode="numeric" placeholder="Contoh: 1111">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="empStatus">Status / Jabatan</label>
+              <input type="text" id="empStatus" placeholder="Contoh: AI Prompter">
+            </div>
+            <div class="form-group">
+              <label for="empCabang">Cabang</label>
+              <input type="text" id="empCabang" value="Pusat" placeholder="Pusat / Progo">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="empDepartemen">Departemen</label>
+              <input type="text" id="empDepartemen" placeholder="IT / Studio / Marketing">
+            </div>
+            <div class="form-group">
+              <label for="empTarif">Tarif per Hari (Rp)</label>
+              <input type="number" id="empTarif" placeholder="75000">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="empNoRekening">Nomor Rekening</label>
+              <input type="text" id="empNoRekening" placeholder="Nomor rekening">
+            </div>
+            <div class="form-group">
+              <label for="empBank">Nama Bank</label>
+              <input type="text" id="empBank" placeholder="BCA / Mandiri / BRI">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('employeeModal')">Batal</button>
+          <button type="submit" class="btn btn-primary" id="btnSaveEmployee">Simpan Karyawan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: TAMBAH / KOREKSI ABSENSI MANUAL -->
+  <div id="attendanceModal" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="attendanceModalTitle">Koreksi Absensi Manual</h3>
+        <button type="button" class="btn-icon" onclick="closeModal('attendanceModal')">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+      <form id="attendanceForm" onsubmit="handleSaveAttendance(event)">
+        <input type="hidden" id="attIsEdit" value="false">
+        <input type="hidden" id="attRowIndex" value="">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="attTanggal">Tanggal Absensi *</label>
+            <input type="date" id="attTanggal" required>
+          </div>
+          <div class="form-group">
+            <label for="attNama">Nama Karyawan *</label>
+            <input type="text" id="attNama" required placeholder="Pilih atau ketik nama karyawan">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="attMasuk">Jam Masuk (Format: HH.mm)</label>
+              <input type="text" id="attMasuk" placeholder="09.00">
+            </div>
+            <div class="form-group">
+              <label for="attPulang">Jam Pulang (Format: HH.mm)</label>
+              <input type="text" id="attPulang" placeholder="17.00">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('attendanceModal')">Batal</button>
+          <button type="submit" class="btn btn-primary" id="btnSaveAttendance">Simpan Absensi</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script>
+    // State Aplikasi Admin
+    const STORAGE_KEY_ADMIN_PIN = "jonas_admin_auth_pin";
+    let activeAdminPin = sessionStorage.getItem(STORAGE_KEY_ADMIN_PIN) || "";
+    let allEmployeesCache = [];
+    let allAttendanceCache = [];
+
+    // Inisialisasi Halaman
+    window.addEventListener("DOMContentLoaded", () => {
+      if (activeAdminPin) {
+        document.getElementById("authGate").style.display = "none";
+        initDashboard();
+      } else {
+        document.getElementById("authGate").style.display = "flex";
+        setTimeout(() => document.getElementById("adminPinInput").focus(), 200);
+      }
+    });
+
+    // Login Handler
+    function handleAdminLogin() {
+      const pin = document.getElementById("adminPinInput").value.trim();
+      if (!pin) {
+        showToast("Masukkan PIN Admin.", "error");
+        return;
+      }
+
+      showToast("Memverifikasi PIN Admin...", "info");
+      google.script.run
+        .withSuccessHandler((res) => {
+          activeAdminPin = pin;
+          sessionStorage.setItem(STORAGE_KEY_ADMIN_PIN, pin);
+          document.getElementById("authGate").style.display = "none";
+          showToast("Autentikasi berhasil. Selamat datang!", "success");
+          initDashboard();
+        })
+        .withFailureHandler((err) => {
+          showToast(err.message || "PIN salah. Akses ditolak.", "error");
+          const pinEl = document.getElementById("adminPinInput");
+          pinEl.value = "";
+          pinEl.focus();
+        })
+        .adminLogin(pin);
+    }
+
+    function logoutAdmin() {
+      sessionStorage.removeItem(STORAGE_KEY_ADMIN_PIN);
+      activeAdminPin = "";
+      document.getElementById("adminPinInput").value = "";
+      document.getElementById("authGate").style.display = "flex";
+      setTimeout(() => document.getElementById("adminPinInput").focus(), 200);
+      showToast("Sesi Admin telah dikunci.", "info");
+    }
+
+    // Tab Switcher
+    function switchTab(tabId) {
+      document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+      document.querySelectorAll(".tab-pane").forEach(pane => pane.classList.remove("active"));
+
+      const targetBtn = Array.from(document.querySelectorAll(".tab-btn")).find(b => b.getAttribute("onclick").includes(tabId));
+      if (targetBtn) targetBtn.classList.add("active");
+
+      const targetPane = document.getElementById("tab-" + tabId);
+      if (targetPane) targetPane.classList.add("active");
+
+      // Lazy load tab data
+      if (tabId === "dashboard") loadDashboardData();
+      else if (tabId === "employees") loadEmployees();
+      else if (tabId === "attendance") loadAttendanceLogs();
+      else if (tabId === "fee") loadFeeSummary();
+    }
+
+    function initDashboard() {
+      loadDashboardData();
+      // Setup default month & year on Fee Tab
+      const now = new Date();
+      let defaultMIdx = now.getMonth();
+      let defaultY = now.getFullYear();
+      if (now.getDate() >= 21) {
+        if (defaultMIdx === 11) { defaultMIdx = 0; defaultY++; }
+        else { defaultMIdx++; }
+      }
+      const selectMonth = document.getElementById("feeMonthSelect");
+      if (selectMonth) selectMonth.selectedIndex = defaultMIdx;
+      const inputYear = document.getElementById("feeYearInput");
+      if (inputYear) inputYear.value = defaultY;
+    }
+
+    // ==========================================
+    // 1. DASHBOARD CONTROLLER
+    // ==========================================
+    function loadDashboardData() {
+      const tbody = document.getElementById("todayTableBody");
+      tbody.innerHTML = '<tr><td colspan="8" class="text-center" style="padding: 24px;">Memuat data kehadiran hari ini...</td></tr>';
+
+      google.script.run
+        .withSuccessHandler((res) => {
+          if (!res || !res.success) return;
+          const stats = res.stats || {};
+          document.getElementById("statTotalEmployees").textContent = stats.totalEmployees || 0;
+          document.getElementById("statHadirToday").textContent = stats.totalHadirToday || 0;
+          document.getElementById("statSedangBekerja").textContent = stats.totalSedangBekerja || 0;
+          document.getElementById("statSelesai").textContent = stats.totalSelesai || 0;
+
+          const now = new Date();
+          const tglTeks = new Intl.DateTimeFormat("id-ID", { dateStyle: "full", timeZone: "Asia/Jakarta" }).format(now);
+          document.getElementById("dashboardSubtitle").textContent = "Pembaruan: " + tglTeks;
+
+          const list = res.todayList || [];
+          if (list.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" class="empty-state"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><span>Belum ada karyawan yang presensi hari ini.</span></td></tr>';
+            return;
+          }
+
+          let html = "";
+          list.forEach((item, idx) => {
+            const isSelesai = item.status === "Selesai";
+            const badgeClass = isSelesai ? "badge-success" : "badge-warning";
+            html += `<tr>
+              <td class="text-center font-bold">${idx + 1}</td>
+              <td class="font-bold">${escapeHtml(item.nama)}</td>
+              <td class="text-center">${escapeHtml(item.tanggal)}</td>
+              <td class="text-center font-bold" style="color: #34d399;">${escapeHtml(item.masuk)} WIB</td>
+              <td class="text-center font-bold" style="color: ${isSelesai ? '#fca5a5' : '#94a3b8'};">${item.pulang !== '-' ? escapeHtml(item.pulang) + ' WIB' : '-'}</td>
+              <td class="text-center font-bold">${escapeHtml(item.jamKerja)} jam</td>
+              <td class="text-center"><span class="badge ${badgeClass}">${item.status}</span></td>
+              <td class="text-center">
+                ${!isSelesai ? `<button class="btn btn-secondary" style="height:28px; padding:0 8px; font-size:11px;" onclick="quickPulangPrompt(${item.rowIndex}, '${escapeHtml(item.nama)}')">Pulangkan</button>` : `<span style="color:#64748b; font-size:11px;">Selesai</span>`}
+              </td>
+            </tr>`;
+          });
+          tbody.innerHTML = html;
+        })
+        .withFailureHandler((err) => {
+          showToast(err.message || "Gagal memuat dashboard.", "error");
+        })
+        .adminGetDashboardData(activeAdminPin);
+    }
+
+    function quickPulangPrompt(rowIndex, nama) {
+      const now = new Date();
+      const jamDefault = Utilities_pad(now.getHours()) + "." + Utilities_pad(now.getMinutes());
+      const jamInput = prompt(`Pulangkan manual ${nama}?\nMasukkan jam pulang (HH.mm):`, jamDefault);
+      if (jamInput) {
+        showToast("Memproses kepulangan...", "info");
+        google.script.run
+          .withSuccessHandler((res) => {
+            showToast("Berhasil memulangkan " + nama, "success");
+            loadDashboardData();
+          })
+          .withFailureHandler((err) => {
+            showToast(err.message, "error");
+          })
+          .adminSaveAttendanceManual(activeAdminPin, {
+            nama: nama,
+            tanggal: new Date().toISOString().substring(0, 10),
+            masuk: "",
+            pulang: jamInput.replace(":", ".")
+          }, true, rowIndex);
+      }
+    }
+
+    // ==========================================
+    // 2. KELOLA KARYAWAN (CRUD)
+    // ==========================================
+    function loadEmployees() {
+      const tbody = document.getElementById("employeeTableBody");
+      tbody.innerHTML = '<tr><td colspan="11" class="text-center" style="padding: 24px;">Memuat data karyawan...</td></tr>';
+
+      google.script.run
+        .withSuccessHandler((res) => {
+          if (!res || !res.success) return;
+          allEmployeesCache = res.employees || [];
+          renderEmployeeTable();
+        })
+        .withFailureHandler((err) => {
+          showToast(err.message || "Gagal memuat karyawan.", "error");
+        })
+        .adminGetEmployees(activeAdminPin);
+    }
+
+    function renderEmployeeTable() {
+      const tbody = document.getElementById("employeeTableBody");
+      const search = (document.getElementById("searchEmployeeInput").value || "").toLowerCase().trim();
+
+      const filtered = allEmployeesCache.filter(e => {
+        return (e.nama || "").toLowerCase().includes(search) ||
+               (e.id || "").toLowerCase().includes(search) ||
+               (e.status || "").toLowerCase().includes(search) ||
+               (e.departemen || "").toLowerCase().includes(search);
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="11" class="empty-state"><span>Tidak ada data karyawan ditemukan.</span></td></tr>';
+        return;
+      }
+
+      let html = "";
+      filtered.forEach((emp, idx) => {
+        html += `<tr>
+          <td class="text-center font-bold">${idx + 1}</td>
+          <td class="font-bold">${escapeHtml(emp.nama)}</td>
+          <td><span class="badge badge-info">${escapeHtml(emp.id)}</span></td>
+          <td class="text-center font-mono">${escapeHtml(emp.pin)}</td>
+          <td>${escapeHtml(emp.status || '-')}</td>
+          <td class="text-center">${escapeHtml(emp.cabang || 'Pusat')}</td>
+          <td>${escapeHtml(emp.departemen || '-')}</td>
+          <td class="text-right font-bold" style="color:#34d399;">Rp ${formatRupiah(emp.tarif)}</td>
+          <td>${escapeHtml(emp.noRekening || '-')}</td>
+          <td>${escapeHtml(emp.bank || '-')}</td>
+          <td class="text-center">
+            <div class="table-actions" style="justify-content:center;">
+              <button class="btn-icon" title="Edit Karyawan" onclick="openEditEmployeeModal(${emp.rowIndex})">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+              </button>
+              <button class="btn-icon delete" title="Hapus Karyawan" onclick="confirmDeleteEmployee(${emp.rowIndex}, '${escapeHtml(emp.nama)}')">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+              </button>
+            </div>
+          </td>
+        </tr>`;
+      });
+      tbody.innerHTML = html;
+    }
+
+    function openAddEmployeeModal() {
+      document.getElementById("employeeModalTitle").textContent = "Tambah Karyawan Baru";
+      document.getElementById("empIsEdit").value = "false";
+      document.getElementById("empRowIndex").value = "";
+      document.getElementById("employeeForm").reset();
+      document.getElementById("empCabang").value = "Pusat";
+      document.getElementById("btnSaveEmployee").textContent = "Simpan Karyawan";
+      openModal("employeeModal");
+    }
+
+    function openEditEmployeeModal(rowIndex) {
+      const emp = allEmployeesCache.find(e => e.rowIndex === rowIndex);
+      if (!emp) return;
+
+      document.getElementById("employeeModalTitle").textContent = "Edit Data Karyawan";
+      document.getElementById("empIsEdit").value = "true";
+      document.getElementById("empRowIndex").value = rowIndex;
+      document.getElementById("empNama").value = emp.nama;
+      document.getElementById("empId").value = emp.id;
+      document.getElementById("empPin").value = emp.pin;
+      document.getElementById("empStatus").value = emp.status;
+      document.getElementById("empCabang").value = emp.cabang || "Pusat";
+      document.getElementById("empDepartemen").value = emp.departemen;
+      document.getElementById("empTarif").value = String(emp.tarif || 0).replace(/[^0-9]/g, "");
+      document.getElementById("empNoRekening").value = emp.noRekening;
+      document.getElementById("empBank").value = emp.bank;
+      document.getElementById("btnSaveEmployee").textContent = "Perbarui Data";
+      openModal("employeeModal");
+    }
+
+    function handleSaveEmployee(e) {
+      e.preventDefault();
+      const isEdit = document.getElementById("empIsEdit").value === "true";
+      const rowIndex = document.getElementById("empRowIndex").value;
+      const data = {
+        nama: document.getElementById("empNama").value.trim(),
+        id: document.getElementById("empId").value.trim(),
+        pin: document.getElementById("empPin").value.trim(),
+        status: document.getElementById("empStatus").value.trim(),
+        cabang: document.getElementById("empCabang").value.trim() || "Pusat",
+        departemen: document.getElementById("empDepartemen").value.trim(),
+        tarif: document.getElementById("empTarif").value.trim() || 0,
+        noRekening: document.getElementById("empNoRekening").value.trim(),
+        bank: document.getElementById("empBank").value.trim()
+      };
+
+      showToast("Menyimpan data karyawan...", "info");
+      document.getElementById("btnSaveEmployee").disabled = true;
+
+      google.script.run
+        .withSuccessHandler((res) => {
+          document.getElementById("btnSaveEmployee").disabled = false;
+          closeModal("employeeModal");
+          showToast("Data karyawan berhasil disimpan!", "success");
+          loadEmployees();
+        })
+        .withFailureHandler((err) => {
+          document.getElementById("btnSaveEmployee").disabled = false;
+          showToast(err.message || "Gagal menyimpan karyawan.", "error");
+        })
+        .adminSaveEmployee(activeAdminPin, data, isEdit, rowIndex);
+    }
+
+    function confirmDeleteEmployee(rowIndex, nama) {
+      if (confirm(`Yakin ingin menghapus karyawan "${nama}" dari database? Data yang dihapus tidak dapat dipulihkan.`)) {
+        showToast("Menghapus karyawan...", "info");
+        google.script.run
+          .withSuccessHandler((res) => {
+            showToast("Karyawan berhasil dihapus.", "success");
+            loadEmployees();
+          })
+          .withFailureHandler((err) => {
+            showToast(err.message || "Gagal menghapus karyawan.", "error");
+          })
+          .adminDeleteEmployee(activeAdminPin, rowIndex);
+      }
+    }
+
+    // ==========================================
+    // 3. RIWAYAT & KOREKSI ABSENSI
+    // ==========================================
+    function loadAttendanceLogs() {
+      const tbody = document.getElementById("attendanceTableBody");
+      tbody.innerHTML = '<tr><td colspan="7" class="text-center" style="padding: 24px;">Memuat riwayat absensi...</td></tr>';
+
+      const filterDate = document.getElementById("filterAttDate").value;
+      const filterName = document.getElementById("filterAttName").value;
+
+      google.script.run
+        .withSuccessHandler((res) => {
+          if (!res || !res.success) return;
+          allAttendanceCache = res.logs || [];
+          renderAttendanceTable();
+        })
+        .withFailureHandler((err) => {
+          showToast(err.message || "Gagal memuat log absensi.", "error");
+        })
+        .adminGetAttendanceLogs(activeAdminPin, filterDate, filterName);
+    }
+
+    function renderAttendanceTable() {
+      const tbody = document.getElementById("attendanceTableBody");
+      if (allAttendanceCache.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><span>Tidak ada riwayat absensi yang cocok.</span></td></tr>';
+        return;
+      }
+
+      let html = "";
+      allAttendanceCache.forEach((log, idx) => {
+        html += `<tr>
+          <td class="text-center font-bold">${idx + 1}</td>
+          <td class="text-center">${escapeHtml(log.tanggal)}</td>
+          <td class="font-bold">${escapeHtml(log.nama)}</td>
+          <td class="text-center font-bold" style="color:#34d399;">${escapeHtml(log.masuk || '-')}</td>
+          <td class="text-center font-bold" style="color:#fca5a5;">${escapeHtml(log.pulang || '-')}</td>
+          <td class="text-center font-bold">${escapeHtml(log.jamKerja || '0.00')} jam</td>
+          <td class="text-center">
+            <div class="table-actions" style="justify-content:center;">
+              <button class="btn-icon" title="Koreksi Absensi" onclick="openEditAttendanceModal(${log.rowIndex})">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+              </button>
+              <button class="btn-icon delete" title="Hapus Baris Absensi" onclick="confirmDeleteAttendance(${log.rowIndex}, '${escapeHtml(log.nama)}')">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+              </button>
+            </div>
+          </td>
+        </tr>`;
+      });
+      tbody.innerHTML = html;
+    }
+
+    function resetAttendanceFilter() {
+      document.getElementById("filterAttDate").value = "";
+      document.getElementById("filterAttName").value = "";
+      loadAttendanceLogs();
+    }
+
+    function openAddAttendanceModal() {
+      document.getElementById("attendanceModalTitle").textContent = "Tambah Absensi Manual";
+      document.getElementById("attIsEdit").value = "false";
+      document.getElementById("attRowIndex").value = "";
+      document.getElementById("attendanceForm").reset();
+      document.getElementById("attTanggal").value = new Date().toISOString().substring(0, 10);
+      document.getElementById("btnSaveAttendance").textContent = "Simpan Absen";
+      openModal("attendanceModal");
+    }
+
+    function openEditAttendanceModal(rowIndex) {
+      const log = allAttendanceCache.find(l => l.rowIndex === rowIndex);
+      if (!log) return;
+
+      document.getElementById("attendanceModalTitle").textContent = "Koreksi Absensi";
+      document.getElementById("attIsEdit").value = "true";
+      document.getElementById("attRowIndex").value = rowIndex;
+      document.getElementById("attNama").value = log.nama;
+      document.getElementById("attMasuk").value = log.masuk;
+      document.getElementById("attPulang").value = log.pulang;
+
+      // Format tanggal ke YYYY-MM-DD untuk input date
+      let dateVal = log.tanggal;
+      if (dateVal.includes("/")) {
+        const p = dateVal.split("/");
+        if (p.length === 3) dateVal = `${p[2]}-${Utilities_pad(p[1])}-${Utilities_pad(p[0])}`;
+      }
+      document.getElementById("attTanggal").value = dateVal;
+      document.getElementById("btnSaveAttendance").textContent = "Perbarui Absensi";
+      openModal("attendanceModal");
+    }
+
+    function handleSaveAttendance(e) {
+      e.preventDefault();
+      const isEdit = document.getElementById("attIsEdit").value === "true";
+      const rowIndex = document.getElementById("attRowIndex").value;
+      const data = {
+        tanggal: document.getElementById("attTanggal").value,
+        nama: document.getElementById("attNama").value.trim(),
+        masuk: document.getElementById("attMasuk").value.trim(),
+        pulang: document.getElementById("attPulang").value.trim()
+      };
+
+      showToast("Menyimpan absensi...", "info");
+      document.getElementById("btnSaveAttendance").disabled = true;
+
+      google.script.run
+        .withSuccessHandler((res) => {
+          document.getElementById("btnSaveAttendance").disabled = false;
+          closeModal("attendanceModal");
+          showToast("Data absensi berhasil disimpan!", "success");
+          loadAttendanceLogs();
+        })
+        .withFailureHandler((err) => {
+          document.getElementById("btnSaveAttendance").disabled = false;
+          showToast(err.message || "Gagal menyimpan absensi.", "error");
+        })
+        .adminSaveAttendanceManual(activeAdminPin, data, isEdit, rowIndex);
+    }
+
+    function confirmDeleteAttendance(rowIndex, nama) {
+      if (confirm(`Hapus baris absensi untuk "${nama}"?`)) {
+        showToast("Menghapus baris absensi...", "info");
+        google.script.run
+          .withSuccessHandler((res) => {
+            showToast("Absensi berhasil dihapus.", "success");
+            loadAttendanceLogs();
+          })
+          .withFailureHandler((err) => {
+            showToast(err.message || "Gagal menghapus absensi.", "error");
+          })
+          .adminDeleteAttendance(activeAdminPin, rowIndex);
+      }
+    }
+
+    // ==========================================
+    // 4. REKAPITULASI & PERHITUNGAN FEE
+    // ==========================================
+    function loadFeeSummary() {
+      const tbody = document.getElementById("feeTableBody");
+      tbody.innerHTML = '<tr><td colspan="9" class="text-center" style="padding: 24px;">Memuat rekapitulasi fee...</td></tr>';
+
+      const monthVal = document.getElementById("feeMonthSelect").value;
+      const yearVal = document.getElementById("feeYearInput").value;
+
+      google.script.run
+        .withSuccessHandler((res) => {
+          if (!res || !res.success) return;
+          document.getElementById("feePeriodBanner").textContent = res.period || "Periode Cut-Off";
+          document.getElementById("feeTotalAmount").textContent = res.totalFee || "Rp 0";
+          document.getElementById("feeTotalDays").textContent = (res.totalDays || 0) + " Hari";
+
+          const list = res.feeList || [];
+          if (list.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="9" class="empty-state"><span>Belum ada data pada periode ini.</span></td></tr>';
+            return;
+          }
+
+          let html = "";
+          list.forEach(item => {
+            html += `<tr>
+              <td class="text-center font-bold">${escapeHtml(item.no)}</td>
+              <td class="font-bold">${escapeHtml(item.nama)}</td>
+              <td>${escapeHtml(item.status)}</td>
+              <td class="text-center">${escapeHtml(item.cabang)}</td>
+              <td class="text-right font-bold">${escapeHtml(item.tarif)}</td>
+              <td class="text-center font-bold" style="color:#60a5fa;">${item.days} Hari</td>
+              <td class="text-right font-bold" style="color:#34d399;">${escapeHtml(item.totalFee)}</td>
+              <td>${escapeHtml(item.noRekening)}</td>
+              <td>${escapeHtml(item.bank)}</td>
+            </tr>`;
+          });
+          tbody.innerHTML = html;
+        })
+        .withFailureHandler((err) => {
+          showToast(err.message || "Gagal memuat rekap fee.", "error");
+        })
+        .adminGetFeeSummary(activeAdminPin, monthVal, yearVal);
+    }
+
+    function triggerSyncFeeSheet() {
+      showToast("Menjalankan kalkulasi ulang Sheet Fee di Spreadsheet...", "info");
+      google.script.run
+        .withSuccessHandler((res) => {
+          showToast(res.message || "Sheet Fee berhasil disinkronkan!", "success");
+          loadFeeSummary();
+        })
+        .withFailureHandler((err) => {
+          showToast(err.message || "Gagal sinkronisasi Fee.", "error");
+        })
+        .adminTriggerRenderFee(activeAdminPin);
+    }
+
+    // Modal Helper
+    function openModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add("show");
+    }
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove("show");
+    }
+
+    // Toast Notification Helper
+    function showToast(message, type = "info") {
+      const container = document.getElementById("toastContainer");
+      const item = document.createElement("div");
+      item.className = "toast-item " + type;
+      item.textContent = message;
+      container.appendChild(item);
+      setTimeout(() => {
+        item.style.opacity = "0";
+        item.style.transform = "translateY(8px)";
+        setTimeout(() => item.remove(), 300);
+      }, 3500);
+    }
+
+    // Formatting Helpers
+    function escapeHtml(str) {
+      if (str === undefined || str === null) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function formatRupiah(num) {
+      const n = Number(String(num).replace(/[^0-9]/g, "")) || 0;
+      return n.toLocaleString("id-ID");
+    }
+
+    function Utilities_pad(num) {
+      return String(num).padStart(2, "0");
+    }
+  </script>
+</body>
+</html>
