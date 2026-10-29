@@ -532,7 +532,7 @@ function setupAbsensiHorizontal(ss) {
 
     a.getRange(5, 3, numEmp, 31).setValues(gridValues).setNumberFormat('@').setHorizontalAlignment('center');
 
-    // Data validation dropdown HANYA untuk sel non-jam (OFF, Sakit, Izin, kosong)
+    // Data validation dropdown HANYA untuk sel yang sudah lewat dan berstatus OFF, Sakit, atau Izin (kosong/jam kerja tidak diberi dropdown)
     const ruleStatus = SpreadsheetApp.newDataValidation()
       .requireValueInList(['OFF', 'Sakit', 'Izin'], true)
       .setAllowInvalid(true)
@@ -542,8 +542,8 @@ function setupAbsensiHorizontal(ss) {
       const rowValRules = [];
       for (let c = 0; c < 31; c++) {
         const v = String(gridValues[r][c] || '').trim();
-        const isHours = v && v !== 'OFF' && v !== 'Sakit' && v !== 'Izin';
-        rowValRules.push(isHours ? null : ruleStatus);
+        const hasStatus = v === 'OFF' || v === 'Sakit' || v === 'Izin';
+        rowValRules.push(hasStatus ? ruleStatus : null);
       }
       validationMatrix.push(rowValRules);
     }
@@ -898,18 +898,18 @@ function onEdit(e) {
       if (fee) renderFeeSheet(fee);
     }
 
-    // Sheet Absensi: Jika kotak kehadiran (C5:AG) diedit, otomatis hilangkan dropdown jika terisi jam kerja
+    // Sheet Absensi: Jika kotak kehadiran (C5:AG) diedit, hanya beri dropdown jika status OFF, Sakit, atau Izin (jika jam kerja atau kosong, hapus dropdown)
     if (sheetName === 'Absensi' && row >= 5 && col >= 3 && col <= 33) {
       const val = String(e.range.getValue() || '').trim();
-      const isHours = val && val !== 'OFF' && val !== 'Sakit' && val !== 'Izin';
-      if (isHours) {
-        e.range.clearDataValidations();
-      } else {
+      const hasStatus = val === 'OFF' || val === 'Sakit' || val === 'Izin';
+      if (hasStatus) {
         const ruleStatus = SpreadsheetApp.newDataValidation()
           .requireValueInList(['OFF', 'Sakit', 'Izin'], true)
           .setAllowInvalid(true)
           .build();
         e.range.setDataValidation(ruleStatus);
+      } else {
+        e.range.clearDataValidations();
       }
     }
 

@@ -7280,7 +7280,6 @@
             }
            ]
           },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
           "showCustomUi": true
          }
         },
@@ -7380,7 +7379,6 @@
             }
            ]
           },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
           "showCustomUi": true
          }
         },
@@ -7792,24 +7790,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -7892,24 +7872,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -7992,24 +7954,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -8092,24 +8036,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -8192,24 +8118,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -8292,24 +8200,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -8392,24 +8282,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -8492,24 +8364,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -8592,24 +8446,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -8692,24 +8528,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -8792,24 +8610,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -8892,24 +8692,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -8992,24 +8774,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -9092,24 +8856,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -9192,24 +8938,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -9292,24 +9020,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -9392,24 +9102,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -9492,24 +9184,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -9592,24 +9266,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -9692,24 +9348,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -9792,24 +9430,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -9892,24 +9512,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -10665,123 +10267,6 @@
             }
            ]
           },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
-         }
-        },
-        {
-         "userEnteredFormat": {
-          "numberFormat": {
-           "type": "TEXT",
-           "pattern": "@"
-          },
-          "backgroundColor": {
-           "red": 1,
-           "green": 1,
-           "blue": 1
-          },
-          "borders": {
-           "top": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "bottom": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "left": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "right": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           }
-          },
-          "horizontalAlignment": "CENTER",
-          "verticalAlignment": "MIDDLE",
-          "textFormat": {
-           "fontFamily": "Arial",
-           "fontSize": 9
-          },
-          "backgroundColorStyle": {
-           "rgbColor": {
-            "red": 1,
-            "green": 1,
-            "blue": 1
-           }
-          }
-         },
-         "effectiveFormat": {
-          "numberFormat": {
-           "type": "TEXT",
-           "pattern": "@"
-          }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
           "showCustomUi": true
          }
         },
@@ -10996,300 +10481,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         }
-        },
-        {
-         "userEnteredFormat": {
-          "numberFormat": {
-           "type": "TEXT",
-           "pattern": "@"
-          },
-          "backgroundColor": {
-           "red": 1,
-           "green": 1,
-           "blue": 1
-          },
-          "borders": {
-           "top": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "bottom": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "left": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "right": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           }
-          },
-          "horizontalAlignment": "CENTER",
-          "verticalAlignment": "MIDDLE",
-          "textFormat": {
-           "fontFamily": "Arial",
-           "fontSize": 9
-          },
-          "backgroundColorStyle": {
-           "rgbColor": {
-            "red": 1,
-            "green": 1,
-            "blue": 1
-           }
-          }
-         },
-         "effectiveFormat": {
-          "numberFormat": {
-           "type": "TEXT",
-           "pattern": "@"
-          }
-         }
-        },
-        {
-         "userEnteredFormat": {
-          "numberFormat": {
-           "type": "TEXT",
-           "pattern": "@"
-          },
-          "backgroundColor": {
-           "red": 1,
-           "green": 1,
-           "blue": 1
-          },
-          "borders": {
-           "top": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "bottom": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "left": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "right": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           }
-          },
-          "horizontalAlignment": "CENTER",
-          "verticalAlignment": "MIDDLE",
-          "textFormat": {
-           "fontFamily": "Arial",
-           "fontSize": 9
-          },
-          "backgroundColorStyle": {
-           "rgbColor": {
-            "red": 1,
-            "green": 1,
-            "blue": 1
-           }
-          }
-         },
-         "effectiveFormat": {
-          "numberFormat": {
-           "type": "TEXT",
-           "pattern": "@"
-          }
-         }
-        },
-        {
-         "userEnteredFormat": {
-          "numberFormat": {
-           "type": "TEXT",
-           "pattern": "@"
-          },
-          "backgroundColor": {
-           "red": 1,
-           "green": 1,
-           "blue": 1
-          },
-          "borders": {
-           "top": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "bottom": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "left": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "right": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           }
-          },
-          "horizontalAlignment": "CENTER",
-          "verticalAlignment": "MIDDLE",
-          "textFormat": {
-           "fontFamily": "Arial",
-           "fontSize": 9
-          },
-          "backgroundColorStyle": {
-           "rgbColor": {
-            "red": 1,
-            "green": 1,
-            "blue": 1
-           }
-          }
-         },
-         "effectiveFormat": {
-          "numberFormat": {
-           "type": "TEXT",
-           "pattern": "@"
-          }
          },
          "dataValidation": {
           "condition": {
@@ -11306,7 +10497,6 @@
             }
            ]
           },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
           "showCustomUi": true
          }
         },
@@ -11406,24 +10596,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -11522,24 +10694,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -11638,24 +10792,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -11754,24 +10890,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -11870,24 +10988,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -11986,24 +11086,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -12102,24 +11184,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -12218,24 +11282,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -12334,24 +11380,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -12450,24 +11478,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -12566,24 +11576,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -12682,24 +11674,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -12798,24 +11772,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -12914,24 +11870,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -13030,24 +11968,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -13146,24 +12066,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -13262,24 +12164,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -13378,24 +12262,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -13494,24 +12360,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -13610,24 +12458,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -13726,24 +12556,398 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
+         }
+        },
+        {
+         "userEnteredFormat": {
+          "numberFormat": {
+           "type": "TEXT",
+           "pattern": "@"
           },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
+          "backgroundColor": {
+           "red": 1,
+           "green": 1,
+           "blue": 1
+          },
+          "borders": {
+           "top": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "bottom": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "left": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "right": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           }
+          },
+          "horizontalAlignment": "CENTER",
+          "verticalAlignment": "MIDDLE",
+          "textFormat": {
+           "fontFamily": "Arial",
+           "fontSize": 9
+          },
+          "backgroundColorStyle": {
+           "rgbColor": {
+            "red": 1,
+            "green": 1,
+            "blue": 1
+           }
+          }
+         },
+         "effectiveFormat": {
+          "numberFormat": {
+           "type": "TEXT",
+           "pattern": "@"
+          }
+         }
+        },
+        {
+         "userEnteredFormat": {
+          "numberFormat": {
+           "type": "TEXT",
+           "pattern": "@"
+          },
+          "backgroundColor": {
+           "red": 1,
+           "green": 1,
+           "blue": 1
+          },
+          "borders": {
+           "top": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "bottom": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "left": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "right": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           }
+          },
+          "horizontalAlignment": "CENTER",
+          "verticalAlignment": "MIDDLE",
+          "textFormat": {
+           "fontFamily": "Arial",
+           "fontSize": 9
+          },
+          "backgroundColorStyle": {
+           "rgbColor": {
+            "red": 1,
+            "green": 1,
+            "blue": 1
+           }
+          }
+         },
+         "effectiveFormat": {
+          "numberFormat": {
+           "type": "TEXT",
+           "pattern": "@"
+          }
+         }
+        },
+        {
+         "userEnteredFormat": {
+          "numberFormat": {
+           "type": "TEXT",
+           "pattern": "@"
+          },
+          "backgroundColor": {
+           "red": 1,
+           "green": 1,
+           "blue": 1
+          },
+          "borders": {
+           "top": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "bottom": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "left": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "right": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           }
+          },
+          "horizontalAlignment": "CENTER",
+          "verticalAlignment": "MIDDLE",
+          "textFormat": {
+           "fontFamily": "Arial",
+           "fontSize": 9
+          },
+          "backgroundColorStyle": {
+           "rgbColor": {
+            "red": 1,
+            "green": 1,
+            "blue": 1
+           }
+          }
+         },
+         "effectiveFormat": {
+          "numberFormat": {
+           "type": "TEXT",
+           "pattern": "@"
+          }
+         }
+        },
+        {
+         "userEnteredFormat": {
+          "numberFormat": {
+           "type": "TEXT",
+           "pattern": "@"
+          },
+          "backgroundColor": {
+           "red": 1,
+           "green": 1,
+           "blue": 1
+          },
+          "borders": {
+           "top": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "bottom": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "left": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "right": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           }
+          },
+          "horizontalAlignment": "CENTER",
+          "verticalAlignment": "MIDDLE",
+          "textFormat": {
+           "fontFamily": "Arial",
+           "fontSize": 9
+          },
+          "backgroundColorStyle": {
+           "rgbColor": {
+            "red": 1,
+            "green": 1,
+            "blue": 1
+           }
+          }
+         },
+         "effectiveFormat": {
+          "numberFormat": {
+           "type": "TEXT",
+           "pattern": "@"
+          }
          }
         },
         {
@@ -14197,7 +13401,6 @@
             }
            ]
           },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
           "showCustomUi": true
          }
         },
@@ -14435,7 +13638,6 @@
             }
            ]
           },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
           "showCustomUi": true
          }
         },
@@ -14551,7 +13753,6 @@
             }
            ]
           },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
           "showCustomUi": true
          }
         },
@@ -14667,320 +13868,7 @@
             }
            ]
           },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
           "showCustomUi": true
-         }
-        },
-        {
-         "userEnteredFormat": {
-          "numberFormat": {
-           "type": "TEXT",
-           "pattern": "@"
-          },
-          "backgroundColor": {
-           "red": 1,
-           "green": 1,
-           "blue": 1
-          },
-          "borders": {
-           "top": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "bottom": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "left": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "right": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           }
-          },
-          "horizontalAlignment": "CENTER",
-          "verticalAlignment": "MIDDLE",
-          "textFormat": {
-           "fontFamily": "Arial",
-           "fontSize": 9
-          },
-          "backgroundColorStyle": {
-           "rgbColor": {
-            "red": 1,
-            "green": 1,
-            "blue": 1
-           }
-          }
-         },
-         "effectiveFormat": {
-          "numberFormat": {
-           "type": "TEXT",
-           "pattern": "@"
-          }
-         }
-        },
-        {
-         "userEnteredFormat": {
-          "numberFormat": {
-           "type": "TEXT",
-           "pattern": "@"
-          },
-          "backgroundColor": {
-           "red": 1,
-           "green": 1,
-           "blue": 1
-          },
-          "borders": {
-           "top": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "bottom": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "left": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "right": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           }
-          },
-          "horizontalAlignment": "CENTER",
-          "verticalAlignment": "MIDDLE",
-          "textFormat": {
-           "fontFamily": "Arial",
-           "fontSize": 9
-          },
-          "backgroundColorStyle": {
-           "rgbColor": {
-            "red": 1,
-            "green": 1,
-            "blue": 1
-           }
-          }
-         },
-         "effectiveFormat": {
-          "numberFormat": {
-           "type": "TEXT",
-           "pattern": "@"
-          }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
-         }
-        },
-        {
-         "userEnteredFormat": {
-          "numberFormat": {
-           "type": "TEXT",
-           "pattern": "@"
-          },
-          "backgroundColor": {
-           "red": 1,
-           "green": 1,
-           "blue": 1
-          },
-          "borders": {
-           "top": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "bottom": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "left": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "right": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           }
-          },
-          "horizontalAlignment": "CENTER",
-          "verticalAlignment": "MIDDLE",
-          "textFormat": {
-           "fontFamily": "Arial",
-           "fontSize": 9
-          },
-          "backgroundColorStyle": {
-           "rgbColor": {
-            "red": 1,
-            "green": 1,
-            "blue": 1
-           }
-          }
-         },
-         "effectiveFormat": {
-          "numberFormat": {
-           "type": "TEXT",
-           "pattern": "@"
-          }
          }
         },
         {
@@ -15193,7 +14081,6 @@
             }
            ]
           },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
           "showCustomUi": true
          }
         },
@@ -15293,24 +14180,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -15409,24 +14278,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -15525,24 +14376,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -15641,24 +14474,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -15757,24 +14572,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -15873,24 +14670,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -15989,24 +14768,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -16105,24 +14866,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -16221,24 +14964,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -16337,24 +15062,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -16453,24 +15160,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -16569,24 +15258,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -16685,24 +15356,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -16801,24 +15454,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -16917,24 +15552,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -17033,24 +15650,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -17149,24 +15748,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -17265,24 +15846,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -17381,24 +15944,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -17497,24 +16042,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -17613,24 +16140,300 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
+         }
+        },
+        {
+         "userEnteredFormat": {
+          "numberFormat": {
+           "type": "TEXT",
+           "pattern": "@"
           },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
+          "backgroundColor": {
+           "red": 1,
+           "green": 1,
+           "blue": 1
+          },
+          "borders": {
+           "top": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "bottom": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "left": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "right": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           }
+          },
+          "horizontalAlignment": "CENTER",
+          "verticalAlignment": "MIDDLE",
+          "textFormat": {
+           "fontFamily": "Arial",
+           "fontSize": 9
+          },
+          "backgroundColorStyle": {
+           "rgbColor": {
+            "red": 1,
+            "green": 1,
+            "blue": 1
+           }
+          }
+         },
+         "effectiveFormat": {
+          "numberFormat": {
+           "type": "TEXT",
+           "pattern": "@"
+          }
+         }
+        },
+        {
+         "userEnteredFormat": {
+          "numberFormat": {
+           "type": "TEXT",
+           "pattern": "@"
+          },
+          "backgroundColor": {
+           "red": 1,
+           "green": 1,
+           "blue": 1
+          },
+          "borders": {
+           "top": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "bottom": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "left": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "right": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           }
+          },
+          "horizontalAlignment": "CENTER",
+          "verticalAlignment": "MIDDLE",
+          "textFormat": {
+           "fontFamily": "Arial",
+           "fontSize": 9
+          },
+          "backgroundColorStyle": {
+           "rgbColor": {
+            "red": 1,
+            "green": 1,
+            "blue": 1
+           }
+          }
+         },
+         "effectiveFormat": {
+          "numberFormat": {
+           "type": "TEXT",
+           "pattern": "@"
+          }
+         }
+        },
+        {
+         "userEnteredFormat": {
+          "numberFormat": {
+           "type": "TEXT",
+           "pattern": "@"
+          },
+          "backgroundColor": {
+           "red": 1,
+           "green": 1,
+           "blue": 1
+          },
+          "borders": {
+           "top": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "bottom": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "left": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "right": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           }
+          },
+          "horizontalAlignment": "CENTER",
+          "verticalAlignment": "MIDDLE",
+          "textFormat": {
+           "fontFamily": "Arial",
+           "fontSize": 9
+          },
+          "backgroundColorStyle": {
+           "rgbColor": {
+            "red": 1,
+            "green": 1,
+            "blue": 1
+           }
+          }
+         },
+         "effectiveFormat": {
+          "numberFormat": {
+           "type": "TEXT",
+           "pattern": "@"
+          }
          }
         },
         {
@@ -18085,7 +16888,6 @@
             }
            ]
           },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
           "showCustomUi": true
          }
         },
@@ -18214,7 +17016,6 @@
             }
            ]
           },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
           "showCustomUi": true
          }
         },
@@ -18343,587 +17144,6 @@
             }
            ]
           },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
-         }
-        },
-        {
-         "userEnteredFormat": {
-          "numberFormat": {
-           "type": "TEXT",
-           "pattern": "@"
-          },
-          "backgroundColor": {
-           "red": 1,
-           "green": 1,
-           "blue": 1
-          },
-          "borders": {
-           "top": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "bottom": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "left": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "right": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           }
-          },
-          "horizontalAlignment": "CENTER",
-          "verticalAlignment": "MIDDLE",
-          "textFormat": {
-           "fontFamily": "Arial",
-           "fontSize": 9
-          },
-          "backgroundColorStyle": {
-           "rgbColor": {
-            "red": 1,
-            "green": 1,
-            "blue": 1
-           }
-          }
-         },
-         "effectiveFormat": {
-          "numberFormat": {
-           "type": "TEXT",
-           "pattern": "@"
-          }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
-         }
-        },
-        {
-         "userEnteredFormat": {
-          "numberFormat": {
-           "type": "TEXT",
-           "pattern": "@"
-          },
-          "backgroundColor": {
-           "red": 1,
-           "green": 1,
-           "blue": 1
-          },
-          "borders": {
-           "top": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "bottom": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "left": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "right": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           }
-          },
-          "horizontalAlignment": "CENTER",
-          "verticalAlignment": "MIDDLE",
-          "textFormat": {
-           "fontFamily": "Arial",
-           "fontSize": 9
-          },
-          "backgroundColorStyle": {
-           "rgbColor": {
-            "red": 1,
-            "green": 1,
-            "blue": 1
-           }
-          }
-         },
-         "effectiveFormat": {
-          "numberFormat": {
-           "type": "TEXT",
-           "pattern": "@"
-          }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
-         }
-        },
-        {
-         "userEnteredFormat": {
-          "numberFormat": {
-           "type": "TEXT",
-           "pattern": "@"
-          },
-          "backgroundColor": {
-           "red": 1,
-           "green": 1,
-           "blue": 1
-          },
-          "borders": {
-           "top": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "bottom": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "left": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "right": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           }
-          },
-          "horizontalAlignment": "CENTER",
-          "verticalAlignment": "MIDDLE",
-          "textFormat": {
-           "fontFamily": "Arial",
-           "fontSize": 9
-          },
-          "backgroundColorStyle": {
-           "rgbColor": {
-            "red": 1,
-            "green": 1,
-            "blue": 1
-           }
-          }
-         },
-         "effectiveFormat": {
-          "numberFormat": {
-           "type": "TEXT",
-           "pattern": "@"
-          }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
-         }
-        },
-        {
-         "userEnteredFormat": {
-          "numberFormat": {
-           "type": "TEXT",
-           "pattern": "@"
-          },
-          "backgroundColor": {
-           "red": 1,
-           "green": 1,
-           "blue": 1
-          },
-          "borders": {
-           "top": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "bottom": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "left": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "right": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           }
-          },
-          "horizontalAlignment": "CENTER",
-          "verticalAlignment": "MIDDLE",
-          "textFormat": {
-           "fontFamily": "Arial",
-           "fontSize": 9
-          },
-          "backgroundColorStyle": {
-           "rgbColor": {
-            "red": 1,
-            "green": 1,
-            "blue": 1
-           }
-          }
-         },
-         "effectiveFormat": {
-          "numberFormat": {
-           "type": "TEXT",
-           "pattern": "@"
-          }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
-         }
-        },
-        {
-         "userEnteredFormat": {
-          "numberFormat": {
-           "type": "TEXT",
-           "pattern": "@"
-          },
-          "backgroundColor": {
-           "red": 1,
-           "green": 1,
-           "blue": 1
-          },
-          "borders": {
-           "top": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "bottom": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "left": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "right": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           }
-          },
-          "horizontalAlignment": "CENTER",
-          "verticalAlignment": "MIDDLE",
-          "textFormat": {
-           "fontFamily": "Arial",
-           "fontSize": 9
-          },
-          "backgroundColorStyle": {
-           "rgbColor": {
-            "red": 1,
-            "green": 1,
-            "blue": 1
-           }
-          }
-         },
-         "effectiveFormat": {
-          "numberFormat": {
-           "type": "TEXT",
-           "pattern": "@"
-          }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
           "showCustomUi": true
          }
         },
@@ -19154,7 +17374,6 @@
             }
            ]
           },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
           "showCustomUi": true
          }
         },
@@ -19270,7 +17489,6 @@
             }
            ]
           },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
           "showCustomUi": true
          }
         },
@@ -19386,7 +17604,6 @@
             }
            ]
           },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
           "showCustomUi": true
          }
         },
@@ -19502,7 +17719,6 @@
             }
            ]
           },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
           "showCustomUi": true
          }
         },
@@ -19618,7 +17834,6 @@
             }
            ]
           },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
           "showCustomUi": true
          }
         },
@@ -19718,24 +17933,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -19834,24 +18031,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -19950,24 +18129,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -20066,24 +18227,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -20182,24 +18325,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -20298,24 +18423,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -20414,24 +18521,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -20530,24 +18619,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -20646,24 +18717,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -20762,24 +18815,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -20878,24 +18913,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -20994,24 +19011,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -21110,24 +19109,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -21226,24 +19207,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -21342,24 +19305,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -21458,24 +19403,6 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
-          },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
          }
         },
         {
@@ -21574,24 +19501,496 @@
            "type": "TEXT",
            "pattern": "@"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "OFF"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Izin"
-            }
-           ]
+         }
+        },
+        {
+         "userEnteredFormat": {
+          "numberFormat": {
+           "type": "TEXT",
+           "pattern": "@"
           },
-          "inputMessage": "Pilih status (OFF, Sakit, Izin) atau masukkan jam kerja.",
-          "showCustomUi": true
+          "backgroundColor": {
+           "red": 1,
+           "green": 1,
+           "blue": 1
+          },
+          "borders": {
+           "top": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "bottom": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "left": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "right": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           }
+          },
+          "horizontalAlignment": "CENTER",
+          "verticalAlignment": "MIDDLE",
+          "textFormat": {
+           "fontFamily": "Arial",
+           "fontSize": 9
+          },
+          "backgroundColorStyle": {
+           "rgbColor": {
+            "red": 1,
+            "green": 1,
+            "blue": 1
+           }
+          }
+         },
+         "effectiveFormat": {
+          "numberFormat": {
+           "type": "TEXT",
+           "pattern": "@"
+          }
+         }
+        },
+        {
+         "userEnteredFormat": {
+          "numberFormat": {
+           "type": "TEXT",
+           "pattern": "@"
+          },
+          "backgroundColor": {
+           "red": 1,
+           "green": 1,
+           "blue": 1
+          },
+          "borders": {
+           "top": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "bottom": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "left": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "right": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           }
+          },
+          "horizontalAlignment": "CENTER",
+          "verticalAlignment": "MIDDLE",
+          "textFormat": {
+           "fontFamily": "Arial",
+           "fontSize": 9
+          },
+          "backgroundColorStyle": {
+           "rgbColor": {
+            "red": 1,
+            "green": 1,
+            "blue": 1
+           }
+          }
+         },
+         "effectiveFormat": {
+          "numberFormat": {
+           "type": "TEXT",
+           "pattern": "@"
+          }
+         }
+        },
+        {
+         "userEnteredFormat": {
+          "numberFormat": {
+           "type": "TEXT",
+           "pattern": "@"
+          },
+          "backgroundColor": {
+           "red": 1,
+           "green": 1,
+           "blue": 1
+          },
+          "borders": {
+           "top": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "bottom": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "left": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "right": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           }
+          },
+          "horizontalAlignment": "CENTER",
+          "verticalAlignment": "MIDDLE",
+          "textFormat": {
+           "fontFamily": "Arial",
+           "fontSize": 9
+          },
+          "backgroundColorStyle": {
+           "rgbColor": {
+            "red": 1,
+            "green": 1,
+            "blue": 1
+           }
+          }
+         },
+         "effectiveFormat": {
+          "numberFormat": {
+           "type": "TEXT",
+           "pattern": "@"
+          }
+         }
+        },
+        {
+         "userEnteredFormat": {
+          "numberFormat": {
+           "type": "TEXT",
+           "pattern": "@"
+          },
+          "backgroundColor": {
+           "red": 1,
+           "green": 1,
+           "blue": 1
+          },
+          "borders": {
+           "top": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "bottom": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "left": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "right": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           }
+          },
+          "horizontalAlignment": "CENTER",
+          "verticalAlignment": "MIDDLE",
+          "textFormat": {
+           "fontFamily": "Arial",
+           "fontSize": 9
+          },
+          "backgroundColorStyle": {
+           "rgbColor": {
+            "red": 1,
+            "green": 1,
+            "blue": 1
+           }
+          }
+         },
+         "effectiveFormat": {
+          "numberFormat": {
+           "type": "TEXT",
+           "pattern": "@"
+          }
+         }
+        },
+        {
+         "userEnteredFormat": {
+          "numberFormat": {
+           "type": "TEXT",
+           "pattern": "@"
+          },
+          "backgroundColor": {
+           "red": 1,
+           "green": 1,
+           "blue": 1
+          },
+          "borders": {
+           "top": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "bottom": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "left": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           },
+           "right": {
+            "style": "SOLID",
+            "width": 1,
+            "color": {
+             "red": 0.79607844,
+             "green": 0.8352941,
+             "blue": 0.88235295
+            },
+            "colorStyle": {
+             "rgbColor": {
+              "red": 0.79607844,
+              "green": 0.8352941,
+              "blue": 0.88235295
+             }
+            }
+           }
+          },
+          "horizontalAlignment": "CENTER",
+          "verticalAlignment": "MIDDLE",
+          "textFormat": {
+           "fontFamily": "Arial",
+           "fontSize": 9
+          },
+          "backgroundColorStyle": {
+           "rgbColor": {
+            "red": 1,
+            "green": 1,
+            "blue": 1
+           }
+          }
+         },
+         "effectiveFormat": {
+          "numberFormat": {
+           "type": "TEXT",
+           "pattern": "@"
+          }
          }
         },
         {
@@ -22216,7 +20615,7 @@
     "index": 1,
     "sheetType": "GRID",
     "gridProperties": {
-     "rowCount": 991,
+     "rowCount": 988,
      "columnCount": 44,
      "hideGridlines": true
     }
@@ -22343,65 +20742,25 @@
            "top": {
             "style": "SOLID",
             "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
+            "color": {},
             "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
+             "rgbColor": {}
             }
            },
            "bottom": {
             "style": "SOLID",
             "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
+            "color": {},
             "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
+             "rgbColor": {}
             }
            },
            "left": {
             "style": "SOLID",
             "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
+            "color": {},
             "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "right": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
+             "rgbColor": {}
             }
            }
           },
@@ -22444,65 +20803,17 @@
            "top": {
             "style": "SOLID",
             "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
+            "color": {},
             "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
+             "rgbColor": {}
             }
            },
            "bottom": {
             "style": "SOLID",
             "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
+            "color": {},
             "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "left": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "right": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
+             "rgbColor": {}
             }
            }
           },
@@ -22575,6 +20886,7 @@
             }
            ]
           },
+          "strict": true,
           "showCustomUi": true
          }
         },
@@ -22589,65 +20901,17 @@
            "top": {
             "style": "SOLID",
             "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
+            "color": {},
             "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
+             "rgbColor": {}
             }
            },
            "bottom": {
             "style": "SOLID",
             "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
+            "color": {},
             "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "left": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "right": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
+             "rgbColor": {}
             }
            }
           },
@@ -22726,6 +20990,10 @@
         },
         {
          "userEnteredFormat": {
+          "numberFormat": {
+           "type": "NUMBER",
+           "pattern": "0"
+          },
           "backgroundColor": {
            "red": 1,
            "green": 1,
@@ -22735,65 +21003,25 @@
            "top": {
             "style": "SOLID",
             "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
+            "color": {},
             "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
+             "rgbColor": {}
             }
            },
            "bottom": {
             "style": "SOLID",
             "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
+            "color": {},
             "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
-            }
-           },
-           "left": {
-            "style": "SOLID",
-            "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
-            "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
+             "rgbColor": {}
             }
            },
            "right": {
             "style": "SOLID",
             "width": 1,
-            "color": {
-             "red": 0.79607844,
-             "green": 0.8352941,
-             "blue": 0.88235295
-            },
+            "color": {},
             "colorStyle": {
-             "rgbColor": {
-              "red": 0.79607844,
-              "green": 0.8352941,
-              "blue": 0.88235295
-             }
+             "rgbColor": {}
             }
            }
           },
@@ -22822,6 +21050,12 @@
             "green": 1,
             "blue": 1
            }
+          }
+         },
+         "effectiveFormat": {
+          "numberFormat": {
+           "type": "NUMBER",
+           "pattern": "0"
           }
          }
         },
@@ -31833,32 +30067,6 @@
            "type": "DATE",
            "pattern": "dd/mm"
           }
-         },
-         "dataValidation": {
-          "condition": {
-           "type": "ONE_OF_LIST",
-           "values": [
-            {
-             "userEnteredValue": "Hadir"
-            },
-            {
-             "userEnteredValue": "WFH"
-            },
-            {
-             "userEnteredValue": "Izin"
-            },
-            {
-             "userEnteredValue": "Sakit"
-            },
-            {
-             "userEnteredValue": "Alpa"
-            },
-            {
-             "userEnteredValue": "OFF"
-            }
-           ]
-          },
-          "strict": true
          }
         }
        ]
@@ -36295,8 +34503,8 @@
         {
          "userEnteredFormat": {
           "numberFormat": {
-           "type": "NUMBER",
-           "pattern": "#,##0"
+           "type": "DATE",
+           "pattern": "dd/mm"
           },
           "backgroundColor": {
            "red": 1,
@@ -36398,8 +34606,8 @@
          },
          "effectiveFormat": {
           "numberFormat": {
-           "type": "NUMBER",
-           "pattern": "#,##0"
+           "type": "DATE",
+           "pattern": "dd/mm"
           }
          }
         },
@@ -40407,10 +38615,6 @@
         },
         {
          "userEnteredFormat": {
-          "numberFormat": {
-           "type": "NUMBER",
-           "pattern": "#,##0"
-          },
           "backgroundColor": {
            "red": 1,
            "green": 1,
@@ -40482,7 +38686,6 @@
             }
            }
           },
-          "horizontalAlignment": "CENTER",
           "verticalAlignment": "MIDDLE",
           "textFormat": {
            "foregroundColor": {
@@ -40507,12 +38710,6 @@
             "green": 1,
             "blue": 1
            }
-          }
-         },
-         "effectiveFormat": {
-          "numberFormat": {
-           "type": "NUMBER",
-           "pattern": "#,##0"
           }
          }
         },
@@ -47317,10 +45514,6 @@
         },
         {
          "userEnteredFormat": {
-          "numberFormat": {
-           "type": "NUMBER",
-           "pattern": "0"
-          },
           "backgroundColor": {
            "red": 0.9411765,
            "green": 0.95686275,
@@ -47416,12 +45609,6 @@
             "green": 0.95686275,
             "blue": 0.972549
            }
-          }
-         },
-         "effectiveFormat": {
-          "numberFormat": {
-           "type": "NUMBER",
-           "pattern": "0"
           }
          }
         },
@@ -51211,6 +49398,182 @@
            "green": 1,
            "blue": 1
           },
+          "horizontalAlignment": "CENTER",
+          "verticalAlignment": "MIDDLE",
+          "textFormat": {
+           "foregroundColor": {
+            "red": 0.047058824,
+            "green": 0.09803922,
+            "blue": 0.14901961
+           },
+           "fontFamily": "Arial",
+           "fontSize": 10,
+           "bold": false,
+           "foregroundColorStyle": {
+            "rgbColor": {
+             "red": 0.047058824,
+             "green": 0.09803922,
+             "blue": 0.14901961
+            }
+           }
+          },
+          "backgroundColorStyle": {
+           "rgbColor": {
+            "red": 1,
+            "green": 1,
+            "blue": 1
+           }
+          }
+         }
+        },
+        {
+         "userEnteredFormat": {
+          "backgroundColor": {
+           "red": 1,
+           "green": 1,
+           "blue": 1
+          },
+          "horizontalAlignment": "CENTER",
+          "verticalAlignment": "MIDDLE",
+          "textFormat": {
+           "foregroundColor": {
+            "red": 0.047058824,
+            "green": 0.09803922,
+            "blue": 0.14901961
+           },
+           "fontFamily": "Arial",
+           "fontSize": 10,
+           "bold": false,
+           "foregroundColorStyle": {
+            "rgbColor": {
+             "red": 0.047058824,
+             "green": 0.09803922,
+             "blue": 0.14901961
+            }
+           }
+          },
+          "backgroundColorStyle": {
+           "rgbColor": {
+            "red": 1,
+            "green": 1,
+            "blue": 1
+           }
+          }
+         }
+        },
+        {
+         "userEnteredFormat": {
+          "backgroundColor": {
+           "red": 1,
+           "green": 1,
+           "blue": 1
+          },
+          "horizontalAlignment": "CENTER",
+          "verticalAlignment": "MIDDLE",
+          "textFormat": {
+           "foregroundColor": {
+            "red": 0.047058824,
+            "green": 0.09803922,
+            "blue": 0.14901961
+           },
+           "fontFamily": "Arial",
+           "fontSize": 10,
+           "bold": false,
+           "foregroundColorStyle": {
+            "rgbColor": {
+             "red": 0.047058824,
+             "green": 0.09803922,
+             "blue": 0.14901961
+            }
+           }
+          },
+          "backgroundColorStyle": {
+           "rgbColor": {
+            "red": 1,
+            "green": 1,
+            "blue": 1
+           }
+          }
+         }
+        },
+        {
+         "userEnteredFormat": {
+          "backgroundColor": {
+           "red": 1,
+           "green": 1,
+           "blue": 1
+          },
+          "horizontalAlignment": "CENTER",
+          "verticalAlignment": "MIDDLE",
+          "textFormat": {
+           "foregroundColor": {
+            "red": 0.047058824,
+            "green": 0.09803922,
+            "blue": 0.14901961
+           },
+           "fontFamily": "Arial",
+           "fontSize": 10,
+           "bold": false,
+           "foregroundColorStyle": {
+            "rgbColor": {
+             "red": 0.047058824,
+             "green": 0.09803922,
+             "blue": 0.14901961
+            }
+           }
+          },
+          "backgroundColorStyle": {
+           "rgbColor": {
+            "red": 1,
+            "green": 1,
+            "blue": 1
+           }
+          }
+         }
+        },
+        {
+         "userEnteredFormat": {
+          "backgroundColor": {
+           "red": 1,
+           "green": 1,
+           "blue": 1
+          },
+          "horizontalAlignment": "CENTER",
+          "verticalAlignment": "MIDDLE",
+          "textFormat": {
+           "foregroundColor": {
+            "red": 0.047058824,
+            "green": 0.09803922,
+            "blue": 0.14901961
+           },
+           "fontFamily": "Arial",
+           "fontSize": 10,
+           "bold": false,
+           "foregroundColorStyle": {
+            "rgbColor": {
+             "red": 0.047058824,
+             "green": 0.09803922,
+             "blue": 0.14901961
+            }
+           }
+          },
+          "backgroundColorStyle": {
+           "rgbColor": {
+            "red": 1,
+            "green": 1,
+            "blue": 1
+           }
+          }
+         }
+        },
+        {
+         "userEnteredFormat": {
+          "backgroundColor": {
+           "red": 1,
+           "green": 1,
+           "blue": 1
+          },
+          "horizontalAlignment": "CENTER",
           "verticalAlignment": "MIDDLE",
           "textFormat": {
            "foregroundColor": {
@@ -51269,216 +49632,6 @@
             "green": 1,
             "blue": 1
            }
-          }
-         }
-        },
-        {
-         "userEnteredFormat": {
-          "backgroundColor": {
-           "red": 1,
-           "green": 1,
-           "blue": 1
-          },
-          "verticalAlignment": "MIDDLE",
-          "textFormat": {
-           "foregroundColor": {
-            "red": 0.047058824,
-            "green": 0.09803922,
-            "blue": 0.14901961
-           },
-           "fontFamily": "Arial",
-           "fontSize": 10,
-           "bold": false,
-           "foregroundColorStyle": {
-            "rgbColor": {
-             "red": 0.047058824,
-             "green": 0.09803922,
-             "blue": 0.14901961
-            }
-           }
-          },
-          "backgroundColorStyle": {
-           "rgbColor": {
-            "red": 1,
-            "green": 1,
-            "blue": 1
-           }
-          }
-         }
-        },
-        {
-         "userEnteredFormat": {
-          "numberFormat": {
-           "type": "NUMBER",
-           "pattern": "Rp #,##0"
-          },
-          "backgroundColor": {
-           "red": 1,
-           "green": 1,
-           "blue": 1
-          },
-          "verticalAlignment": "MIDDLE",
-          "textFormat": {
-           "foregroundColor": {
-            "red": 0.047058824,
-            "green": 0.09803922,
-            "blue": 0.14901961
-           },
-           "fontFamily": "Arial",
-           "fontSize": 10,
-           "bold": false,
-           "foregroundColorStyle": {
-            "rgbColor": {
-             "red": 0.047058824,
-             "green": 0.09803922,
-             "blue": 0.14901961
-            }
-           }
-          },
-          "backgroundColorStyle": {
-           "rgbColor": {
-            "red": 1,
-            "green": 1,
-            "blue": 1
-           }
-          }
-         },
-         "effectiveFormat": {
-          "numberFormat": {
-           "type": "NUMBER",
-           "pattern": "Rp #,##0"
-          }
-         }
-        },
-        {
-         "userEnteredFormat": {
-          "numberFormat": {
-           "type": "NUMBER",
-           "pattern": "Rp #,##0"
-          },
-          "backgroundColor": {
-           "red": 1,
-           "green": 1,
-           "blue": 1
-          },
-          "verticalAlignment": "MIDDLE",
-          "textFormat": {
-           "foregroundColor": {
-            "red": 0.047058824,
-            "green": 0.09803922,
-            "blue": 0.14901961
-           },
-           "fontFamily": "Arial",
-           "fontSize": 10,
-           "bold": false,
-           "foregroundColorStyle": {
-            "rgbColor": {
-             "red": 0.047058824,
-             "green": 0.09803922,
-             "blue": 0.14901961
-            }
-           }
-          },
-          "backgroundColorStyle": {
-           "rgbColor": {
-            "red": 1,
-            "green": 1,
-            "blue": 1
-           }
-          }
-         },
-         "effectiveFormat": {
-          "numberFormat": {
-           "type": "NUMBER",
-           "pattern": "Rp #,##0"
-          }
-         }
-        },
-        {
-         "userEnteredFormat": {
-          "numberFormat": {
-           "type": "NUMBER",
-           "pattern": "Rp #,##0"
-          },
-          "backgroundColor": {
-           "red": 1,
-           "green": 1,
-           "blue": 1
-          },
-          "verticalAlignment": "MIDDLE",
-          "textFormat": {
-           "foregroundColor": {
-            "red": 0.047058824,
-            "green": 0.09803922,
-            "blue": 0.14901961
-           },
-           "fontFamily": "Arial",
-           "fontSize": 10,
-           "bold": false,
-           "foregroundColorStyle": {
-            "rgbColor": {
-             "red": 0.047058824,
-             "green": 0.09803922,
-             "blue": 0.14901961
-            }
-           }
-          },
-          "backgroundColorStyle": {
-           "rgbColor": {
-            "red": 1,
-            "green": 1,
-            "blue": 1
-           }
-          }
-         },
-         "effectiveFormat": {
-          "numberFormat": {
-           "type": "NUMBER",
-           "pattern": "Rp #,##0"
-          }
-         }
-        },
-        {
-         "userEnteredFormat": {
-          "numberFormat": {
-           "type": "NUMBER",
-           "pattern": "0"
-          },
-          "backgroundColor": {
-           "red": 1,
-           "green": 1,
-           "blue": 1
-          },
-          "verticalAlignment": "MIDDLE",
-          "textFormat": {
-           "foregroundColor": {
-            "red": 0.047058824,
-            "green": 0.09803922,
-            "blue": 0.14901961
-           },
-           "fontFamily": "Arial",
-           "fontSize": 10,
-           "bold": false,
-           "foregroundColorStyle": {
-            "rgbColor": {
-             "red": 0.047058824,
-             "green": 0.09803922,
-             "blue": 0.14901961
-            }
-           }
-          },
-          "backgroundColorStyle": {
-           "rgbColor": {
-            "red": 1,
-            "green": 1,
-            "blue": 1
-           }
-          }
-         },
-         "effectiveFormat": {
-          "numberFormat": {
-           "type": "NUMBER",
-           "pattern": "0"
           }
          }
         },
@@ -52819,10 +50972,6 @@
         },
         {
          "userEnteredFormat": {
-          "numberFormat": {
-           "type": "NUMBER",
-           "pattern": "Rp #,##0"
-          },
           "backgroundColor": {
            "red": 1,
            "green": 1,
@@ -52853,21 +51002,11 @@
             "green": 1,
             "blue": 1
            }
-          }
-         },
-         "effectiveFormat": {
-          "numberFormat": {
-           "type": "NUMBER",
-           "pattern": "Rp #,##0"
           }
          }
         },
         {
          "userEnteredFormat": {
-          "numberFormat": {
-           "type": "NUMBER",
-           "pattern": "Rp #,##0"
-          },
           "backgroundColor": {
            "red": 1,
            "green": 1,
@@ -52898,12 +51037,6 @@
             "green": 1,
             "blue": 1
            }
-          }
-         },
-         "effectiveFormat": {
-          "numberFormat": {
-           "type": "NUMBER",
-           "pattern": "Rp #,##0"
           }
          }
         },
@@ -54179,6 +52312,7 @@
            "green": 1,
            "blue": 1
           },
+          "horizontalAlignment": "CENTER",
           "verticalAlignment": "MIDDLE",
           "textFormat": {
            "foregroundColor": {
@@ -54213,6 +52347,7 @@
            "green": 1,
            "blue": 1
           },
+          "horizontalAlignment": "CENTER",
           "verticalAlignment": "MIDDLE",
           "textFormat": {
            "foregroundColor": {
@@ -54247,6 +52382,7 @@
            "green": 1,
            "blue": 1
           },
+          "horizontalAlignment": "CENTER",
           "verticalAlignment": "MIDDLE",
           "textFormat": {
            "foregroundColor": {
@@ -54281,6 +52417,7 @@
            "green": 1,
            "blue": 1
           },
+          "horizontalAlignment": "CENTER",
           "verticalAlignment": "MIDDLE",
           "textFormat": {
            "foregroundColor": {
@@ -57015,6 +55152,7 @@
            "green": 1,
            "blue": 1
           },
+          "horizontalAlignment": "CENTER",
           "verticalAlignment": "MIDDLE",
           "textFormat": {
            "foregroundColor": {
@@ -57049,6 +55187,7 @@
            "green": 1,
            "blue": 1
           },
+          "horizontalAlignment": "CENTER",
           "verticalAlignment": "MIDDLE",
           "textFormat": {
            "foregroundColor": {
@@ -57083,6 +55222,7 @@
            "green": 1,
            "blue": 1
           },
+          "horizontalAlignment": "CENTER",
           "verticalAlignment": "MIDDLE",
           "textFormat": {
            "foregroundColor": {
@@ -57117,6 +55257,7 @@
            "green": 1,
            "blue": 1
           },
+          "horizontalAlignment": "CENTER",
           "verticalAlignment": "MIDDLE",
           "textFormat": {
            "foregroundColor": {
@@ -57151,6 +55292,7 @@
            "green": 1,
            "blue": 1
           },
+          "horizontalAlignment": "CENTER",
           "verticalAlignment": "MIDDLE",
           "textFormat": {
            "foregroundColor": {
@@ -57185,6 +55327,7 @@
            "green": 1,
            "blue": 1
           },
+          "horizontalAlignment": "CENTER",
           "verticalAlignment": "MIDDLE",
           "textFormat": {
            "foregroundColor": {
@@ -58448,7 +56591,6 @@
            "green": 1,
            "blue": 1
           },
-          "horizontalAlignment": "CENTER",
           "verticalAlignment": "MIDDLE",
           "textFormat": {
            "foregroundColor": {
@@ -58483,7 +56625,6 @@
            "green": 1,
            "blue": 1
           },
-          "horizontalAlignment": "CENTER",
           "verticalAlignment": "MIDDLE",
           "textFormat": {
            "foregroundColor": {
@@ -58518,7 +56659,6 @@
            "green": 1,
            "blue": 1
           },
-          "horizontalAlignment": "CENTER",
           "verticalAlignment": "MIDDLE",
           "textFormat": {
            "foregroundColor": {
@@ -58553,7 +56693,6 @@
            "green": 1,
            "blue": 1
           },
-          "horizontalAlignment": "CENTER",
           "verticalAlignment": "MIDDLE",
           "textFormat": {
            "foregroundColor": {
