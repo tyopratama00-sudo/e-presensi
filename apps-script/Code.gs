@@ -689,12 +689,12 @@ function renderFeeSheet(fee) {
     fee.getRange('E' + r).setFormula(`=IF(B${r}="", "", IFERROR(IF(VLOOKUP(B${r}, '${dbName}'!$A:$I, 7, FALSE)="-", 0, VLOOKUP(B${r}, '${dbName}'!$A:$I, 7, FALSE)), 0))`).setNumberFormat('Rp #,##0').setHorizontalAlignment('center').setFontWeight('bold');
     fee.getRange('F' + r).setFormula(`=IF(OR(B${r}="", NOT(ISNUMBER(E${r}))), 0, E${r} * H${r})`).setNumberFormat('Rp #,##0').setHorizontalAlignment('center').setFontWeight('bold');
     fee.getRange('G' + r).setFormula(`=IF(OR(B${r}="", NOT(ISNUMBER(E${r}))), 0, E${r} * H${r})`).setNumberFormat('Rp #,##0').setHorizontalAlignment('center').setFontWeight('bold');
-    fee.getRange('H' + r).setFormula(`=IF(B${r}="", "", COUNTIF(L${r}:AP${r}, "Present"))`).setNumberFormat('0').setHorizontalAlignment('center').setFontWeight('bold');
+    fee.getRange('H' + r).setFormula(`=IF(B${r}="", "", COUNT(L${r}:AP${r}))`).setNumberFormat('0').setHorizontalAlignment('center').setFontWeight('bold');
     fee.getRange('I' + r).setFormula(`=IF(B${r}="", "", IFERROR(VLOOKUP(B${r}, '${dbName}'!$A:$I, 8, FALSE), "-"))`).setHorizontalAlignment('center');
     fee.getRange('J' + r).setFormula(`=IF(B${r}="", "", IFERROR(VLOOKUP(B${r}, '${dbName}'!$A:$I, 9, FALSE), "-"))`).setHorizontalAlignment('center').setFontWeight('bold');
     fee.getRange('K' + r).setValue('');
 
-    // Attendance L..AP
+    // Attendance L..AP (Rate nominal harian per karyawan, kosong jika tidak hadir)
     const attFormulas = [];
     for (let c = 12; c <= 42; c++) {
       let colLet = '';
@@ -704,9 +704,9 @@ function renderFeeSheet(fee) {
         colLet = String.fromCharCode(65 + rem) + colLet;
         t = Math.floor((t - rem) / 26);
       }
-      attFormulas.push(`=IF(OR($B${r}="", ${colLet}$4=""), "", IF(IFERROR(INDEX(Absensi!$C$5:$AG$100, MATCH($B${r}, Absensi!$B$5:$B$100, 0), MATCH(${colLet}$4, Absensi!$C$4:$AG$4, 0)))<>"", "Present", ""))`);
+      attFormulas.push(`=IF(OR($B${r}="", ${colLet}$4=""), "", IF(IFERROR(INDEX(Absensi!$C$5:$AG$100, MATCH($B${r}, Absensi!$B$5:$B$100, 0), MATCH(${colLet}$4, Absensi!$C$4:$AG$4, 0)))<>"", $E${r}, ""))`);
     }
-    fee.getRange(r, 12, 1, 31).setFormulas([attFormulas]).setHorizontalAlignment('center');
+    fee.getRange(r, 12, 1, 31).setFormulas([attFormulas]).setNumberFormat('#,##0').setHorizontalAlignment('center');
   }
 
   // 6. Baris Jumlah
@@ -718,7 +718,7 @@ function renderFeeSheet(fee) {
   fee.getRange('F' + jumlahRow).setFormula(`=SUM(F5:F${lastDataRow})`).setNumberFormat('Rp #,##0').setHorizontalAlignment('center');
   fee.getRange('G' + jumlahRow).setFormula(`=SUM(G5:G${lastDataRow})`).setNumberFormat('Rp #,##0').setHorizontalAlignment('center');
 
-  // Kolom Tanggal pada Baris Jumlah
+  // Kolom Tanggal pada Baris Jumlah (Menampilkan total fee harian, jika kosong/0 maka kosongkan)
   const sumAttFormulas = [];
   for (let c = 12; c <= 42; c++) {
     let colLet = '';
@@ -728,13 +728,14 @@ function renderFeeSheet(fee) {
       colLet = String.fromCharCode(65 + rem) + colLet;
       t = Math.floor((t - rem) / 26);
     }
-    if (numPeople === 1) {
-      sumAttFormulas.push(`=${colLet}5`);
-    } else {
-      sumAttFormulas.push(`=COUNTIF(${colLet}5:${colLet}${lastDataRow}, "Present")`);
-    }
+    sumAttFormulas.push(`=IF(SUM(${colLet}5:${colLet}${lastDataRow})=0, "", SUM(${colLet}5:${colLet}${lastDataRow}))`);
   }
-  fee.getRange(jumlahRow, 12, 1, 31).setFormulas([sumAttFormulas]).setHorizontalAlignment('center');
+  fee.getRange(jumlahRow, 12, 1, 31).setFormulas([sumAttFormulas]).setNumberFormat('#,##0').setHorizontalAlignment('center');
+
+  // Atur lebar kolom L:AP agar angka nominal tidak terpotong (###)
+  for (let c = 12; c <= 42; c++) {
+    fee.setColumnWidth(c, 70);
+  }
 
   if (numPeople === 1) {
     try {
