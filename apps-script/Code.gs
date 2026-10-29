@@ -464,7 +464,7 @@ function setupAbsensiHorizontal(ss) {
       const empName = names[i];
       a.getRange('A' + r).setValue(i + 1).setNumberFormat('0').setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#64748B');
       a.getRange('B' + r).setValue(empName).setFontWeight('bold').setFontColor('#0F172A').setHorizontalAlignment('left');
-      a.getRange('AH' + r).setFormula(`=COUNTIF(C${r}:AG${r}, "<>")`).setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#0F766E');
+      a.getRange('AH' + r).setFormula(`=COUNTIFS(C${r}:AG${r}, "<>", C${r}:AG${r}, "<>OFF", C${r}:AG${r}, "<>Sakit", C${r}:AG${r}, "<>Izin")`).setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#0F766E');
       a.getRange('AI' + r).setFormula(hoursFormula(r)).setNumberFormat('0.00').setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#0F766E');
       a.getRange(r, 1, 1, 35).setFontFamily('Arial').setFontSize(9);
     }
@@ -478,7 +478,7 @@ function setupAbsensiHorizontal(ss) {
       for (let c = 0; c < 31; c++) {
         if (c < cutOffDates.length) {
           const dateKey = Utilities.formatDate(cutOffDates[c], TZ, 'yyyy-MM-dd');
-          rowCells.push(empAttendance[dateKey] || '');
+          rowCells.push(empAttendance[dateKey] || 'OFF');
         } else {
           rowCells.push('');
         }
@@ -487,6 +487,14 @@ function setupAbsensiHorizontal(ss) {
     }
 
     a.getRange(5, 3, numEmp, 31).setValues(gridValues).setNumberFormat('@').setHorizontalAlignment('center');
+
+    // Data validation dropdown untuk status: OFF, Sakit, Izin (tetap membolehkan input jam kerja)
+    const ruleStatus = SpreadsheetApp.newDataValidation()
+      .requireValueInList(['OFF', 'Sakit', 'Izin'], true)
+      .setAllowInvalid(true)
+      .build();
+    a.getRange(5, 3, numEmp, 31).setDataValidation(ruleStatus);
+
     a.getRange(4, 1, numEmp + 1, 35).setBorder(true, true, true, true, true, true, '#CBD5E1', SpreadsheetApp.BorderStyle.SOLID);
     a.getRange('A4:AI4').setBorder(true, true, true, true, null, null, '#0F172A', SpreadsheetApp.BorderStyle.MEDIUM);
   }
@@ -537,26 +545,48 @@ function setupAbsensiHorizontal(ss) {
   // 7. CONDITIONAL FORMATTING
   a.clearConditionalFormatRules();
   if (numEmp > 0) {
+    const rangeData = a.getRange(5, 3, numEmp, 31);
+
+    const ruleOff = SpreadsheetApp.newConditionalFormatRule()
+      .whenTextEqualTo('OFF')
+      .setBackground('#F1F5F9')
+      .setFontColor('#64748B')
+      .setRanges([rangeData])
+      .build();
+
+    const ruleSakit = SpreadsheetApp.newConditionalFormatRule()
+      .whenTextEqualTo('Sakit')
+      .setBackground('#FEE2E2')
+      .setFontColor('#991B1B')
+      .setBold(true)
+      .setRanges([rangeData])
+      .build();
+
+    const ruleIzin = SpreadsheetApp.newConditionalFormatRule()
+      .whenTextEqualTo('Izin')
+      .setBackground('#FEF3C7')
+      .setFontColor('#92400E')
+      .setBold(true)
+      .setRanges([rangeData])
+      .build();
+
     const ruleComplete = SpreadsheetApp.newConditionalFormatRule()
       .whenTextContains(' - ')
       .setBackground('#DCFCE7')
       .setFontColor('#166534')
-      .setRanges([a.getRange(5, 3, numEmp, 31)])
+      .setBold(true)
+      .setRanges([rangeData])
       .build();
 
     const ruleInProgress = SpreadsheetApp.newConditionalFormatRule()
-      .whenFormulaSatisfied('=AND(C5<>"", ISERROR(FIND(" - ", C5)))')
-      .setBackground('#FEF3C7')
-      .setFontColor('#92400E')
-      .setRanges([a.getRange(5, 3, numEmp, 31)])
+      .whenFormulaSatisfied('=AND(C5<>"", C5<>"OFF", C5<>"Sakit", C5<>"Izin", ISERROR(FIND(" - ", C5)))')
+      .setBackground('#FFFBEB')
+      .setFontColor('#B45309')
+      .setBold(true)
+      .setRanges([rangeData])
       .build();
 
-    const ruleWeekend = SpreadsheetApp.newConditionalFormatRule()
-      .whenFormulaSatisfied('=OR(C$3="Sat", C$3="Sun")')
-      .setBackground('#F1F5F9')
-      .setRanges([a.getRange(5, 3, numEmp, 31)])
-      .build();
-    a.setConditionalFormatRules([ruleComplete, ruleInProgress, ruleWeekend]);
+    a.setConditionalFormatRules([ruleOff, ruleSakit, ruleIzin, ruleComplete, ruleInProgress]);
   }
 }
 function renderFeeSheet(fee) {
@@ -704,7 +734,7 @@ function renderFeeSheet(fee) {
         colLet = String.fromCharCode(65 + rem) + colLet;
         t = Math.floor((t - rem) / 26);
       }
-      attFormulas.push(`=IF(OR($B${r}="", ${colLet}$4=""), "", IF(IFERROR(INDEX(Absensi!$C$5:$AG$100, MATCH($B${r}, Absensi!$B$5:$B$100, 0), MATCH(${colLet}$4, Absensi!$C$4:$AG$4, 0)))<>"", $E${r}, ""))`);
+      attFormulas.push(`=IF(OR($B${r}="", ${colLet}$4=""), "", LET(v, IFERROR(INDEX(Absensi!$C$5:$AG$100, MATCH($B${r}, Absensi!$B$5:$B$100, 0), MATCH(${colLet}$4, Absensi!$C$4:$AG$4, 0)), ""), IF(OR(v="", v="OFF", v="Sakit", v="Izin"), "", $E${r})))`);
     }
     fee.getRange(r, 12, 1, 31).setFormulas([attFormulas]).setNumberFormat('#,##0').setHorizontalAlignment('center');
   }
@@ -968,10 +998,20 @@ function absen(idUser, pin, aksi, lat, lng) {
       const noUrut = targetRow - 4;
       shAbsensi.getRange(targetRow, 1).setValue(noUrut).setNumberFormat('0').setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#64748B');
       shAbsensi.getRange(targetRow, 2).setValue(nama).setFontWeight('bold').setFontColor('#0F172A').setHorizontalAlignment('left');
-      shAbsensi.getRange(targetRow, 34).setFormula(`=COUNTIF(C${targetRow}:AG${targetRow}, "<>")`).setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#0F766E');
+      shAbsensi.getRange(targetRow, 34).setFormula(`=COUNTIFS(C${targetRow}:AG${targetRow}, "<>", C${targetRow}:AG${targetRow}, "<>OFF", C${targetRow}:AG${targetRow}, "<>Sakit", C${targetRow}:AG${targetRow}, "<>Izin")`).setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#0F766E');
       shAbsensi.getRange(targetRow, 35).setFormula(hoursFormula(targetRow)).setNumberFormat('0.00').setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#0F766E');
       shAbsensi.getRange(targetRow, 1, 1, 35).setFontFamily('Arial').setFontSize(9);
       shAbsensi.getRange(targetRow, 1, 1, 35).setBorder(true, true, true, true, true, true, '#CBD5E1', SpreadsheetApp.BorderStyle.SOLID);
+
+      // Inisialisasi sel C..AG dengan 'OFF' dan validation dropdown
+      const defaultCells = Array(31).fill('OFF');
+      shAbsensi.getRange(targetRow, 3, 1, 31).setValues([defaultCells]).setNumberFormat('@').setHorizontalAlignment('center');
+      const ruleStatus = SpreadsheetApp.newDataValidation()
+        .requireValueInList(['OFF', 'Sakit', 'Izin'], true)
+        .setAllowInvalid(true)
+        .build();
+      shAbsensi.getRange(targetRow, 3, 1, 31).setDataValidation(ruleStatus);
+
       try {
         if (shAbsensi.getFilter()) shAbsensi.getFilter().remove();
         shAbsensi.getRange(4, 1, targetRow - 3, 35).createFilter();
@@ -980,9 +1020,10 @@ function absen(idUser, pin, aksi, lat, lng) {
 
     const targetCell = shAbsensi.getRange(targetRow, targetCol);
     const currentVal = String(targetCell.getValue() || '').trim();
+    const isNotClockedIn = !currentVal || currentVal === 'OFF' || currentVal === 'Sakit' || currentVal === 'Izin';
 
     if (aksi === 'masuk') {
-      if (currentVal) {
+      if (!isNotClockedIn) {
         throw new Error(`You have already clocked in today (${currentVal}).`);
       }
       targetCell.setValue(jamTeks).setNumberFormat('@').setHorizontalAlignment('center');
@@ -1007,7 +1048,7 @@ function absen(idUser, pin, aksi, lat, lng) {
     }
 
     // Aksi pulang
-    if (!currentVal) {
+    if (isNotClockedIn) {
       throw new Error('You have not clocked in today.');
     }
     if (currentVal.includes(' - ')) {
