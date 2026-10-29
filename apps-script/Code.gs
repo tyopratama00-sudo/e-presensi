@@ -55,7 +55,7 @@ function doGet(e) {
   }
 
   return HtmlService.createHtmlOutputFromFile('Index')
-    .setTitle('Presensi Jonas Photo')
+    .setTitle('Jonas Photo Attendance')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1, viewport-fit=cover')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
@@ -239,7 +239,12 @@ function setupAbsensiHorizontal(ss) {
     a.insertColumnsAfter(a.getMaxColumns(), 36 - a.getMaxColumns());
   }
 
-  // 1. Reset format dasar baris 1-2
+  // 1. Bersihkan merge lama dan format di baris 1-4
+  try {
+    a.getRange(1, 1, 4, a.getMaxColumns()).breakApart();
+    a.getRange(1, 1, 4, a.getMaxColumns()).clearContent();
+  } catch (err) {}
+
   a.getRange('A:A').setNumberFormat('0').setHorizontalAlignment('center');
   a.getRange('C1:D1').setNumberFormat('0').setHorizontalAlignment('center');
 
@@ -594,6 +599,15 @@ function renderFeeSheet(fee) {
     .setFontFamily('Arial')
     .setFontSize(9);
 
+  // Bersihkan merge dan baris lama dari baris 5 ke bawah agar tidak ada tabrakan merge & data lama
+  try {
+    const prevFeeLast = fee.getLastRow();
+    if (prevFeeLast >= 5) {
+      fee.getRange(5, 1, prevFeeLast - 4, fee.getMaxColumns()).breakApart();
+      fee.getRange(5, 1, prevFeeLast - 4, fee.getMaxColumns()).clearContent().clearFormat();
+    }
+  } catch (err) {}
+
   // 4. Deteksi Nama-Nama yang ada di Baris 5 ke bawah
   const dbSheet = fee.getSheetByName ? (fee.getParent().getSheetByName('Database') || fee.getParent().getSheetByName('Freelancer')) : null;
   const dbName = dbSheet ? dbSheet.getName() : 'Database';
@@ -804,27 +818,27 @@ function absen(idUser, pin, aksi, lat, lng) {
   aksi = String(aksi || '').toLowerCase().trim();
 
   if (!idUser) {
-    throw new Error('ID harus diisi.');
+    throw new Error('ID is required.');
   }
   if (!pin) {
-    throw new Error('PIN harus diisi.');
+    throw new Error('PIN is required.');
   }
   if (aksi !== 'masuk' && aksi !== 'pulang') {
-    throw new Error('Aksi tidak valid.');
+    throw new Error('Invalid action.');
   }
 
   // 1. Cek radius lokasi dengan rumus Haversine
   const jarak = jarakMeter(LOKASI.lat, LOKASI.lng, Number(lat), Number(lng));
   if (isNaN(jarak) || jarak > RADIUS_M) {
     const jarakStr = isNaN(jarak) ? '-' : Math.round(jarak);
-    throw new Error(`Anda berada di luar lokasi kerja (jarak: ${jarakStr} meter). Maksimal radius ${RADIUS_M} meter.`);
+    throw new Error(`You are outside the work location (distance: ${jarakStr} m). Maximum radius is ${RADIUS_M} m.`);
   }
 
   // 2. Cek user di Sheet "Database" (atau fallback "Freelancer")
   const ss = getSS();
   const shFreelancer = ss.getSheetByName('Database') || ss.getSheetByName('Freelancer');
   if (!shFreelancer) {
-    throw new Error('Sheet "Database" belum dibuat. Buka ulang web app atau jalankan setup().');
+    throw new Error('Sheet "Database" does not exist yet. Reopen the web app or run setup().');
   }
 
   const dataFreelancer = shFreelancer.getDataRange().getDisplayValues().slice(1);
@@ -836,13 +850,13 @@ function absen(idUser, pin, aksi, lat, lng) {
   });
 
   if (!orang || !orang[0].trim()) {
-    throw new Error(`ID "${idUser}" tidak terdaftar.`);
+    throw new Error(`ID "${idUser}" is not registered.`);
   }
 
   // Cek PIN: kolom C (index 2), fallback ke kolom I (index 8) atau kolom B (index 1)
   const expectedPin = (orang[2] && orang[2].trim()) ? orang[2].trim() : ((orang[8] && orang[8].trim()) ? orang[8].trim() : orang[1].trim());
   if (pin !== expectedPin) {
-    throw new Error(`PIN salah untuk ${orang[0].trim()}. Silakan periksa kembali.`);
+    throw new Error(`Wrong PIN for ${orang[0].trim()}. Please check and try again.`);
   }
 
   const nama = orang[0].trim();
@@ -889,7 +903,7 @@ function absen(idUser, pin, aksi, lat, lng) {
 
     if (targetCol === -1) {
       const tglStr = Utilities.formatDate(now, TZ, 'dd/MM/yyyy');
-      throw new Error(`Tanggal hari ini (${tglStr}) belum ada pada rentang tanggal cut-off sheet Absensi.`);
+      throw new Error(`Today's date (${tglStr}) is not in the cut-off date range of the Absensi sheet.`);
     }
 
     // 5. Cari baris karyawan di Kolom B (mulai baris 5)
@@ -926,7 +940,7 @@ function absen(idUser, pin, aksi, lat, lng) {
 
     if (aksi === 'masuk') {
       if (currentVal) {
-        throw new Error(`Sudah absen masuk hari ini (${currentVal}).`);
+        throw new Error(`You have already clocked in today (${currentVal}).`);
       }
       targetCell.setValue(jamTeks).setNumberFormat('@').setHorizontalAlignment('center');
 
@@ -942,7 +956,7 @@ function absen(idUser, pin, aksi, lat, lng) {
 
       return {
         success: true,
-        message: `Halo ${nama}, absensi MASUK berhasil dicatat pukul ${jamTeks} WIB.`,
+        message: `Hi ${nama}, your CLOCK IN was recorded at ${jamTeks} WIB.`,
         nama: nama,
         jam: jamTeks,
         tipe: 'masuk'
@@ -951,10 +965,10 @@ function absen(idUser, pin, aksi, lat, lng) {
 
     // Aksi pulang
     if (!currentVal) {
-      throw new Error('Belum absen masuk hari ini.');
+      throw new Error('You have not clocked in today.');
     }
     if (currentVal.includes(' - ')) {
-      throw new Error(`Sudah absen pulang hari ini (${currentVal}).`);
+      throw new Error(`You have already clocked out today (${currentVal}).`);
     }
 
     // Hitung jam kerja
@@ -992,7 +1006,7 @@ function absen(idUser, pin, aksi, lat, lng) {
 
     return {
       success: true,
-      message: `Halo ${nama}, absensi PULANG berhasil dicatat pukul ${jamTeks} WIB. Total jam kerja: ${jamKerja} jam.`,
+      message: `Hi ${nama}, your CLOCK OUT was recorded at ${jamTeks} WIB. Total hours worked: ${jamKerja} h.`,
       nama: nama,
       jam: jamTeks,
       jamKerja: jamKerja,
