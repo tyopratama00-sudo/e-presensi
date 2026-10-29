@@ -12,7 +12,17 @@ function getSS() {
   return SpreadsheetApp.getActiveSpreadsheet() || SpreadsheetApp.openById(SPREADSHEET_ID);
 }
 
-function doGet() {
+function doGet(e) {
+  if (e && e.parameter && e.parameter.setup === '1') {
+    const ss = getSS();
+    setupAbsensiHorizontal(ss);
+    const fee = ss.getSheetByName('Fee');
+    if (fee) {
+      renderFeeSheet(fee);
+    }
+    return ContentService.createTextOutput('SETUP_HORIZONTAL_SUCCESS');
+  }
+
   return HtmlService.createHtmlOutputFromFile('Index')
     .setTitle('Presensi Jonas Photo')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1, viewport-fit=cover')
