@@ -1,5 +1,9 @@
 // node test.js — cek hitung jarak radius
 const fs = require('fs'), vm = require('vm'), assert = require('assert');
+const html = fs.readFileSync(__dirname + '/apps-script/Index.html', 'utf8');
+assert(html.includes('Inter'), 'attendance UI should use Inter with system fallback');
+assert(html.includes('max-width: 460px'), 'desktop card should be wider');
+assert(html.includes('id="idError"') && html.includes('id="pinError"'), 'validation errors should sit by their fields');
 const ctx = {};
 vm.runInNewContext(fs.readFileSync(__dirname + '/apps-script/Code.gs', 'utf8') + ';this.jarakMeter=jarakMeter;this.LOKASI=LOKASI', ctx);
 const { jarakMeter, LOKASI } = ctx;
