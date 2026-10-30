@@ -758,11 +758,12 @@
     }
 
     /* =========================================
-       BIOMETRIC / WEBAUTHN UI
+       BIOMETRIC / WEBAUTHN UI (STUDIO DARK MATTE)
        ========================================= */
 
-    /* Panel biometrik utama (menggantikan form saat terdaftar) */
-    .biometric-panel {
+    /* Panel pembungkus biometrik */
+    .bio-scan-wrap {
+      width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -770,67 +771,149 @@
       padding: 4px 0 8px;
     }
 
-    /* Tombol scan biometrik besar */
-    .btn-biometric-scan {
+    /* Baris ikon dekoratif fingerprint & face */
+    .bio-icons-row {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 0 2px;
+    }
+    .bio-icon-fp, .bio-icon-face {
+      font-size: 32px;
+      line-height: 1;
+      display: inline-block;
+      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.8));
+    }
+    .bio-icon-fp {
+      animation: bioPulse 2.4s ease-in-out infinite;
+    }
+    .bio-icon-face {
+      animation: bioPulse 2.4s ease-in-out infinite 0.6s;
+    }
+    @keyframes bioPulse {
+      0%, 100% { opacity: 0.55; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.08); filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.6)); }
+    }
+    .bio-icon-divider {
+      color: #475569;
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+
+    /* Tombol Scan Biometrik Utama (Satu Tombol Besar Eye-Catching) */
+    .btn-bio-scan-main {
       width: 100%;
-      height: 64px;
-      border-radius: var(--radius-btn);
-      border: 2px solid rgba(99, 102, 241, 0.5);
-      background: linear-gradient(180deg, #4f46e5 0%, #312e81 100%);
-      box-shadow: 0 8px 24px -4px rgba(79, 70, 229, 0.5), inset 0 1px 1px rgba(255,255,255,0.25);
+      min-height: 76px;
+      border-radius: var(--radius-inner);
+      border: 1.5px solid rgba(148, 163, 184, 0.25);
+      background: linear-gradient(180deg, #1f242d 0%, #13161c 60%, #0d0f13 100%);
+      box-shadow: 
+        0 10px 25px -5px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        inset 0 1px 1px rgba(255, 255, 255, 0.12);
       color: #ffffff;
-      font-family: var(--font-sans);
-      font-size: 16px;
-      font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      transition: all 160ms var(--ease-smooth);
+      gap: 14px;
+      padding: 12px 20px;
+      transition: all 180ms var(--ease-smooth);
       position: relative;
       overflow: hidden;
     }
-    .btn-biometric-scan:hover:not(:disabled) {
-      background: linear-gradient(180deg, #6366f1 0%, #3730a3 100%);
-      box-shadow: 0 12px 28px -4px rgba(99, 102, 241, 0.65);
+    /* Animasi Garis Laser Scan */
+    .btn-bio-scan-main::before {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.8), rgba(52, 211, 153, 0.8), transparent);
+      box-shadow: 0 0 8px rgba(99, 102, 241, 0.7);
+      animation: bioScanLaser 3s ease-in-out infinite;
+      pointer-events: none;
     }
-    .btn-biometric-scan:active:not(:disabled) { transform: translateY(2px) scale(0.97); }
-    .btn-biometric-scan:disabled { opacity: 0.45; cursor: not-allowed; }
-    .btn-biometric-scan.is-busy .bio-label-content { display: none; }
-    .btn-biometric-scan.is-busy .shutter-spinner { display: inline-block; }
+    @keyframes bioScanLaser {
+      0% { top: -10%; opacity: 0; }
+      20% { opacity: 1; }
+      80% { opacity: 1; }
+      100% { top: 110%; opacity: 0; }
+    }
+    .btn-bio-scan-main:hover:not(:disabled) {
+      border-color: rgba(99, 102, 241, 0.6);
+      background: linear-gradient(180deg, #272d38 0%, #171b22 60%, #101318 100%);
+      box-shadow: 
+        0 12px 30px -5px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(99, 102, 241, 0.3),
+        inset 0 1px 1px rgba(255, 255, 255, 0.2);
+    }
+    .btn-bio-scan-main:active:not(:disabled) {
+      transform: translateY(2px) scale(0.985);
+    }
+    .btn-bio-scan-main:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .btn-bio-scan-main.is-busy .bio-scan-content { display: none; }
+    .btn-bio-scan-main.is-busy .shutter-spinner { display: inline-block; }
 
-    .bio-icon {
-      font-size: 26px;
-      line-height: 1;
-      filter: drop-shadow(0 0 6px rgba(165,180,252,0.6));
+    .bio-scan-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #34d399;
+      box-shadow: 0 0 10px #34d399;
+      flex-shrink: 0;
     }
-    .bio-label-text { line-height: 1.2; }
-    .bio-label-sub {
+    .bio-scan-text-group {
+      text-align: left;
+    }
+    .bio-scan-title {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #ffffff;
+      display: block;
+      line-height: 1.2;
+    }
+    .bio-scan-subtitle {
+      font-family: var(--font-mono);
       font-size: 11px;
       font-weight: 500;
-      opacity: 0.75;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
       display: block;
-      font-family: var(--font-mono);
+      margin-top: 3px;
     }
 
-    /* Grid Clock In / Clock Out untuk biometrik */
-    .bio-shutter-grid {
+    /* Grid Pilihan Aksi Shutter (CLOCK IN / CLOCK OUT setelah scan berhasil) */
+    .bio-action-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 12px;
       width: 100%;
+      animation: bioSlideUp 260ms var(--ease-smooth);
+    }
+    @keyframes bioSlideUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Link fallback ke form manual */
+    /* Link Fallback Mode PIN & Hapus */
     .bio-fallback-row {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 14px;
+      gap: 12px;
       font-size: 12px;
       color: var(--text-dim);
       width: 100%;
+      margin-top: 2px;
     }
     .bio-fallback-link {
       color: var(--accent-gold);
@@ -841,20 +924,22 @@
       border: none;
       cursor: pointer;
       font-size: 12px;
-      padding: 0;
+      padding: 2px 4px;
+      border-radius: 4px;
     }
     .bio-fallback-link:hover { color: #fde68a; }
 
-    /* Toast registrasi biometrik (setelah berhasil login PIN) */
+    /* Toast Registrasi Biometrik (Studio Dark Style) */
     .bio-register-toast {
-      background: rgba(30, 36, 48, 0.95);
-      border: 1px solid rgba(99, 102, 241, 0.4);
+      background: rgba(23, 27, 36, 0.95);
+      border: 1.5px solid rgba(99, 102, 241, 0.45);
       border-radius: 14px;
       padding: 12px 14px;
       margin-bottom: 14px;
       display: flex;
       align-items: center;
       gap: 12px;
+      box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.7);
     }
     .bio-register-toast-icon { font-size: 24px; flex-shrink: 0; }
     .bio-register-toast-body { flex: 1; min-width: 0; }
@@ -863,11 +948,13 @@
       font-weight: 700;
       color: #a5b4fc;
       margin-bottom: 2px;
+      letter-spacing: 0.02em;
     }
     .bio-register-toast-sub {
       font-size: 11px;
       color: var(--text-muted);
       font-family: var(--font-mono);
+      line-height: 1.3;
     }
     .bio-register-toast-actions {
       display: flex;
@@ -876,15 +963,16 @@
       flex-shrink: 0;
     }
     .btn-bio-register-yes {
-      background: #4f46e5;
-      border: none;
+      background: linear-gradient(180deg, #4f46e5 0%, #3730a3 100%);
+      border: 1px solid rgba(165, 180, 252, 0.4);
       border-radius: 7px;
       color: #fff;
       font-size: 11.5px;
       font-weight: 700;
-      padding: 5px 10px;
+      padding: 6px 12px;
       cursor: pointer;
       white-space: nowrap;
+      transition: all 150ms ease;
     }
     .btn-bio-register-yes:hover { background: #6366f1; }
     .btn-bio-register-no {
@@ -1034,7 +1122,7 @@
           <div class="bio-register-toast-icon">🔒</div>
           <div class="bio-register-toast-body">
             <div class="bio-register-toast-title">Aktifkan Biometrik?</div>
-            <div class="bio-register-toast-sub">Absen berikutnya cukup<br>pakai Face ID / Fingerprint</div>
+            <div class="bio-register-toast-sub">Absen berikutnya cukup sekali scan Face ID / Fingerprint</div>
           </div>
           <div class="bio-register-toast-actions">
             <button class="btn-bio-register-yes" onclick="startBiometricRegistration()">Aktifkan</button>
@@ -1042,42 +1130,59 @@
           </div>
         </div>
 
-        <!-- Tombol biometrik scan -->
-        <div class="biometric-panel">
-          <div class="bio-shutter-grid">
-            <button type="button" class="btn-biometric-scan btn-shutter-in" id="btnBioMasuk" onclick="lakukanAbsenBiometrik('masuk')">
-              <span class="bio-label-content" style="display:flex;align-items:center;gap:10px;">
-                <span class="bio-icon">👆</span>
-                <span class="bio-label-text">
-                  CLOCK IN
-                  <span class="bio-label-sub">Face / Fingerprint</span>
-                </span>
+        <!-- Panel Scan Utama (Dark Matte Studio Theme) -->
+        <div class="bio-scan-wrap" id="bioScanWrap">
+          
+          <!-- Ikon dekoratif Fingerprint & Face ID -->
+          <div class="bio-icons-row" id="bioIconsRow">
+            <span class="bio-icon-fp" title="Fingerprint / Touch ID">👆</span>
+            <span class="bio-icon-divider">·</span>
+            <span class="bio-icon-face" title="Face ID / Windows Hello">🤳</span>
+          </div>
+
+          <!-- Tombol Scan Utama (Satu Tombol Besar Eye-Catching) -->
+          <button type="button" class="btn-bio-scan-main" id="btnBioScan" onclick="initiateBioScan()">
+            <div class="bio-scan-content" style="display:flex;align-items:center;gap:14px;width:100%;justify-content:center;">
+              <span class="bio-scan-dot"></span>
+              <div class="bio-scan-text-group">
+                <span class="bio-scan-title">Scan Biometrik</span>
+                <span class="bio-scan-subtitle">Face ID · Touch ID · Fingerprint</span>
+              </div>
+            </div>
+            <span class="shutter-spinner" aria-hidden="true"></span>
+          </button>
+
+          <!-- Dua Tombol Shutter Aksi (Muncul setelah scan biometrik berhasil diverifikasi) -->
+          <div class="bio-action-row" id="bioActionRow" hidden>
+            <button type="button" class="btn-shutter btn-shutter-in" id="btnBioMasuk" onclick="submitBioAbsen('masuk')">
+              <span class="shutter-label-content" style="display:flex;align-items:center;gap:8px;">
+                <span class="shutter-indicator-dot"></span>
+                <span>CLOCK IN</span>
               </span>
               <span class="shutter-spinner" aria-hidden="true"></span>
             </button>
-            <button type="button" class="btn-biometric-scan btn-shutter-out" id="btnBioPulang" onclick="lakukanAbsenBiometrik('pulang')" style="border-color:rgba(248,113,113,0.4);">
-              <span class="bio-label-content" style="display:flex;align-items:center;gap:10px;">
-                <span class="bio-icon">👆</span>
-                <span class="bio-label-text">
-                  CLOCK OUT
-                  <span class="bio-label-sub">Face / Fingerprint</span>
-                </span>
+            <button type="button" class="btn-shutter btn-shutter-out" id="btnBioPulang" onclick="submitBioAbsen('pulang')">
+              <span class="shutter-label-content" style="display:flex;align-items:center;gap:8px;">
+                <span class="shutter-indicator-dot"></span>
+                <span>CLOCK OUT</span>
               </span>
               <span class="shutter-spinner" aria-hidden="true"></span>
             </button>
           </div>
+
+          <!-- Link Fallback & Manajemen -->
           <div class="bio-fallback-row">
             <span>🔒 Biometrik aktif</span>
             <span>·</span>
-            <button class="bio-fallback-link" onclick="switchToPinMode()">Masuk dengan PIN</button>
+            <button type="button" class="bio-fallback-link" onclick="switchToPinMode()">Masuk dengan PIN</button>
             <span>·</span>
-            <button class="bio-fallback-link" onclick="hapusBiometrik()">Hapus</button>
+            <button type="button" class="bio-fallback-link" onclick="hapusBiometrik()">Hapus</button>
           </div>
         </div>
+
       </div>
 
       <!-- Attendance Input Form (tampil jika biometrik belum terdaftar / mode PIN) -->
-      <form id="absenForm" novalidate>
       <form id="absenForm" novalidate>
         
         <div class="form-fields-grid">
@@ -1679,18 +1784,20 @@
     }
 
     /**
-     * ABSEN DENGAN BIOMETRIK
-     * Menggunakan credential yang sudah terdaftar; tanpa input ID/PIN.
+     * ALUR BIOMETRIK 2-LANGKAH:
+     * Langkah 1: initiateBioScan() -> Scan Face ID / Fingerprint untuk verifikasi identitas
+     * Langkah 2: submitBioAbsen(aksi) -> Setelah terverifikasi, pilih CLOCK IN / CLOCK OUT + GPS
      */
-    async function lakukanAbsenBiometrik(aksi) {
+    let _verifiedAssertion = null;
+
+    async function initiateBioScan() {
       const credId = getSavedCredentialId();
       if (!credId) { switchToPinMode(); return; }
 
-      const btnBio = aksi === 'masuk' ? $("btnBioMasuk") : $("btnBioPulang");
-      const btnBioOther = aksi === 'masuk' ? $("btnBioPulang") : $("btnBioMasuk");
-      btnBio.disabled = true; btnBioOther.disabled = true;
-      btnBio.classList.add("is-busy");
-      updateHudStatus("VERIFIKASI BIOMETRIK...", "busy");
+      const btnScan = $("btnBioScan");
+      btnScan.disabled = true;
+      btnScan.classList.add("is-busy");
+      updateHudStatus("SCANNING BIOMETRIK...", "busy");
 
       try {
         // 1. Dapatkan challenge dari server
@@ -1701,7 +1808,7 @@
             .getWebAuthnChallenge();
         });
 
-        // 2. Autentikasi via WebAuthn (biometrik perangkat)
+        // 2. Autentikasi biometrik pada perangkat
         const assertion = await navigator.credentials.get({
           publicKey: {
             challenge: b64urlToBuf(challenge),
@@ -1719,61 +1826,133 @@
 
         const clientDataJSON = bufToB64url(assertion.response.clientDataJSON);
 
-        updateHudStatus("MENDETEKSI LOKASI GPS...", "busy");
+        // Simpan hasil verifikasi ke state sementara
+        _verifiedAssertion = {
+          credId: credId,
+          clientDataJSON: clientDataJSON
+        };
 
-        // 3. Dapatkan GPS lalu kirim ke server
-        navigator.geolocation.getCurrentPosition(
-          function(pos) {
-            updateHudStatus("MEMPROSES ABSENSI...", "busy");
-            google.script.run
-              .withSuccessHandler(function(res) {
-                const pesan = res && typeof res === "object" ? res.message : res;
-                const nama  = res && typeof res === "object" ? res.nama : null;
-                updateHudStatus("SUKSES: " + pesan, "success");
-                btnBio.disabled = false; btnBioOther.disabled = false;
-                btnBio.classList.remove("is-busy");
-                showPolaroidReceipt({
-                  aksi: aksi,
-                  nama: nama,
-                  idUser: getSavedCredentialId() ? "🔒 Biometrik" : "--",
-                  jarak: pos.coords.accuracy,
-                  biometric: true
-                });
-              })
-              .withFailureHandler(function(err) {
-                const pesan = err.message || "Terjadi kesalahan pada server.";
-                updateHudStatus("GAGAL: " + pesan, "error");
-                btnBio.disabled = false; btnBioOther.disabled = false;
-                btnBio.classList.remove("is-busy");
-              })
-              .absenWithWebAuthn(credId, clientDataJSON, aksi, pos.coords.latitude, pos.coords.longitude);
-          },
-          function(err) {
-            let pesan = "Gagal mendeteksi lokasi GPS.";
-            if (err.code === 1) pesan = "Izin lokasi GPS ditolak.";
-            else if (err.code === 2) pesan = "Sinyal GPS tidak tersedia.";
-            else if (err.code === 3) pesan = "GPS timeout.";
-            updateHudStatus("ERROR GPS: " + pesan, "error");
-            btnBio.disabled = false; btnBioOther.disabled = false;
-            btnBio.classList.remove("is-busy");
-          },
-          { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
-        );
+        // Feedback sukses & SFX
+        playShutterSound();
+        if (navigator.vibrate) navigator.vibrate([30, 40]);
+
+        // Transisi UI: sembunyikan tombol scan, munculkan tombol CLOCK IN / CLOCK OUT
+        btnScan.classList.remove("is-busy");
+        btnScan.disabled = false;
+        btnScan.hidden = true;
+        if ($("bioIconsRow")) $("bioIconsRow").hidden = true;
+        $("bioActionRow").hidden = false;
+
+        updateHudStatus("IDENTITAS TERVERIFIKASI ✓ PILIH SHUTTER", "success");
 
       } catch (err) {
         const msg = err.message || String(err);
+        btnScan.classList.remove("is-busy");
+        btnScan.disabled = false;
+
         if (msg.toLowerCase().includes("cancel") || msg.toLowerCase().includes("abort") || msg.toLowerCase().includes("not allowed")) {
-          updateHudStatus("Verifikasi biometrik dibatalkan.", "error");
+          updateHudStatus("Scan biometrik dibatalkan.", "error");
         } else {
           updateHudStatus("GAGAL BIOMETRIK: " + msg, "error");
         }
-        btnBio.disabled = false; btnBioOther.disabled = false;
-        btnBio.classList.remove("is-busy");
       }
+    }
+
+    /**
+     * Langkah 2: Eksekusi Absen setelah scan biometrik terverifikasi
+     */
+    function submitBioAbsen(aksi) {
+      if (!_verifiedAssertion) {
+        initiateBioScan();
+        return;
+      }
+
+      const btnIn = $("btnBioMasuk");
+      const btnOut = $("btnBioPulang");
+      const targetBtn = aksi === "masuk" ? btnIn : btnOut;
+
+      [btnIn, btnOut].forEach(b => {
+        b.disabled = true;
+        b.classList.toggle("is-busy", b === targetBtn);
+      });
+
+      if (!navigator.geolocation) {
+        updateHudStatus("GPS TIDAK DIDUKUNG PERANGKAT", "error");
+        [btnIn, btnOut].forEach(b => { b.disabled = false; b.classList.remove("is-busy"); });
+        return;
+      }
+
+      updateHudStatus("MENDETEKSI LOKASI GPS...", "busy");
+
+      navigator.geolocation.getCurrentPosition(
+        function (pos) {
+          const akurasi = Math.round(pos.coords.accuracy);
+          updateHudStatus("MEMPROSES KEHADIRAN...", "busy");
+
+          google.script.run
+            .withSuccessHandler(function (res) {
+              const pesan = (res && typeof res === "object") ? res.message : res;
+              const nama  = (res && typeof res === "object") ? res.nama : null;
+
+              updateHudStatus("SUKSES: " + pesan, "success");
+              [btnIn, btnOut].forEach(b => { b.disabled = false; b.classList.remove("is-busy"); });
+
+              showPolaroidReceipt({
+                aksi: aksi,
+                nama: nama,
+                idUser: "🔒 Biometrik",
+                jarak: pos.coords.accuracy,
+                biometric: true
+              });
+
+              // Reset status tombol biometrik ke mode awal siap scan lagi
+              resetBioUiToScan();
+            })
+            .withFailureHandler(function (err) {
+              let pesan = err.message || "Terjadi kesalahan pada server.";
+              if (akurasi > RADIUS_M && /location/i.test(pesan)) {
+                pesan += " (Akurasi GPS perangkat: ±" + akurasi + " m)";
+              }
+              updateHudStatus("GAGAL: " + pesan, "error");
+              [btnIn, btnOut].forEach(b => { b.disabled = false; b.classList.remove("is-busy"); });
+            })
+            .absenWithWebAuthn(
+              _verifiedAssertion.credId,
+              _verifiedAssertion.clientDataJSON,
+              aksi,
+              pos.coords.latitude,
+              pos.coords.longitude
+            );
+        },
+        function (err) {
+          [btnIn, btnOut].forEach(b => { b.disabled = false; b.classList.remove("is-busy"); });
+          let pesan = "Gagal mendeteksi lokasi GPS.";
+          if (err.code === 1) pesan = "Izin lokasi GPS ditolak.";
+          else if (err.code === 2) pesan = "Sinyal GPS tidak tersedia.";
+          else if (err.code === 3) pesan = "GPS timeout.";
+          updateHudStatus("ERROR GPS: " + pesan, "error");
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+      );
+    }
+
+    /** Kembalikan UI Biometrik ke status tombol scan awal */
+    function resetBioUiToScan() {
+      _verifiedAssertion = null;
+      $("btnBioScan").hidden = false;
+      $("btnBioScan").disabled = false;
+      $("btnBioScan").classList.remove("is-busy");
+      if ($("bioIconsRow")) $("bioIconsRow").hidden = false;
+      $("bioActionRow").hidden = true;
+      [$("btnBioMasuk"), $("btnBioPulang")].forEach(b => {
+        b.disabled = false;
+        b.classList.remove("is-busy");
+      });
     }
 
     /** Tampilkan biometric panel, sembunyikan form PIN */
     function showBiometricPanel() {
+      resetBioUiToScan();
       $("biometricPanel").hidden = false;
       $("absenForm").hidden = true;
     }
