@@ -18,6 +18,7 @@ const LOKASI = { lat: -6.9046, lng: 107.6184 };
 const RADIUS_M = 100;
 const TZ = 'Asia/Jakarta';
 const SPREADSHEET_ID = '1BNZnczmcVutERAM0z_G9NNvU1eGt9yzkEpYF4OjbaYY';
+const APP_URL = 'https://jonas-attendance.vercel.app';
 
 function getSS() {
   return SpreadsheetApp.getActiveSpreadsheet() || SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -73,10 +74,7 @@ function doGet(e) {
   }
 
   // UI absensi hanya di Vercel (biometrik terikat ke satu domain).
-  const url = prop_('APP_URL');
-  const html = url
-    ? `<p style="font:16px sans-serif;text-align:center;margin-top:40vh"><a href="${url}" target="_top">Buka E-Presensi</a></p><script>window.top.location.href=${JSON.stringify(url)}</script>`
-    : '<p style="font:16px sans-serif;text-align:center;margin-top:40vh">APP_URL belum diatur di Script Properties.</p>';
+  const html = `<p style="font:16px sans-serif;text-align:center;margin-top:40vh"><a href="${APP_URL}" target="_top">Buka E-Presensi</a></p><script>window.top.location.href=${JSON.stringify(APP_URL)}</script>`;
   return HtmlService.createHtmlOutput(html).setTitle('Jonas Photo Attendance');
 }
 
