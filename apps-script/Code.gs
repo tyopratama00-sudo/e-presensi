@@ -1526,3 +1526,45 @@ function absenWithWebAuthn(credentialId, clientDataJSON, aksi, lat, lng) {
     lock.releaseLock();
   }
 }
+
+
+/**
+ * Endpoint POST untuk melayani permintaan API dari Vercel / Client Eksternal
+ */
+function doPost(e) {
+  try {
+    var body = {};
+    if (e && e.postData && e.postData.contents) {
+      try {
+        body = JSON.parse(e.postData.contents);
+      } catch (parseErr) {
+        body = e.parameter || {};
+      }
+    } else if (e && e.parameter) {
+      body = e.parameter;
+    }
+
+    var action = String(body.action || '').trim();
+    var res;
+
+    if (action === 'getWebAuthnChallenge') {
+      res = { success: true, challenge: getWebAuthnChallenge() };
+    } else if (action === 'registerWebAuthnCredential') {
+      res = registerWebAuthnCredential(body.idUser, body.pin, body.credentialId, body.clientDataJSON);
+    } else if (action === 'absenWithWebAuthn') {
+      res = absenWithWebAuthn(body.credentialId, body.clientDataJSON, body.aksi, body.lat, body.lng);
+    } else if (action === 'absen') {
+      res = absen(body.idUser, body.pin, body.aksi, body.lat, body.lng);
+    } else {
+      throw new Error('Aksi API tidak valid: ' + action);
+    }
+
+    return ContentService.createTextOutput(JSON.stringify(res))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      error: err.message || String(err)
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
