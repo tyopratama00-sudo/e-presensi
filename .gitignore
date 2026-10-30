@@ -1,0 +1,7 @@
+freelancers.json
+backups/
+*.xlsx
+sheet-data-backup.json
+sheet-format-snapshot.json
+*.gsheet
+.vercel/

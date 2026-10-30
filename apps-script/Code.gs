@@ -23,8 +23,15 @@ function getSS() {
   return SpreadsheetApp.getActiveSpreadsheet() || SpreadsheetApp.openById(SPREADSHEET_ID);
 }
 
+function prop_(key) {
+  return PropertiesService.getScriptProperties().getProperty(key);
+}
+
 function doGet(e) {
-  if (e && e.parameter && e.parameter.setup === '1') {
+  const p = (e && e.parameter) || {};
+  const admin = !!prop_('API_SECRET') && p.key === prop_('API_SECRET');
+
+  if (admin && p.setup === '1') {
     const ss = getSS();
     const a = ss.getSheetByName('Absensi');
     if (a) {
@@ -39,7 +46,7 @@ function doGet(e) {
     return ContentService.createTextOutput('SETUP_HORIZONTAL_SUCCESS');
   }
 
-  if (e && e.parameter && e.parameter.inspect === '1') {
+  if (admin && p.inspect === '1') {
     const ss = getSS();
     const sheets = ss.getSheets();
     const result = {
@@ -65,10 +72,12 @@ function doGet(e) {
       .setMimeType(ContentService.MimeType.JSON);
   }
 
-  return HtmlService.createHtmlOutputFromFile('Index')
-    .setTitle('Jonas Photo Attendance')
-    .addMetaTag('viewport', 'width=device-width, initial-scale=1, viewport-fit=cover')
-    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  // UI absensi hanya di Vercel (biometrik terikat ke satu domain).
+  const url = prop_('APP_URL');
+  const html = url
+    ? `<p style="font:16px sans-serif;text-align:center;margin-top:40vh"><a href="${url}" target="_top">Buka E-Presensi</a></p><script>window.top.location.href=${JSON.stringify(url)}</script>`
+    : '<p style="font:16px sans-serif;text-align:center;margin-top:40vh">APP_URL belum diatur di Script Properties.</p>';
+  return HtmlService.createHtmlOutput(html).setTitle('Jonas Photo Attendance');
 }
 
 /**
@@ -1012,68 +1021,57 @@ function menuRenderFee() {
   }
 }
 
+// ============================================================
+// ABSENSI — hanya lewat doPost dari server Vercel (API_SECRET)
+// ============================================================
+
+const PIN_MAX_GAGAL = 5;
+const PIN_KUNCI_DETIK = 15 * 60;
+
 /**
- * Fungsi proses absensi (Masuk / Pulang)
- * Mendukung autentikasi ID dan PIN
+ * Cari karyawan di sheet Database berdasarkan ID (kolom B) atau Nama (kolom A).
  */
-function absen(idUser, pin, aksi, lat, lng) {
-  // Dukungan kompatibilitas jika dipanggil dengan 4 parameter lama: absen(pin, aksi, lat, lng)
-  if (lat === undefined && lng === undefined && (aksi === undefined || typeof aksi === 'number')) {
-    lng = lat;
-    lat = aksi;
-    aksi = pin;
-    pin = idUser;
-  }
+function cariKaryawan_(ss, idUser) {
+  const sh = ss.getSheetByName('Database') || ss.getSheetByName('Freelancer');
+  if (!sh) throw new Error('Sheet "Database" belum ada. Jalankan setup().');
+  const q = String(idUser || '').trim().toLowerCase();
+  if (!q) throw new Error('ID wajib diisi.');
+  const row = sh.getDataRange().getDisplayValues().slice(1).find(r =>
+    q === String(r[1] || '').trim().toLowerCase() || q === String(r[0] || '').trim().toLowerCase());
+  if (!row || !String(row[0]).trim()) throw new Error(`ID "${idUser}" tidak terdaftar.`);
+  return { nama: String(row[0]).trim(), id: String(row[1] || '').trim(), pin: String(row[2] || '').trim() };
+}
 
-  idUser = String(idUser || '').trim();
-  pin = String(pin || '').trim();
+/**
+ * Cek PIN (kolom C). Akun dikunci 15 menit setelah 5 kali PIN salah.
+ */
+function cekPin_(ss, idUser, pin) {
+  const k = cariKaryawan_(ss, idUser);
+  const cache = CacheService.getScriptCache();
+  const key = 'pin_gagal_' + k.nama.toLowerCase();
+  const gagal = Number(cache.get(key) || 0);
+  if (gagal >= PIN_MAX_GAGAL) throw new Error('Terlalu banyak PIN salah. Coba lagi 15 menit lagi.');
+  if (!k.pin) throw new Error(`PIN untuk ${k.nama} belum diatur. Hubungi admin.`);
+  if (String(pin || '').trim() !== k.pin) {
+    cache.put(key, String(gagal + 1), PIN_KUNCI_DETIK);
+    throw new Error(`PIN salah untuk ${k.nama}. Sisa percobaan: ${PIN_MAX_GAGAL - gagal - 1}.`);
+  }
+  cache.remove(key);
+  return k;
+}
+
+/**
+ * Catat MASUK / PULANG di sheet Absensi dan Absensi_Log_Backup.
+ */
+function catatAbsen_(ss, nama, aksi, lat, lng) {
   aksi = String(aksi || '').toLowerCase().trim();
+  if (aksi !== 'masuk' && aksi !== 'pulang') throw new Error('Aksi tidak valid.');
 
-  if (!idUser) {
-    throw new Error('ID is required.');
-  }
-  if (!pin) {
-    throw new Error('PIN is required.');
-  }
-  if (aksi !== 'masuk' && aksi !== 'pulang') {
-    throw new Error('Invalid action.');
-  }
-
-  // 1. Cek radius lokasi dengan rumus Haversine
   const jarak = jarakMeter(LOKASI.lat, LOKASI.lng, Number(lat), Number(lng));
   if (isNaN(jarak) || jarak > RADIUS_M) {
-    const jarakStr = isNaN(jarak) ? '-' : Math.round(jarak);
-    throw new Error(`You are outside the work location (distance: ${jarakStr} m). Maximum radius is ${RADIUS_M} m.`);
+    throw new Error(`Anda di luar lokasi kerja (jarak: ${isNaN(jarak) ? '-' : Math.round(jarak)} m). Maksimal ${RADIUS_M} m.`);
   }
 
-  // 2. Cek user di Sheet "Database" (atau fallback "Freelancer")
-  const ss = getSS();
-  const shFreelancer = ss.getSheetByName('Database') || ss.getSheetByName('Freelancer');
-  if (!shFreelancer) {
-    throw new Error('Sheet "Database" does not exist yet. Reopen the web app or run setup().');
-  }
-
-  const dataFreelancer = shFreelancer.getDataRange().getDisplayValues().slice(1);
-  const q = idUser.toLowerCase();
-  const orang = dataFreelancer.find(row => {
-    const rowNama = (row[0] || '').trim().toLowerCase();
-    const rowId = (row[1] || '').trim().toLowerCase();
-    return q === rowId || q === rowNama;
-  });
-
-  if (!orang || !orang[0].trim()) {
-    throw new Error(`ID "${idUser}" is not registered.`);
-  }
-
-  // Cek PIN: kolom C (index 2), fallback ke kolom I (index 8) atau kolom B (index 1)
-  const expectedPin = (orang[2] && orang[2].trim()) ? orang[2].trim() : ((orang[8] && orang[8].trim()) ? orang[8].trim() : orang[1].trim());
-  if (pin !== expectedPin) {
-    throw new Error(`Wrong PIN for ${orang[0].trim()}. Please check and try again.`);
-  }
-
-  const nama = orang[0].trim();
-
-  // 3. LockService agar tidak bentrok saat banyak orang absen bersamaan
   const lock = LockService.getScriptLock();
   lock.waitLock(15000);
 
@@ -1088,40 +1086,27 @@ function absen(idUser, pin, aksi, lat, lng) {
     const jamTeks = Utilities.formatDate(now, TZ, 'HH.mm');
     const todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-    // 4. Cari kolom tanggal hari ini di Baris 4 (Kolom C s/d AG, 31 tanggal cut-off)
+    // Cari kolom tanggal hari ini di Baris 4 (Kolom C s/d AG, 31 tanggal cut-off)
     const dateRowValues = shAbsensi.getRange(4, 3, 1, 31).getValues()[0];
     let targetCol = -1;
-
     for (let c = 0; c < dateRowValues.length; c++) {
       const d = dateRowValues[c];
-      if (d instanceof Date) {
-        if (d.getFullYear() === todayDate.getFullYear() &&
-            d.getMonth() === todayDate.getMonth() &&
-            d.getDate() === todayDate.getDate()) {
-          targetCol = 3 + c;
-          break;
-        }
-      } else if (d) {
-        const dObj = new Date(d);
-        if (!isNaN(dObj.getTime()) &&
-            dObj.getFullYear() === todayDate.getFullYear() &&
-            dObj.getMonth() === todayDate.getMonth() &&
-            dObj.getDate() === todayDate.getDate()) {
-          targetCol = 3 + c;
-          break;
-        }
+      const dObj = d instanceof Date ? d : new Date(d);
+      if (d && !isNaN(dObj.getTime()) &&
+          dObj.getFullYear() === todayDate.getFullYear() &&
+          dObj.getMonth() === todayDate.getMonth() &&
+          dObj.getDate() === todayDate.getDate()) {
+        targetCol = 3 + c;
+        break;
       }
     }
-
     if (targetCol === -1) {
-      const tglStr = Utilities.formatDate(now, TZ, 'dd/MM/yyyy');
-      throw new Error(`Today's date (${tglStr}) is not in the cut-off date range of the Absensi sheet.`);
+      throw new Error(`Tanggal hari ini (${Utilities.formatDate(now, TZ, 'dd/MM/yyyy')}) tidak ada di periode sheet Absensi.`);
     }
 
-    // 5. Cari baris karyawan di Kolom B (mulai baris 5)
+    // Cari baris karyawan di Kolom B (mulai baris 5)
     const currentTableEnd = shAbsensi.getLastRow();
     let targetRow = -1;
-
     if (currentTableEnd >= 5) {
       const names = shAbsensi.getRange(5, 2, currentTableEnd - 4, 1).getValues();
       for (let r = 0; r < names.length; r++) {
@@ -1132,20 +1117,17 @@ function absen(idUser, pin, aksi, lat, lng) {
       }
     }
 
-    // Jika nama belum ada di tabel bulan ini, tambahkan baris baru untuk karyawan ini
+    // Nama belum ada di tabel bulan ini: tambahkan baris baru
     if (targetRow === -1) {
       targetRow = (currentTableEnd >= 5 ? currentTableEnd : 4) + 1;
-      const noUrut = targetRow - 4;
-      shAbsensi.getRange(targetRow, 1).setValue(noUrut).setNumberFormat('0').setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#64748B');
+      shAbsensi.getRange(targetRow, 1).setValue(targetRow - 4).setNumberFormat('0').setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#64748B');
       shAbsensi.getRange(targetRow, 2).setValue(nama).setFontWeight('bold').setFontColor('#0F172A').setHorizontalAlignment('left');
       shAbsensi.getRange(targetRow, 34).setFormula(`=COUNTIFS(C${targetRow}:AG${targetRow}, "<>", C${targetRow}:AG${targetRow}, "<>OFF", C${targetRow}:AG${targetRow}, "<>Sakit", C${targetRow}:AG${targetRow}, "<>Izin")`).setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#0F766E');
       shAbsensi.getRange(targetRow, 35).setFormula(hoursFormula(targetRow)).setNumberFormat('0.00').setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#0F766E');
       shAbsensi.getRange(targetRow, 1, 1, 35).setFontFamily('Arial').setFontSize(9);
       shAbsensi.getRange(targetRow, 1, 1, 35).setBorder(true, true, true, true, true, true, '#CBD5E1', SpreadsheetApp.BorderStyle.SOLID);
 
-      // Inisialisasi sel C..AG dengan 'OFF' dan validation dropdown
-      const defaultCells = Array(31).fill('OFF');
-      shAbsensi.getRange(targetRow, 3, 1, 31).setValues([defaultCells]).setNumberFormat('@').setHorizontalAlignment('center');
+      shAbsensi.getRange(targetRow, 3, 1, 31).setValues([Array(31).fill('OFF')]).setNumberFormat('@').setHorizontalAlignment('center');
       const ruleStatus = SpreadsheetApp.newDataValidation()
         .requireValueInList(['OFF', 'Sakit', 'Izin'], true)
         .setAllowInvalid(true)
@@ -1160,17 +1142,14 @@ function absen(idUser, pin, aksi, lat, lng) {
 
     const targetCell = shAbsensi.getRange(targetRow, targetCol);
     const currentVal = String(targetCell.getValue() || '').trim();
-    const isNotClockedIn = !currentVal || currentVal === 'OFF' || currentVal === 'Sakit' || currentVal === 'Izin';
+    const belumMasuk = !currentVal || currentVal === 'OFF' || currentVal === 'Sakit' || currentVal === 'Izin';
+    const shBackup = ss.getSheetByName('Absensi_Log_Backup');
 
     if (aksi === 'masuk') {
-      if (!isNotClockedIn) {
-        throw new Error(`You have already clocked in today (${currentVal}).`);
-      }
+      if (!belumMasuk) throw new Error(`Anda sudah absen masuk hari ini (${currentVal}).`);
       targetCell.setValue(jamTeks).setNumberFormat('@').setHorizontalAlignment('center');
       targetCell.clearDataValidations();
 
-      // Simpan log ke master log Absensi_Log_Backup
-      const shBackup = ss.getSheetByName('Absensi_Log_Backup');
       if (shBackup) {
         shBackup.insertRowAfter(1);
         shBackup.getRange(2, 1, 1, 4).setValues([[todayDate, nama, now, '']]);
@@ -1179,64 +1158,36 @@ function absen(idUser, pin, aksi, lat, lng) {
         shBackup.getRange('E2').setFormula('=IF(OR(C2="", D2=""), "", ROUND(IF(D2 < C2, D2 + 1 - C2, D2 - C2) * 24, 2))').setNumberFormat('0.00');
       }
 
-      return {
-        success: true,
-        message: `Hi ${nama}, your CLOCK IN was recorded at ${jamTeks} WIB.`,
-        nama: nama,
-        jam: jamTeks,
-        tipe: 'masuk'
-      };
+      return { message: `Hai ${nama}, absen MASUK tercatat pukul ${jamTeks} WIB.`, nama: nama, jam: jamTeks, tipe: 'masuk', jarak: Math.round(jarak) };
     }
 
     // Aksi pulang
-    if (isNotClockedIn) {
-      throw new Error('You have not clocked in today.');
-    }
-    if (currentVal.includes(' - ')) {
-      throw new Error(`You have already clocked out today (${currentVal}).`);
-    }
+    if (belumMasuk) throw new Error('Anda belum absen masuk hari ini.');
+    if (currentVal.includes(' - ')) throw new Error(`Anda sudah absen pulang hari ini (${currentVal}).`);
 
-    // Hitung jam kerja
-    const jamMasukStr = currentVal.replace('.', ':');
-    const parts = jamMasukStr.split(':');
+    const parts = currentVal.replace('.', ':').split(':');
     const masukHours = (parseInt(parts[0], 10) || 0) + (parseInt(parts[1], 10) || 0) / 60;
     const nowHours = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
     let selisih = nowHours - masukHours;
     if (selisih < 0) selisih += 24;
     const jamKerja = Math.max(0, Math.round(selisih * 100) / 100);
 
-    const valBaru = `${currentVal} - ${jamTeks}`;
-    targetCell.setValue(valBaru).setNumberFormat('@').setHorizontalAlignment('center');
+    targetCell.setValue(`${currentVal} - ${jamTeks}`).setNumberFormat('@').setHorizontalAlignment('center');
 
-    // Update waktu pulang di master log Absensi_Log_Backup
-    const shBackup = ss.getSheetByName('Absensi_Log_Backup');
     if (shBackup && shBackup.getLastRow() >= 2) {
-      const maxScan = Math.min(shBackup.getLastRow() - 1, 100);
-      const rows = shBackup.getRange(2, 1, maxScan, 2).getValues();
+      const rows = shBackup.getRange(2, 1, Math.min(shBackup.getLastRow() - 1, 100), 2).getValues();
       const hariIniStr = Utilities.formatDate(now, TZ, 'yyyy-MM-dd');
       for (let i = 0; i < rows.length; i++) {
         const tgl = rows[i][0];
-        let tglStr = '';
-        if (tgl instanceof Date) {
-          tglStr = Utilities.formatDate(tgl, TZ, 'yyyy-MM-dd');
-        } else if (typeof tgl === 'string') {
-          tglStr = tgl;
-        }
-        if (rows[i][1] === nama && (tglStr === hariIniStr || tglStr.startsWith(hariIniStr))) {
+        const tglStr = tgl instanceof Date ? Utilities.formatDate(tgl, TZ, 'yyyy-MM-dd') : String(tgl);
+        if (rows[i][1] === nama && tglStr.startsWith(hariIniStr)) {
           shBackup.getRange(2 + i, 4).setValue(now).setNumberFormat('HH.mm');
           break;
         }
       }
     }
 
-    return {
-      success: true,
-      message: `Hi ${nama}, your CLOCK OUT was recorded at ${jamTeks} WIB. Total hours worked: ${jamKerja} h.`,
-      nama: nama,
-      jam: jamTeks,
-      jamKerja: jamKerja,
-      tipe: 'pulang'
-    };
+    return { message: `Hai ${nama}, absen PULANG tercatat pukul ${jamTeks} WIB. Total kerja: ${jamKerja} jam.`, nama: nama, jam: jamTeks, jamKerja: jamKerja, tipe: 'pulang', jarak: Math.round(jarak) };
   } finally {
     lock.releaseLock();
   }
@@ -1254,317 +1205,102 @@ function jarakMeter(lat1, lng1, lat2, lng2) {
 
 
 // ============================================================
-// WEBAUTHN BIOMETRIC SUPPORT
+// BIOMETRIK (WEBAUTHN)
+// Tanda tangan diverifikasi di Vercel (vercel-app/api/action.js).
+// Di sini: challenge sekali pakai, penyimpanan public key & signCount.
 // ============================================================
 
-/**
- * Ambil/buat sheet WebAuthn untuk menyimpan credential terdaftar.
- */
-function getWebAuthnSheet_(ss) {
-  let sh = ss.getSheetByName('WebAuthn');
-  if (!sh) {
-    sh = ss.insertSheet('WebAuthn');
-    sh.getRange('A1:E1').setValues([['credentialId', 'idUser', 'nama', 'registeredAt', 'origin']]);
-    sh.getRange('A1:E1').setFontWeight('bold');
-    sh.setColumnWidth(1, 300);
-    sh.setColumnWidth(2, 160);
-    sh.setColumnWidth(3, 200);
-    sh.setColumnWidth(4, 160);
-    sh.setColumnWidth(5, 260);
-  }
-  return sh;
-}
-
-/**
- * Hasilkan random challenge (base64url 32 byte) dan simpan ke ScriptProperties
- * dengan TTL 5 menit.
- */
-function getWebAuthnChallenge() {
-  const bytes = [];
-  for (let i = 0; i < 32; i++) bytes.push(Math.floor(Math.random() * 256));
-  const challenge = Utilities.base64EncodeWebSafe(bytes).replace(/=/g, '');
-  const props = PropertiesService.getScriptProperties();
-  const key = 'wac_' + challenge.substring(0, 10);
-  props.setProperty(key, JSON.stringify({ challenge: challenge, ts: Date.now() }));
+function buatChallenge_() {
+  const bytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, Utilities.getUuid() + Utilities.getUuid());
+  const challenge = Utilities.base64EncodeWebSafe(bytes).replace(/=+$/, '');
+  CacheService.getScriptCache().put('ch_' + challenge, '1', 300);
   return challenge;
 }
 
-/**
- * Validasi challenge dari clientDataJSON (base64url-encoded).
- * Menghapus challenge setelah berhasil divalidasi (one-time use).
- */
-function verifyWebAuthnChallenge_(clientDataJSON) {
-  var clientData;
-  try {
-    var decoded = Utilities.newBlob(Utilities.base64DecodeWebSafe(clientDataJSON)).getDataAsString();
-    clientData = JSON.parse(decoded);
-  } catch (e) {
-    throw new Error('clientDataJSON tidak valid.');
-  }
-
-  var challenge = clientData.challenge;
-  if (!challenge) throw new Error('Challenge tidak ditemukan di clientData.');
-
-  var props = PropertiesService.getScriptProperties();
-  var key = 'wac_' + challenge.substring(0, 10);
-  var stored = props.getProperty(key);
-  if (!stored) throw new Error('Challenge sudah kedaluwarsa atau tidak valid. Silakan coba lagi.');
-
-  var storedData = JSON.parse(stored);
-  if (storedData.challenge !== challenge) throw new Error('Challenge tidak cocok.');
-  if (Date.now() - storedData.ts > 5 * 60 * 1000) {
-    props.deleteProperty(key);
-    throw new Error('Challenge kedaluwarsa. Silakan coba lagi.');
-  }
-
-  props.deleteProperty(key); // One-time use
-  return clientData.origin || '';
+function pakaiChallenge_(challenge) {
+  const cache = CacheService.getScriptCache();
+  const key = 'ch_' + String(challenge || '');
+  if (!challenge || !cache.get(key)) throw new Error('Sesi biometrik kedaluwarsa. Silakan coba lagi.');
+  cache.remove(key);
 }
 
-/**
- * Daftarkan credential biometrik (WebAuthn) untuk user yang sudah terverifikasi PIN.
- * Dipanggil setelah absen PIN berhasil, sebagai step opt-in registrasi biometrik.
- */
-function registerWebAuthnCredential(idUser, pin, credentialId, clientDataJSON) {
-  idUser = String(idUser || '').trim();
-  pin = String(pin || '').trim();
-  credentialId = String(credentialId || '').trim();
-
-  if (!idUser || !pin || !credentialId || !clientDataJSON) {
-    throw new Error('Parameter tidak lengkap untuk registrasi biometrik.');
-  }
-
-  var ss = getSS();
-  var dbSheet = ss.getSheetByName('Database') || ss.getSheetByName('Freelancer');
-  if (!dbSheet) throw new Error('Sheet Database tidak ditemukan.');
-
-  var rows = dbSheet.getDataRange().getDisplayValues().slice(1);
-  var q = idUser.toLowerCase();
-  var orang = null;
-  for (var i = 0; i < rows.length; i++) {
-    var rId = (rows[i][1] || '').trim().toLowerCase();
-    var rNama = (rows[i][0] || '').trim().toLowerCase();
-    if (q === rId || q === rNama) { orang = rows[i]; break; }
-  }
-
-  if (!orang || !orang[0].trim()) throw new Error('ID tidak terdaftar.');
-  var expectedPin = (orang[2] && orang[2].trim()) ? orang[2].trim() : orang[1].trim();
-  if (pin !== expectedPin) throw new Error('PIN salah. Registrasi biometrik ditolak.');
-
-  var nama = orang[0].trim();
-
-  // Verifikasi challenge
-  verifyWebAuthnChallenge_(clientDataJSON);
-
-  // Simpan credential (update jika sudah ada)
-  var waSh = getWebAuthnSheet_(ss);
-  var waData = waSh.getDataRange().getValues();
-  var existingRow = -1;
-  for (var j = 1; j < waData.length; j++) {
-    if (String(waData[j][0]) === credentialId) { existingRow = j + 1; break; }
-  }
-
-  var now = Utilities.formatDate(new Date(), TZ, 'yyyy-MM-dd HH:mm:ss');
-  if (existingRow > 0) {
-    waSh.getRange(existingRow, 1, 1, 5).setValues([[credentialId, idUser, nama, now, 'updated']]);
-  } else {
-    waSh.appendRow([credentialId, idUser, nama, now, 'registered']);
-  }
-
-  return { success: true, message: 'Biometrik berhasil didaftarkan untuk ' + nama + '.', nama: nama };
+function sheetBiometrik_(ss) {
+  const sh = ss.getSheetByName('WebAuthn') || ss.insertSheet('WebAuthn');
+  sh.getRange('A1:F1').setValues([['credentialId', 'idUser', 'nama', 'registeredAt', 'publicKey', 'signCount']]).setFontWeight('bold');
+  sh.getRange('A:A').setNumberFormat('@');
+  sh.getRange('E:E').setNumberFormat('@');
+  return sh;
 }
 
-/**
- * Absen menggunakan WebAuthn tanpa input ID/PIN.
- * credentialId dicari di sheet WebAuthn → resolve idUser → rekam absensi.
- */
-function absenWithWebAuthn(credentialId, clientDataJSON, aksi, lat, lng) {
-  credentialId = String(credentialId || '').trim();
-  aksi = String(aksi || '').toLowerCase().trim();
-
-  if (!credentialId || !clientDataJSON) throw new Error('Data biometrik tidak lengkap.');
-  if (aksi !== 'masuk' && aksi !== 'pulang') throw new Error('Aksi tidak valid.');
-
-  // 1. Verifikasi challenge
-  verifyWebAuthnChallenge_(clientDataJSON);
-
-  // 2. Cari credential di sheet WebAuthn
-  var ss = getSS();
-  var waSh = getWebAuthnSheet_(ss);
-  var waData = waSh.getDataRange().getValues();
-
-  var idUser = null;
-  var nama = null;
-  for (var i = 1; i < waData.length; i++) {
-    if (String(waData[i][0]) === credentialId) {
-      idUser = String(waData[i][1]);
-      nama = String(waData[i][2]);
-      break;
+function cariBiometrik_(sh, credentialId) {
+  const id = String(credentialId || '').trim();
+  if (!id) throw new Error('Data biometrik tidak lengkap.');
+  const rows = sh.getDataRange().getValues();
+  for (let i = 1; i < rows.length; i++) {
+    if (String(rows[i][0]) === id) {
+      // Baris versi lama (tanpa public key) punya kolom F kosong
+      if (rows[i][5] === '' || !rows[i][4]) throw new Error('Biometrik versi lama. Daftar ulang dengan ID + PIN.');
+      return { row: i + 1, idUser: String(rows[i][1]), nama: String(rows[i][2]), publicKey: String(rows[i][4]), signCount: Number(rows[i][5]) || 0 };
     }
   }
+  throw new Error('Perangkat ini belum terdaftar. Daftar ulang dengan ID + PIN.');
+}
 
-  if (!idUser) throw new Error('Perangkat ini belum terdaftar biometrik. Gunakan ID + PIN terlebih dahulu, lalu aktifkan biometrik.');
+function daftarBiometrik_(ss, b) {
+  const k = cekPin_(ss, b.idUser, b.pin);
+  const id = String(b.credentialId || '').trim();
+  const publicKey = String(b.publicKey || '').trim();
+  if (!id || !publicKey) throw new Error('Data pendaftaran biometrik tidak lengkap.');
+  pakaiChallenge_(b.challenge);
 
-  // 3. Verifikasi lokasi
-  var jarak = jarakMeter(LOKASI.lat, LOKASI.lng, Number(lat), Number(lng));
-  if (isNaN(jarak) || jarak > RADIUS_M) {
-    var jarakStr = isNaN(jarak) ? '-' : Math.round(jarak);
-    throw new Error('Anda berada di luar lokasi kerja (jarak: ' + jarakStr + ' m). Maksimal radius ' + RADIUS_M + ' m.');
-  }
+  const sh = sheetBiometrik_(ss);
+  const row = [id, k.id || k.nama, k.nama, Utilities.formatDate(new Date(), TZ, 'yyyy-MM-dd HH:mm:ss'), publicKey, 0];
+  let ada = null;
+  try { ada = cariBiometrik_(sh, id); } catch (err) {}
+  if (ada) sh.getRange(ada.row, 1, 1, 6).setValues([row]);
+  else sh.appendRow(row);
+  return { nama: k.nama, message: `Face ID / sidik jari aktif untuk ${k.nama}.` };
+}
 
-  // 4. Rekam absensi (tanpa cek PIN)
-  var lock = LockService.getScriptLock();
-  lock.waitLock(15000);
+function ambilBiometrik_(ss, credentialId) {
+  const c = cariBiometrik_(sheetBiometrik_(ss), credentialId);
+  return { publicKey: c.publicKey, signCount: c.signCount };
+}
 
-  try {
-    var shAbsensi = ss.getSheetByName('Absensi');
-    if (!shAbsensi) {
-      setupAbsensiHorizontal(ss);
-      shAbsensi = ss.getSheetByName('Absensi');
-    }
-
-    var now = new Date();
-    var jamTeks = Utilities.formatDate(now, TZ, 'HH.mm');
-    var todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-    var dateRowValues = shAbsensi.getRange(4, 3, 1, 31).getValues()[0];
-    var targetCol = -1;
-    for (var c = 0; c < dateRowValues.length; c++) {
-      var d = dateRowValues[c];
-      var dObj = (d instanceof Date) ? d : new Date(d);
-      if (!isNaN(dObj.getTime()) &&
-          dObj.getFullYear() === todayDate.getFullYear() &&
-          dObj.getMonth() === todayDate.getMonth() &&
-          dObj.getDate() === todayDate.getDate()) {
-        targetCol = 3 + c; break;
-      }
-    }
-    if (targetCol === -1) {
-      var tglStr = Utilities.formatDate(now, TZ, 'dd/MM/yyyy');
-      throw new Error('Tanggal hari ini (' + tglStr + ') tidak ada di sheet Absensi.');
-    }
-
-    var currentTableEnd = shAbsensi.getLastRow();
-    var targetRow = -1;
-    if (currentTableEnd >= 5) {
-      var names = shAbsensi.getRange(5, 2, currentTableEnd - 4, 1).getValues();
-      for (var r = 0; r < names.length; r++) {
-        if (String(names[r][0] || '').trim().toLowerCase() === nama.toLowerCase()) {
-          targetRow = 5 + r; break;
-        }
-      }
-    }
-
-    if (targetRow === -1) {
-      targetRow = (currentTableEnd >= 5 ? currentTableEnd : 4) + 1;
-      var noUrut = targetRow - 4;
-      shAbsensi.getRange(targetRow, 1).setValue(noUrut).setNumberFormat('0').setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#64748B');
-      shAbsensi.getRange(targetRow, 2).setValue(nama).setFontWeight('bold').setFontColor('#0F172A').setHorizontalAlignment('left');
-      shAbsensi.getRange(targetRow, 34).setFormula('=COUNTIFS(C' + targetRow + ':AG' + targetRow + ', "<>", C' + targetRow + ':AG' + targetRow + ', "<>OFF", C' + targetRow + ':AG' + targetRow + ', "<>Sakit", C' + targetRow + ':AG' + targetRow + ', "<>Izin")').setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#0F766E');
-      shAbsensi.getRange(targetRow, 35).setFormula(hoursFormula(targetRow)).setNumberFormat('0.00').setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#0F766E');
-      shAbsensi.getRange(targetRow, 1, 1, 35).setFontFamily('Arial').setFontSize(9);
-      shAbsensi.getRange(targetRow, 1, 1, 35).setBorder(true, true, true, true, true, true, '#CBD5E1', SpreadsheetApp.BorderStyle.SOLID);
-      var defaultCells = [];
-      for (var dc = 0; dc < 31; dc++) defaultCells.push('OFF');
-      shAbsensi.getRange(targetRow, 3, 1, 31).setValues([defaultCells]).setNumberFormat('@').setHorizontalAlignment('center');
-      var ruleStatus = SpreadsheetApp.newDataValidation().requireValueInList(['OFF', 'Sakit', 'Izin'], true).setAllowInvalid(true).build();
-      shAbsensi.getRange(targetRow, 3, 1, 31).setDataValidation(ruleStatus);
-      try { if (shAbsensi.getFilter()) shAbsensi.getFilter().remove(); shAbsensi.getRange(4, 1, targetRow - 3, 35).createFilter(); } catch (ex) {}
-    }
-
-    var targetCell = shAbsensi.getRange(targetRow, targetCol);
-    var currentVal = String(targetCell.getValue() || '').trim();
-    var isNotClockedIn = !currentVal || currentVal === 'OFF' || currentVal === 'Sakit' || currentVal === 'Izin';
-
-    if (aksi === 'masuk') {
-      if (!isNotClockedIn) throw new Error('Anda sudah Clock In hari ini (' + currentVal + ').');
-      targetCell.setValue(jamTeks).setNumberFormat('@').setHorizontalAlignment('center');
-      targetCell.clearDataValidations();
-      var shBackup = ss.getSheetByName('Absensi_Log_Backup');
-      if (shBackup) {
-        shBackup.insertRowAfter(1);
-        shBackup.getRange(2, 1, 1, 4).setValues([[todayDate, nama, now, '']]);
-        shBackup.getRange('A2').setNumberFormat('dd/mm/yyyy');
-        shBackup.getRange('C2:D2').setNumberFormat('HH.mm');
-        shBackup.getRange('E2').setFormula('=IF(OR(C2="", D2=""), "", ROUND(IF(D2 < C2, D2 + 1 - C2, D2 - C2) * 24, 2))').setNumberFormat('0.00');
-      }
-      return { success: true, message: 'Hi ' + nama + ', CLOCK IN tercatat pukul ' + jamTeks + ' WIB. [🔒 Biometrik ✓]', nama: nama, jam: jamTeks, tipe: 'masuk', biometric: true };
-    }
-
-    // Aksi pulang
-    if (isNotClockedIn) throw new Error('Anda belum Clock In hari ini.');
-    if (currentVal.includes(' - ')) throw new Error('Anda sudah Clock Out hari ini (' + currentVal + ').');
-
-    var jamMasukParts = currentVal.replace('.', ':').split(':');
-    var masukHours = (parseInt(jamMasukParts[0], 10) || 0) + (parseInt(jamMasukParts[1], 10) || 0) / 60;
-    var nowHours = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
-    var selisih = nowHours - masukHours;
-    if (selisih < 0) selisih += 24;
-    var jamKerja = Math.max(0, Math.round(selisih * 100) / 100);
-
-    var valBaru = currentVal + ' - ' + jamTeks;
-    targetCell.setValue(valBaru).setNumberFormat('@').setHorizontalAlignment('center');
-
-    var shBackupOut = ss.getSheetByName('Absensi_Log_Backup');
-    if (shBackupOut && shBackupOut.getLastRow() >= 2) {
-      var maxScan = Math.min(shBackupOut.getLastRow() - 1, 100);
-      var backupRows = shBackupOut.getRange(2, 1, maxScan, 2).getValues();
-      var hariIniStr = Utilities.formatDate(now, TZ, 'yyyy-MM-dd');
-      for (var bi = 0; bi < backupRows.length; bi++) {
-        var tgl = backupRows[bi][0];
-        var tglStr2 = (tgl instanceof Date) ? Utilities.formatDate(tgl, TZ, 'yyyy-MM-dd') : String(tgl);
-        if (backupRows[bi][1] === nama && tglStr2.startsWith(hariIniStr)) {
-          shBackupOut.getRange(2 + bi, 4).setValue(now).setNumberFormat('HH.mm');
-          break;
-        }
-      }
-    }
-
-    return { success: true, message: 'Hi ' + nama + ', CLOCK OUT tercatat pukul ' + jamTeks + ' WIB. Total: ' + jamKerja + ' jam. [🔒 Biometrik ✓]', nama: nama, jam: jamTeks, jamKerja: jamKerja, tipe: 'pulang', biometric: true };
-
-  } finally {
-    lock.releaseLock();
-  }
+function absenBiometrik_(ss, b) {
+  const sh = sheetBiometrik_(ss);
+  const c = cariBiometrik_(sh, b.credentialId);
+  pakaiChallenge_(b.challenge);
+  sh.getRange(c.row, 6).setValue(Number(b.signCount) || 0);
+  const k = cariKaryawan_(ss, c.idUser); // pastikan karyawan masih terdaftar
+  const res = catatAbsen_(ss, k.nama, b.aksi, b.lat, b.lng);
+  res.biometric = true;
+  return res;
 }
 
 
 /**
- * Endpoint POST untuk melayani permintaan API dari Vercel / Client Eksternal
+ * Endpoint POST — hanya untuk server Vercel. Wajib menyertakan API_SECRET (Script Properties).
  */
 function doPost(e) {
+  let res;
   try {
-    var body = {};
-    if (e && e.postData && e.postData.contents) {
-      try {
-        body = JSON.parse(e.postData.contents);
-      } catch (parseErr) {
-        body = e.parameter || {};
-      }
-    } else if (e && e.parameter) {
-      body = e.parameter;
+    const body = JSON.parse((e && e.postData && e.postData.contents) || '{}');
+    const secret = prop_('API_SECRET');
+    if (!secret || body.secret !== secret) throw new Error('Akses ditolak.');
+
+    const ss = getSS();
+    switch (body.action) {
+      case 'challenge': res = { challenge: buatChallenge_() }; break;
+      case 'absen': res = catatAbsen_(ss, cekPin_(ss, body.idUser, body.pin).nama, body.aksi, body.lat, body.lng); break;
+      case 'register': res = daftarBiometrik_(ss, body); break;
+      case 'credential': res = ambilBiometrik_(ss, body.credentialId); break;
+      case 'absenBio': res = absenBiometrik_(ss, body); break;
+      default: throw new Error('Aksi API tidak valid.');
     }
-
-    var action = String(body.action || '').trim();
-    var res;
-
-    if (action === 'getWebAuthnChallenge') {
-      res = { success: true, challenge: getWebAuthnChallenge() };
-    } else if (action === 'registerWebAuthnCredential') {
-      res = registerWebAuthnCredential(body.idUser, body.pin, body.credentialId, body.clientDataJSON);
-    } else if (action === 'absenWithWebAuthn') {
-      res = absenWithWebAuthn(body.credentialId, body.clientDataJSON, body.aksi, body.lat, body.lng);
-    } else if (action === 'absen') {
-      res = absen(body.idUser, body.pin, body.aksi, body.lat, body.lng);
-    } else {
-      throw new Error('Aksi API tidak valid: ' + action);
-    }
-
-    return ContentService.createTextOutput(JSON.stringify(res))
-      .setMimeType(ContentService.MimeType.JSON);
+    res.success = true;
   } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({
-      success: false,
-      error: err.message || String(err)
-    })).setMimeType(ContentService.MimeType.JSON);
+    res = { success: false, error: err.message || String(err) };
   }
+  return ContentService.createTextOutput(JSON.stringify(res)).setMimeType(ContentService.MimeType.JSON);
 }
