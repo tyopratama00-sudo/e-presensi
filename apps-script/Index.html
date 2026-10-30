@@ -756,6 +756,147 @@
       .camera-viewfinder { padding: 12px; }
       .brand-logo-img { width: 125px; }
     }
+
+    /* =========================================
+       BIOMETRIC / WEBAUTHN UI
+       ========================================= */
+
+    /* Panel biometrik utama (menggantikan form saat terdaftar) */
+    .biometric-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      padding: 4px 0 8px;
+    }
+
+    /* Tombol scan biometrik besar */
+    .btn-biometric-scan {
+      width: 100%;
+      height: 64px;
+      border-radius: var(--radius-btn);
+      border: 2px solid rgba(99, 102, 241, 0.5);
+      background: linear-gradient(180deg, #4f46e5 0%, #312e81 100%);
+      box-shadow: 0 8px 24px -4px rgba(79, 70, 229, 0.5), inset 0 1px 1px rgba(255,255,255,0.25);
+      color: #ffffff;
+      font-family: var(--font-sans);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      transition: all 160ms var(--ease-smooth);
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-biometric-scan:hover:not(:disabled) {
+      background: linear-gradient(180deg, #6366f1 0%, #3730a3 100%);
+      box-shadow: 0 12px 28px -4px rgba(99, 102, 241, 0.65);
+    }
+    .btn-biometric-scan:active:not(:disabled) { transform: translateY(2px) scale(0.97); }
+    .btn-biometric-scan:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-biometric-scan.is-busy .bio-label-content { display: none; }
+    .btn-biometric-scan.is-busy .shutter-spinner { display: inline-block; }
+
+    .bio-icon {
+      font-size: 26px;
+      line-height: 1;
+      filter: drop-shadow(0 0 6px rgba(165,180,252,0.6));
+    }
+    .bio-label-text { line-height: 1.2; }
+    .bio-label-sub {
+      font-size: 11px;
+      font-weight: 500;
+      opacity: 0.75;
+      display: block;
+      font-family: var(--font-mono);
+    }
+
+    /* Grid Clock In / Clock Out untuk biometrik */
+    .bio-shutter-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      width: 100%;
+    }
+
+    /* Link fallback ke form manual */
+    .bio-fallback-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      font-size: 12px;
+      color: var(--text-dim);
+      width: 100%;
+    }
+    .bio-fallback-link {
+      color: var(--accent-gold);
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 12px;
+      padding: 0;
+    }
+    .bio-fallback-link:hover { color: #fde68a; }
+
+    /* Toast registrasi biometrik (setelah berhasil login PIN) */
+    .bio-register-toast {
+      background: rgba(30, 36, 48, 0.95);
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .bio-register-toast-icon { font-size: 24px; flex-shrink: 0; }
+    .bio-register-toast-body { flex: 1; min-width: 0; }
+    .bio-register-toast-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #a5b4fc;
+      margin-bottom: 2px;
+    }
+    .bio-register-toast-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+    .bio-register-toast-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+    .btn-bio-register-yes {
+      background: #4f46e5;
+      border: none;
+      border-radius: 7px;
+      color: #fff;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 5px 10px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-bio-register-yes:hover { background: #6366f1; }
+    .btn-bio-register-no {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      font-size: 11px;
+      cursor: pointer;
+      padding: 2px 0;
+      text-align: center;
+    }
+    .btn-bio-register-no:hover { color: var(--text-muted); }
   </style>
 </head>
 <body>
@@ -885,7 +1026,58 @@
         <button type="button" class="btn-switch-account" onclick="switchAccount()">Ganti Akun</button>
       </div>
 
-      <!-- Attendance Input Form -->
+      <!-- ===== BIOMETRIC PANEL (tampil jika biometrik terdaftar) ===== -->
+      <div id="biometricPanel" hidden>
+
+        <!-- Toast registrasi biometrik (tampil setelah login PIN berhasil) -->
+        <div id="bioRegisterToast" class="bio-register-toast" hidden>
+          <div class="bio-register-toast-icon">🔒</div>
+          <div class="bio-register-toast-body">
+            <div class="bio-register-toast-title">Aktifkan Biometrik?</div>
+            <div class="bio-register-toast-sub">Absen berikutnya cukup<br>pakai Face ID / Fingerprint</div>
+          </div>
+          <div class="bio-register-toast-actions">
+            <button class="btn-bio-register-yes" onclick="startBiometricRegistration()">Aktifkan</button>
+            <button class="btn-bio-register-no" onclick="dismissBioToast()">Nanti</button>
+          </div>
+        </div>
+
+        <!-- Tombol biometrik scan -->
+        <div class="biometric-panel">
+          <div class="bio-shutter-grid">
+            <button type="button" class="btn-biometric-scan btn-shutter-in" id="btnBioMasuk" onclick="lakukanAbsenBiometrik('masuk')">
+              <span class="bio-label-content" style="display:flex;align-items:center;gap:10px;">
+                <span class="bio-icon">👆</span>
+                <span class="bio-label-text">
+                  CLOCK IN
+                  <span class="bio-label-sub">Face / Fingerprint</span>
+                </span>
+              </span>
+              <span class="shutter-spinner" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="btn-biometric-scan btn-shutter-out" id="btnBioPulang" onclick="lakukanAbsenBiometrik('pulang')" style="border-color:rgba(248,113,113,0.4);">
+              <span class="bio-label-content" style="display:flex;align-items:center;gap:10px;">
+                <span class="bio-icon">👆</span>
+                <span class="bio-label-text">
+                  CLOCK OUT
+                  <span class="bio-label-sub">Face / Fingerprint</span>
+                </span>
+              </span>
+              <span class="shutter-spinner" aria-hidden="true"></span>
+            </button>
+          </div>
+          <div class="bio-fallback-row">
+            <span>🔒 Biometrik aktif</span>
+            <span>·</span>
+            <button class="bio-fallback-link" onclick="switchToPinMode()">Masuk dengan PIN</button>
+            <span>·</span>
+            <button class="bio-fallback-link" onclick="hapusBiometrik()">Hapus</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Attendance Input Form (tampil jika biometrik belum terdaftar / mode PIN) -->
+      <form id="absenForm" novalidate>
       <form id="absenForm" novalidate>
         
         <div class="form-fields-grid">
@@ -1326,6 +1518,15 @@
               pinInput.value = "";
               setBusy(null);
 
+              // Tawarkan registrasi biometrik jika belum terdaftar
+              isBiometricAvailable().then(function(avail) {
+                if (avail && !getSavedCredentialId()) {
+                  _pendingBioIdUser = idUser;
+                  _pendingBioPin = pin;
+                  $("bioRegisterToast").hidden = false;
+                }
+              });
+
               showPolaroidReceipt({
                 aksi: aksi,
                 nama: nama,
@@ -1355,7 +1556,273 @@
       );
     }
 
+    // ==========================================
+    // WEBAUTHN BIOMETRIC
+    // ==========================================
+    const KEY_CRED_ID  = "jonas_webauthn_credId";
+    const KEY_CRED_UID = "jonas_webauthn_uid";
+
+    /** Cek apakah platform authenticator tersedia (Face ID / Fingerprint) */
+    async function isBiometricAvailable() {
+      try {
+        if (!window.PublicKeyCredential) return false;
+        return await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+      } catch (e) { return false; }
+    }
+
+    /** Dapatkan credentialId tersimpan di localStorage (null jika belum) */
+    function getSavedCredentialId() {
+      try { return localStorage.getItem(KEY_CRED_ID) || null; } catch (e) { return null; }
+    }
+
+    /** Simpan credentialId ke localStorage */
+    function saveCredentialId(credId) {
+      try { localStorage.setItem(KEY_CRED_ID, credId); } catch (e) {}
+    }
+
+    /** Hapus credentialId dari localStorage */
+    function removeCredentialId() {
+      try { localStorage.removeItem(KEY_CRED_ID); localStorage.removeItem(KEY_CRED_UID); } catch (e) {}
+    }
+
+    /** Helper: base64url encode ArrayBuffer */
+    function bufToB64url(buf) {
+      const bytes = new Uint8Array(buf);
+      let str = '';
+      for (const b of bytes) str += String.fromCharCode(b);
+      return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+    }
+
+    /** Helper: base64url decode ke Uint8Array */
+    function b64urlToBuf(str) {
+      str = str.replace(/-/g, '+').replace(/_/g, '/');
+      while (str.length % 4) str += '=';
+      const bin = atob(str);
+      const buf = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+      return buf.buffer;
+    }
+
+    /**
+     * REGISTRASI BIOMETRIK
+     * Dipanggil setelah user berhasil absen dengan PIN dan memilih aktifkan biometrik.
+     * State: _pendingBioIdUser & _pendingBioPin harus sudah diisi.
+     */
+    let _pendingBioIdUser = null;
+    let _pendingBioPin = null;
+
+    async function startBiometricRegistration() {
+      $("bioRegisterToast").hidden = true;
+      if (!_pendingBioIdUser || !_pendingBioPin) {
+        updateHudStatus("GAGAL: Data user tidak tersedia untuk registrasi biometrik.", "error");
+        return;
+      }
+      updateHudStatus("MENDAFTARKAN BIOMETRIK...", "busy");
+      try {
+        // 1. Dapatkan challenge dari server
+        const challenge = await new Promise((resolve, reject) => {
+          google.script.run
+            .withSuccessHandler(resolve)
+            .withFailureHandler(e => reject(e))
+            .getWebAuthnChallenge();
+        });
+
+        // 2. Buat credential baru via WebAuthn
+        const uid = new TextEncoder().encode(_pendingBioIdUser);
+        const cred = await navigator.credentials.create({
+          publicKey: {
+            challenge: b64urlToBuf(challenge),
+            rp: { name: "Jonas Photo Attendance" },
+            user: { id: uid, name: _pendingBioIdUser, displayName: _pendingBioIdUser },
+            pubKeyCredParams: [
+              { type: "public-key", alg: -7 },   // ES256
+              { type: "public-key", alg: -257 }  // RS256
+            ],
+            authenticatorSelection: {
+              authenticatorAttachment: "platform",
+              userVerification: "required",
+              residentKey: "preferred"
+            },
+            timeout: 60000,
+            attestation: "none"
+          }
+        });
+
+        if (!cred) throw new Error("Registrasi biometrik dibatalkan.");
+
+        const credId = bufToB64url(cred.rawId);
+        const clientDataJSON = bufToB64url(cred.response.clientDataJSON);
+
+        // 3. Kirim ke server untuk disimpan
+        await new Promise((resolve, reject) => {
+          google.script.run
+            .withSuccessHandler(resolve)
+            .withFailureHandler(e => reject(e))
+            .registerWebAuthnCredential(_pendingBioIdUser, _pendingBioPin, credId, clientDataJSON);
+        });
+
+        // 4. Simpan di localStorage & tampilkan biometric panel
+        saveCredentialId(credId);
+        _pendingBioIdUser = null;
+        _pendingBioPin = null;
+        updateHudStatus("🔒 BIOMETRIK AKTIF · SIAP SCAN", "success");
+        showBiometricPanel();
+
+      } catch (err) {
+        const msg = err.message || String(err);
+        if (msg.toLowerCase().includes("cancel") || msg.toLowerCase().includes("abort") || msg.toLowerCase().includes("not allowed")) {
+          updateHudStatus("Registrasi biometrik dibatalkan.", "error");
+        } else {
+          updateHudStatus("GAGAL REGISTRASI: " + msg, "error");
+        }
+      }
+    }
+
+    /**
+     * ABSEN DENGAN BIOMETRIK
+     * Menggunakan credential yang sudah terdaftar; tanpa input ID/PIN.
+     */
+    async function lakukanAbsenBiometrik(aksi) {
+      const credId = getSavedCredentialId();
+      if (!credId) { switchToPinMode(); return; }
+
+      const btnBio = aksi === 'masuk' ? $("btnBioMasuk") : $("btnBioPulang");
+      const btnBioOther = aksi === 'masuk' ? $("btnBioPulang") : $("btnBioMasuk");
+      btnBio.disabled = true; btnBioOther.disabled = true;
+      btnBio.classList.add("is-busy");
+      updateHudStatus("VERIFIKASI BIOMETRIK...", "busy");
+
+      try {
+        // 1. Dapatkan challenge dari server
+        const challenge = await new Promise((resolve, reject) => {
+          google.script.run
+            .withSuccessHandler(resolve)
+            .withFailureHandler(e => reject(e))
+            .getWebAuthnChallenge();
+        });
+
+        // 2. Autentikasi via WebAuthn (biometrik perangkat)
+        const assertion = await navigator.credentials.get({
+          publicKey: {
+            challenge: b64urlToBuf(challenge),
+            allowCredentials: [{
+              id: b64urlToBuf(credId),
+              type: "public-key",
+              transports: ["internal"]
+            }],
+            userVerification: "required",
+            timeout: 60000
+          }
+        });
+
+        if (!assertion) throw new Error("Verifikasi biometrik dibatalkan.");
+
+        const clientDataJSON = bufToB64url(assertion.response.clientDataJSON);
+
+        updateHudStatus("MENDETEKSI LOKASI GPS...", "busy");
+
+        // 3. Dapatkan GPS lalu kirim ke server
+        navigator.geolocation.getCurrentPosition(
+          function(pos) {
+            updateHudStatus("MEMPROSES ABSENSI...", "busy");
+            google.script.run
+              .withSuccessHandler(function(res) {
+                const pesan = res && typeof res === "object" ? res.message : res;
+                const nama  = res && typeof res === "object" ? res.nama : null;
+                updateHudStatus("SUKSES: " + pesan, "success");
+                btnBio.disabled = false; btnBioOther.disabled = false;
+                btnBio.classList.remove("is-busy");
+                showPolaroidReceipt({
+                  aksi: aksi,
+                  nama: nama,
+                  idUser: getSavedCredentialId() ? "🔒 Biometrik" : "--",
+                  jarak: pos.coords.accuracy,
+                  biometric: true
+                });
+              })
+              .withFailureHandler(function(err) {
+                const pesan = err.message || "Terjadi kesalahan pada server.";
+                updateHudStatus("GAGAL: " + pesan, "error");
+                btnBio.disabled = false; btnBioOther.disabled = false;
+                btnBio.classList.remove("is-busy");
+              })
+              .absenWithWebAuthn(credId, clientDataJSON, aksi, pos.coords.latitude, pos.coords.longitude);
+          },
+          function(err) {
+            let pesan = "Gagal mendeteksi lokasi GPS.";
+            if (err.code === 1) pesan = "Izin lokasi GPS ditolak.";
+            else if (err.code === 2) pesan = "Sinyal GPS tidak tersedia.";
+            else if (err.code === 3) pesan = "GPS timeout.";
+            updateHudStatus("ERROR GPS: " + pesan, "error");
+            btnBio.disabled = false; btnBioOther.disabled = false;
+            btnBio.classList.remove("is-busy");
+          },
+          { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+        );
+
+      } catch (err) {
+        const msg = err.message || String(err);
+        if (msg.toLowerCase().includes("cancel") || msg.toLowerCase().includes("abort") || msg.toLowerCase().includes("not allowed")) {
+          updateHudStatus("Verifikasi biometrik dibatalkan.", "error");
+        } else {
+          updateHudStatus("GAGAL BIOMETRIK: " + msg, "error");
+        }
+        btnBio.disabled = false; btnBioOther.disabled = false;
+        btnBio.classList.remove("is-busy");
+      }
+    }
+
+    /** Tampilkan biometric panel, sembunyikan form PIN */
+    function showBiometricPanel() {
+      $("biometricPanel").hidden = false;
+      $("absenForm").hidden = true;
+    }
+
+    /** Tampilkan form PIN, sembunyikan biometric panel */
+    function showPinForm() {
+      $("biometricPanel").hidden = true;
+      $("absenForm").hidden = false;
+    }
+
+    /** Tombol "Masuk dengan PIN" dari biometric panel */
+    function switchToPinMode() {
+      showPinForm();
+      $("idInput").focus();
+    }
+
+    /** Hapus data biometrik dari perangkat ini */
+    function hapusBiometrik() {
+      if (!confirm("Hapus data biometrik dari perangkat ini?\nAnda harus menggunakan ID + PIN untuk absen berikutnya.")) return;
+      removeCredentialId();
+      showPinForm();
+      updateHudStatus("Biometrik dihapus · Gunakan ID + PIN", "normal");
+    }
+
+    /** Tutup toast registrasi biometrik */
+    function dismissBioToast() {
+      $("bioRegisterToast").hidden = true;
+      _pendingBioIdUser = null;
+      _pendingBioPin = null;
+    }
+
+    /** Inisialisasi: cek apakah perangkat punya biometrik terdaftar */
+    async function initBiometric() {
+      const credId = getSavedCredentialId();
+      if (!credId) return; // Tidak ada → tetap tampilkan form PIN
+
+      const available = await isBiometricAvailable();
+      if (!available) {
+        // Perangkat tidak mendukung biometrik → hapus credential lama
+        removeCredentialId();
+        return;
+      }
+
+      // Ada credential & perangkat mendukung → tampilkan panel biometrik
+      showBiometricPanel();
+    }
+
     loadSavedCredentials();
+    initBiometric();
   </script>
 </body>
 </html>

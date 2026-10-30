@@ -1252,3 +1252,277 @@ function jarakMeter(lat1, lng1, lat2, lng2) {
   return 2 * 6371000 * Math.asin(Math.sqrt(a));
 }
 
+
+// ============================================================
+// WEBAUTHN BIOMETRIC SUPPORT
+// ============================================================
+
+/**
+ * Ambil/buat sheet WebAuthn untuk menyimpan credential terdaftar.
+ */
+function getWebAuthnSheet_(ss) {
+  let sh = ss.getSheetByName('WebAuthn');
+  if (!sh) {
+    sh = ss.insertSheet('WebAuthn');
+    sh.getRange('A1:E1').setValues([['credentialId', 'idUser', 'nama', 'registeredAt', 'origin']]);
+    sh.getRange('A1:E1').setFontWeight('bold');
+    sh.setColumnWidth(1, 300);
+    sh.setColumnWidth(2, 160);
+    sh.setColumnWidth(3, 200);
+    sh.setColumnWidth(4, 160);
+    sh.setColumnWidth(5, 260);
+  }
+  return sh;
+}
+
+/**
+ * Hasilkan random challenge (base64url 32 byte) dan simpan ke ScriptProperties
+ * dengan TTL 5 menit.
+ */
+function getWebAuthnChallenge() {
+  const bytes = [];
+  for (let i = 0; i < 32; i++) bytes.push(Math.floor(Math.random() * 256));
+  const challenge = Utilities.base64EncodeWebSafe(bytes).replace(/=/g, '');
+  const props = PropertiesService.getScriptProperties();
+  const key = 'wac_' + challenge.substring(0, 10);
+  props.setProperty(key, JSON.stringify({ challenge: challenge, ts: Date.now() }));
+  return challenge;
+}
+
+/**
+ * Validasi challenge dari clientDataJSON (base64url-encoded).
+ * Menghapus challenge setelah berhasil divalidasi (one-time use).
+ */
+function verifyWebAuthnChallenge_(clientDataJSON) {
+  var clientData;
+  try {
+    var decoded = Utilities.newBlob(Utilities.base64DecodeWebSafe(clientDataJSON)).getDataAsString();
+    clientData = JSON.parse(decoded);
+  } catch (e) {
+    throw new Error('clientDataJSON tidak valid.');
+  }
+
+  var challenge = clientData.challenge;
+  if (!challenge) throw new Error('Challenge tidak ditemukan di clientData.');
+
+  var props = PropertiesService.getScriptProperties();
+  var key = 'wac_' + challenge.substring(0, 10);
+  var stored = props.getProperty(key);
+  if (!stored) throw new Error('Challenge sudah kedaluwarsa atau tidak valid. Silakan coba lagi.');
+
+  var storedData = JSON.parse(stored);
+  if (storedData.challenge !== challenge) throw new Error('Challenge tidak cocok.');
+  if (Date.now() - storedData.ts > 5 * 60 * 1000) {
+    props.deleteProperty(key);
+    throw new Error('Challenge kedaluwarsa. Silakan coba lagi.');
+  }
+
+  props.deleteProperty(key); // One-time use
+  return clientData.origin || '';
+}
+
+/**
+ * Daftarkan credential biometrik (WebAuthn) untuk user yang sudah terverifikasi PIN.
+ * Dipanggil setelah absen PIN berhasil, sebagai step opt-in registrasi biometrik.
+ */
+function registerWebAuthnCredential(idUser, pin, credentialId, clientDataJSON) {
+  idUser = String(idUser || '').trim();
+  pin = String(pin || '').trim();
+  credentialId = String(credentialId || '').trim();
+
+  if (!idUser || !pin || !credentialId || !clientDataJSON) {
+    throw new Error('Parameter tidak lengkap untuk registrasi biometrik.');
+  }
+
+  var ss = getSS();
+  var dbSheet = ss.getSheetByName('Database') || ss.getSheetByName('Freelancer');
+  if (!dbSheet) throw new Error('Sheet Database tidak ditemukan.');
+
+  var rows = dbSheet.getDataRange().getDisplayValues().slice(1);
+  var q = idUser.toLowerCase();
+  var orang = null;
+  for (var i = 0; i < rows.length; i++) {
+    var rId = (rows[i][1] || '').trim().toLowerCase();
+    var rNama = (rows[i][0] || '').trim().toLowerCase();
+    if (q === rId || q === rNama) { orang = rows[i]; break; }
+  }
+
+  if (!orang || !orang[0].trim()) throw new Error('ID tidak terdaftar.');
+  var expectedPin = (orang[2] && orang[2].trim()) ? orang[2].trim() : orang[1].trim();
+  if (pin !== expectedPin) throw new Error('PIN salah. Registrasi biometrik ditolak.');
+
+  var nama = orang[0].trim();
+
+  // Verifikasi challenge
+  verifyWebAuthnChallenge_(clientDataJSON);
+
+  // Simpan credential (update jika sudah ada)
+  var waSh = getWebAuthnSheet_(ss);
+  var waData = waSh.getDataRange().getValues();
+  var existingRow = -1;
+  for (var j = 1; j < waData.length; j++) {
+    if (String(waData[j][0]) === credentialId) { existingRow = j + 1; break; }
+  }
+
+  var now = Utilities.formatDate(new Date(), TZ, 'yyyy-MM-dd HH:mm:ss');
+  if (existingRow > 0) {
+    waSh.getRange(existingRow, 1, 1, 5).setValues([[credentialId, idUser, nama, now, 'updated']]);
+  } else {
+    waSh.appendRow([credentialId, idUser, nama, now, 'registered']);
+  }
+
+  return { success: true, message: 'Biometrik berhasil didaftarkan untuk ' + nama + '.', nama: nama };
+}
+
+/**
+ * Absen menggunakan WebAuthn tanpa input ID/PIN.
+ * credentialId dicari di sheet WebAuthn → resolve idUser → rekam absensi.
+ */
+function absenWithWebAuthn(credentialId, clientDataJSON, aksi, lat, lng) {
+  credentialId = String(credentialId || '').trim();
+  aksi = String(aksi || '').toLowerCase().trim();
+
+  if (!credentialId || !clientDataJSON) throw new Error('Data biometrik tidak lengkap.');
+  if (aksi !== 'masuk' && aksi !== 'pulang') throw new Error('Aksi tidak valid.');
+
+  // 1. Verifikasi challenge
+  verifyWebAuthnChallenge_(clientDataJSON);
+
+  // 2. Cari credential di sheet WebAuthn
+  var ss = getSS();
+  var waSh = getWebAuthnSheet_(ss);
+  var waData = waSh.getDataRange().getValues();
+
+  var idUser = null;
+  var nama = null;
+  for (var i = 1; i < waData.length; i++) {
+    if (String(waData[i][0]) === credentialId) {
+      idUser = String(waData[i][1]);
+      nama = String(waData[i][2]);
+      break;
+    }
+  }
+
+  if (!idUser) throw new Error('Perangkat ini belum terdaftar biometrik. Gunakan ID + PIN terlebih dahulu, lalu aktifkan biometrik.');
+
+  // 3. Verifikasi lokasi
+  var jarak = jarakMeter(LOKASI.lat, LOKASI.lng, Number(lat), Number(lng));
+  if (isNaN(jarak) || jarak > RADIUS_M) {
+    var jarakStr = isNaN(jarak) ? '-' : Math.round(jarak);
+    throw new Error('Anda berada di luar lokasi kerja (jarak: ' + jarakStr + ' m). Maksimal radius ' + RADIUS_M + ' m.');
+  }
+
+  // 4. Rekam absensi (tanpa cek PIN)
+  var lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+
+  try {
+    var shAbsensi = ss.getSheetByName('Absensi');
+    if (!shAbsensi) {
+      setupAbsensiHorizontal(ss);
+      shAbsensi = ss.getSheetByName('Absensi');
+    }
+
+    var now = new Date();
+    var jamTeks = Utilities.formatDate(now, TZ, 'HH.mm');
+    var todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    var dateRowValues = shAbsensi.getRange(4, 3, 1, 31).getValues()[0];
+    var targetCol = -1;
+    for (var c = 0; c < dateRowValues.length; c++) {
+      var d = dateRowValues[c];
+      var dObj = (d instanceof Date) ? d : new Date(d);
+      if (!isNaN(dObj.getTime()) &&
+          dObj.getFullYear() === todayDate.getFullYear() &&
+          dObj.getMonth() === todayDate.getMonth() &&
+          dObj.getDate() === todayDate.getDate()) {
+        targetCol = 3 + c; break;
+      }
+    }
+    if (targetCol === -1) {
+      var tglStr = Utilities.formatDate(now, TZ, 'dd/MM/yyyy');
+      throw new Error('Tanggal hari ini (' + tglStr + ') tidak ada di sheet Absensi.');
+    }
+
+    var currentTableEnd = shAbsensi.getLastRow();
+    var targetRow = -1;
+    if (currentTableEnd >= 5) {
+      var names = shAbsensi.getRange(5, 2, currentTableEnd - 4, 1).getValues();
+      for (var r = 0; r < names.length; r++) {
+        if (String(names[r][0] || '').trim().toLowerCase() === nama.toLowerCase()) {
+          targetRow = 5 + r; break;
+        }
+      }
+    }
+
+    if (targetRow === -1) {
+      targetRow = (currentTableEnd >= 5 ? currentTableEnd : 4) + 1;
+      var noUrut = targetRow - 4;
+      shAbsensi.getRange(targetRow, 1).setValue(noUrut).setNumberFormat('0').setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#64748B');
+      shAbsensi.getRange(targetRow, 2).setValue(nama).setFontWeight('bold').setFontColor('#0F172A').setHorizontalAlignment('left');
+      shAbsensi.getRange(targetRow, 34).setFormula('=COUNTIFS(C' + targetRow + ':AG' + targetRow + ', "<>", C' + targetRow + ':AG' + targetRow + ', "<>OFF", C' + targetRow + ':AG' + targetRow + ', "<>Sakit", C' + targetRow + ':AG' + targetRow + ', "<>Izin")').setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#0F766E');
+      shAbsensi.getRange(targetRow, 35).setFormula(hoursFormula(targetRow)).setNumberFormat('0.00').setHorizontalAlignment('center').setFontWeight('bold').setFontColor('#0F766E');
+      shAbsensi.getRange(targetRow, 1, 1, 35).setFontFamily('Arial').setFontSize(9);
+      shAbsensi.getRange(targetRow, 1, 1, 35).setBorder(true, true, true, true, true, true, '#CBD5E1', SpreadsheetApp.BorderStyle.SOLID);
+      var defaultCells = [];
+      for (var dc = 0; dc < 31; dc++) defaultCells.push('OFF');
+      shAbsensi.getRange(targetRow, 3, 1, 31).setValues([defaultCells]).setNumberFormat('@').setHorizontalAlignment('center');
+      var ruleStatus = SpreadsheetApp.newDataValidation().requireValueInList(['OFF', 'Sakit', 'Izin'], true).setAllowInvalid(true).build();
+      shAbsensi.getRange(targetRow, 3, 1, 31).setDataValidation(ruleStatus);
+      try { if (shAbsensi.getFilter()) shAbsensi.getFilter().remove(); shAbsensi.getRange(4, 1, targetRow - 3, 35).createFilter(); } catch (ex) {}
+    }
+
+    var targetCell = shAbsensi.getRange(targetRow, targetCol);
+    var currentVal = String(targetCell.getValue() || '').trim();
+    var isNotClockedIn = !currentVal || currentVal === 'OFF' || currentVal === 'Sakit' || currentVal === 'Izin';
+
+    if (aksi === 'masuk') {
+      if (!isNotClockedIn) throw new Error('Anda sudah Clock In hari ini (' + currentVal + ').');
+      targetCell.setValue(jamTeks).setNumberFormat('@').setHorizontalAlignment('center');
+      targetCell.clearDataValidations();
+      var shBackup = ss.getSheetByName('Absensi_Log_Backup');
+      if (shBackup) {
+        shBackup.insertRowAfter(1);
+        shBackup.getRange(2, 1, 1, 4).setValues([[todayDate, nama, now, '']]);
+        shBackup.getRange('A2').setNumberFormat('dd/mm/yyyy');
+        shBackup.getRange('C2:D2').setNumberFormat('HH.mm');
+        shBackup.getRange('E2').setFormula('=IF(OR(C2="", D2=""), "", ROUND(IF(D2 < C2, D2 + 1 - C2, D2 - C2) * 24, 2))').setNumberFormat('0.00');
+      }
+      return { success: true, message: 'Hi ' + nama + ', CLOCK IN tercatat pukul ' + jamTeks + ' WIB. [🔒 Biometrik ✓]', nama: nama, jam: jamTeks, tipe: 'masuk', biometric: true };
+    }
+
+    // Aksi pulang
+    if (isNotClockedIn) throw new Error('Anda belum Clock In hari ini.');
+    if (currentVal.includes(' - ')) throw new Error('Anda sudah Clock Out hari ini (' + currentVal + ').');
+
+    var jamMasukParts = currentVal.replace('.', ':').split(':');
+    var masukHours = (parseInt(jamMasukParts[0], 10) || 0) + (parseInt(jamMasukParts[1], 10) || 0) / 60;
+    var nowHours = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
+    var selisih = nowHours - masukHours;
+    if (selisih < 0) selisih += 24;
+    var jamKerja = Math.max(0, Math.round(selisih * 100) / 100);
+
+    var valBaru = currentVal + ' - ' + jamTeks;
+    targetCell.setValue(valBaru).setNumberFormat('@').setHorizontalAlignment('center');
+
+    var shBackupOut = ss.getSheetByName('Absensi_Log_Backup');
+    if (shBackupOut && shBackupOut.getLastRow() >= 2) {
+      var maxScan = Math.min(shBackupOut.getLastRow() - 1, 100);
+      var backupRows = shBackupOut.getRange(2, 1, maxScan, 2).getValues();
+      var hariIniStr = Utilities.formatDate(now, TZ, 'yyyy-MM-dd');
+      for (var bi = 0; bi < backupRows.length; bi++) {
+        var tgl = backupRows[bi][0];
+        var tglStr2 = (tgl instanceof Date) ? Utilities.formatDate(tgl, TZ, 'yyyy-MM-dd') : String(tgl);
+        if (backupRows[bi][1] === nama && tglStr2.startsWith(hariIniStr)) {
+          shBackupOut.getRange(2 + bi, 4).setValue(now).setNumberFormat('HH.mm');
+          break;
+        }
+      }
+    }
+
+    return { success: true, message: 'Hi ' + nama + ', CLOCK OUT tercatat pukul ' + jamTeks + ' WIB. Total: ' + jamKerja + ' jam. [🔒 Biometrik ✓]', nama: nama, jam: jamTeks, jamKerja: jamKerja, tipe: 'pulang', biometric: true };
+
+  } finally {
+    lock.releaseLock();
+  }
+}
